@@ -1,7 +1,9 @@
 package com.example.wafflestudio_toyproject
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wafflestudio_toyproject.databinding.ActivityLoginBinding
 
