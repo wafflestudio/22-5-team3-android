@@ -12,10 +12,18 @@ class UserRepository @Inject constructor(private val api: UserApi) {
         username: String,
         email: String,
         password: String,
+        name: String,
+        department: Int,
         onSuccess: (SignupResponse) -> Unit,
         onError: (String) -> Unit
     ) {
-        val request = SignupRequest(userid = username, email = email, password = password)
+        val request = SignupRequest(
+            userid = username,
+            email = email,
+            password = password,
+            name = name,
+            department = department
+        )
 
         api.signup(request).enqueue(object : Callback<SignupResponse> {
             override fun onResponse(
