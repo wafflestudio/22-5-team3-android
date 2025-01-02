@@ -5,9 +5,11 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:fitsSystemWindows">false</item>
     </style>
 
     <style name="Theme.Wafflestudio_toyproject" parent="Base.Theme.Wafflestudio_toyproject" />
+
+    <style name="CustomSpinner" parent="Theme.AppCompat.Light">
+        <item name="android:popupBackground">@android:color/white</item> <!-- 팝업 배경색 -->
+    </style>
 </resources>
