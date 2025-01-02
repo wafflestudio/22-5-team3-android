@@ -157,7 +157,7 @@
                 android:id="@+id/emailEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
+                android:inputType="textEmailAddress"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:backgroundTint="@android:color/transparent"/>
