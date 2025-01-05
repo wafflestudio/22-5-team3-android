@@ -1,48 +1,111 @@
 package com.example.wafflestudio_toyproject.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
+import com.example.wafflestudio_toyproject.AuthApi
+import com.example.wafflestudio_toyproject.RefreshTokenRequest
 import com.example.wafflestudio_toyproject.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    private const val BASE_URL = "http://52.78.27.95/"
+
+    // 일반 API용 OkHttpClient (Authenticator 포함)
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        sharedPreferences: SharedPreferences,
+        tokenAuthenticator: TokenAuthenticator
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .authenticator(tokenAuthenticator) // Authenticator 추가
+            .addInterceptor { chain ->
+                val requestBuilder = chain.request().newBuilder()
+                val accessToken = sharedPreferences.getString("access_token", null)
+
+                if (!accessToken.isNullOrEmpty()) {
+                    requestBuilder.addHeader("Authorization", "Bearer $accessToken")
+                }
+
+                chain.proceed(requestBuilder.build())
+            }
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+    }
+
+    // AuthAPI 전용 OkHttpClient (Authenticator 미포함)
+    @Provides
+    @Singleton
+    @Named("AuthClient")
+    fun provideAuthOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+    }
+
+    // 일반 API용 Retrofit (OkHttpClient 사용)
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://52.78.27.95/")
+            .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
+    // AuthAPI 전용 Retrofit (AuthClient 사용)
+    @Provides
+    @Singleton
+    @Named("AuthRetrofit")
+    fun provideAuthRetrofit(@Named("AuthClient") authOkHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(authOkHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    // 일반 API UserApi 생성
     @Provides
     @Singleton
     fun provideUserApi(retrofit: Retrofit): UserApi {
         return retrofit.create(UserApi::class.java)
     }
 
-    // 로그 확인용
+    // AuthAPI 생성 (AuthRetrofit 사용)
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        // HttpLoggingInterceptor 추가
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY // BODY: 요청 및 응답 본문 로깅
-        }
+    @Named("AuthApi")
+    fun provideAuthApi(@Named("AuthRetrofit") authRetrofit: Retrofit): AuthApi {
+        return authRetrofit.create(AuthApi::class.java)
+    }
 
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor) // 로깅 인터셉터 추가
-            .build()
+    // SharedPreferences 제공
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
     }
 }
+
+
+
