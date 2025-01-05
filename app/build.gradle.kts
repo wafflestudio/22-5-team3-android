@@ -61,4 +61,8 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging.interceptor)
+
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.androidx.navigation.fragment)
 }
