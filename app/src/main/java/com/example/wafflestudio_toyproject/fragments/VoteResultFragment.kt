@@ -17,13 +17,6 @@ class VoteResultFragment : Fragment() {
     ): View {
         _binding = FragmentVoteresultBinding.inflate(inflater, container, false)
 
-        /*
-        // NavHostFragment 초기화
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.app_nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-
-         */
-
         return binding.root
     }
 
