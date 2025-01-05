@@ -13,7 +13,9 @@ interface UserApi {
 data class SignupRequest(
     val userid: String,
     val email: String,
-    val password: String
+    val password: String,
+    val name: String,
+    val department: Int
 )
 
 // 응답 데이터 클래스
