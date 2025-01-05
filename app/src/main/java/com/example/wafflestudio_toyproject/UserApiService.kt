@@ -23,7 +23,7 @@ data class SignupRequest(
     val email: String,
     val password: String,
     val name: String,
-    val department: Int
+    val college: Int
 )
 
 data class LoginRequest(

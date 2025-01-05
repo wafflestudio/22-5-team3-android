@@ -45,13 +45,13 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun signup(username: String, email: String, password: String, realname: String, department: Int) {
+    private fun signup(username: String, email: String, password: String, realname: String, college: Int) {
         userRepository.signup(
             username,
             email,
             password,
             realname,
-            department,
+            college,
             onSuccess = { response ->
                 Toast.makeText(this, "회원가입 성공: ${response.email}", Toast.LENGTH_SHORT).show()
             },

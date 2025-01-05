@@ -17,7 +17,7 @@ class UserRepository @Inject constructor(
         email: String,
         password: String,
         name: String,
-        department: Int,
+        college: Int,
         onSuccess: (SignupResponse) -> Unit,
         onError: (String) -> Unit
     ) {
@@ -26,7 +26,7 @@ class UserRepository @Inject constructor(
             email = email,
             password = password,
             name = name,
-            department = department
+            college = college
         )
 
         api.signup(request).enqueue(object : Callback<SignupResponse> {

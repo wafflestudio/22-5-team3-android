@@ -3,20 +3,46 @@ package com.example.wafflestudio_toyproject
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.viewpager2.widget.ViewPager2
+import com.example.wafflestudio_toyproject.databinding.ActivityMainBinding
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+    lateinit var viewPager: ViewPager2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        viewPager = binding.viewPager
+        viewPager.adapter = ViewPagerAdapter(this)
+
+        setTabLayout()
+    }
+
+    private fun setTabLayout() {
+        val tabLayout: TabLayout = binding.tabLayout
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            when(position){
+                0->{
+                    tab.text = "진행 중인 투표"
+                    tab.setIcon(R.drawable.ongoing_vote)
+                }
+                1->{
+                    tab.text = "Hot 투표"
+                    tab.setIcon(R.drawable.hot_vote)
+                }
+                2-> {
+                    tab.text = "투표글 보기"
+                    tab.setIcon(R.drawable.vote_result)
+                }
+            }
+        }.attach()
     }
 }
