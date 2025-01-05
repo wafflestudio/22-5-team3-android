@@ -12,6 +12,11 @@ interface UserApi {
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 }
 
+interface AuthApi{
+    @POST("api/users/refresh")
+    fun refreshToken(@Body request: RefreshTokenRequest): Call<RefreshTokenResponse>
+}
+
 // 요청 데이터 클래스
 data class SignupRequest(
     val userid: String,
@@ -33,6 +38,15 @@ data class SignupResponse(
 )
 
 data class LoginResponse(
+    val access_token: String,
+    val refresh_token: String
+)
+
+data class RefreshTokenRequest(
+    val refresh_token: String
+)
+
+data class RefreshTokenResponse(
     val access_token: String,
     val refresh_token: String
 )

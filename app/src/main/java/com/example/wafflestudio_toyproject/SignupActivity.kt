@@ -6,9 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wafflestudio_toyproject.databinding.ActivitySignupBinding
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -62,13 +59,5 @@ class SignupActivity : AppCompatActivity() {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
             }
         )
-    }
-
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("http://52.78.27.95/")
-            .addConverterFactory(GsonConverterFactory.create()) // JSON 변환
-            .client(OkHttpClient.Builder().build()) // 클라이언트 설정
-            .build()
     }
 }

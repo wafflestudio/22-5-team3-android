@@ -1,5 +1,6 @@
 package com.example.wafflestudio_toyproject
 
+import android.content.SharedPreferences
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -7,7 +8,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepository @Inject constructor(private val api: UserApi) {
+class UserRepository @Inject constructor(
+    private val api: UserApi,
+    private val sharedPreferences: SharedPreferences
+) {
     fun signup(
         username: String,
         email: String,
@@ -76,4 +80,15 @@ class UserRepository @Inject constructor(private val api: UserApi) {
         })
     }
 
+    fun saveTokens(accessToken: String, refreshToken: String) {
+        sharedPreferences.edit().apply {
+            putString("access_token", accessToken)
+            putString("refresh_token", refreshToken)
+            apply()
+        }
+    }
+
+    fun getAccessToken(): String? {
+        return sharedPreferences.getString("access_token", null)
+    }
 }

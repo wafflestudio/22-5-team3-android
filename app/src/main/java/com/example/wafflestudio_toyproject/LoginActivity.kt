@@ -23,6 +23,11 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // 자동 로그인 체크
+        if (isUserLoggedIn()) {
+            navigateToMainScreen()
+        }
+
         binding.signUpButton.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
@@ -34,19 +39,29 @@ class LoginActivity : AppCompatActivity() {
 
             if (username.isNotEmpty() && password.isNotEmpty()) {
                 login(username, password)
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
             } else {
                 Toast.makeText(this, "모든 항목을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun login(username: String, password: String){
+    private fun isUserLoggedIn(): Boolean {
+        val accessToken = userRepository.getAccessToken()
+        return !accessToken.isNullOrEmpty()
+    }
+
+    private fun navigateToMainScreen() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun login(username: String, password: String) {
         userRepository.login(username, password,
             onSuccess = { response ->
                 Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
+                userRepository.saveTokens(response.access_token, response.refresh_token)
+                navigateToMainScreen()
             },
             onError = { errorMessage ->
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
