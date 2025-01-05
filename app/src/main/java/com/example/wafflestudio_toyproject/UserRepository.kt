@@ -44,4 +44,36 @@ class UserRepository @Inject constructor(private val api: UserApi) {
             }
         })
     }
+
+    fun login(
+        userid: String,
+        password: String,
+        onSuccess: (LoginResponse) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val request = LoginRequest(
+            userid = userid,
+            password = password
+        )
+
+        api.login(request).enqueue(object : Callback<LoginResponse> {
+            override fun onResponse(
+                call: Call<LoginResponse>,
+                response: Response<LoginResponse>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        onSuccess(it)
+                    } ?: onError("응답이 비어 있습니다.")
+                } else {
+                    onError("로그인 실패: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                onError("네트워크 에러: ${t.message}")
+            }
+        })
+    }
+
 }
