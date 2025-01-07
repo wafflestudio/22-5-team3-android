@@ -1,11 +1,10 @@
-package com.example.wafflestudio_toyproject.di
+package com.example.wafflestudio_toyproject.network
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.example.wafflestudio_toyproject.AuthApi
-import com.example.wafflestudio_toyproject.RefreshTokenRequest
 import com.example.wafflestudio_toyproject.UserApi
+import com.example.wafflestudio_toyproject.VoteApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +28,8 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         sharedPreferences: SharedPreferences,
-        tokenAuthenticator: TokenAuthenticator
+        tokenAuthenticator: TokenAuthenticator,
+        loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .authenticator(tokenAuthenticator) // Authenticator 추가
@@ -43,9 +43,7 @@ object NetworkModule {
 
                 chain.proceed(requestBuilder.build())
             }
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            .addInterceptor(loggingInterceptor)
             .build()
     }
 
@@ -104,6 +102,21 @@ object NetworkModule {
     @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+    }
+
+    //투표 api
+    @Provides
+    @Singleton
+    fun provideVoteApi(retrofit: Retrofit): VoteApi {
+        return retrofit.create(VoteApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY // FULL 요청/응답 로깅
+        }
     }
 }
 

@@ -1,16 +1,12 @@
-package com.example.wafflestudio_toyproject.di
+package com.example.wafflestudio_toyproject.network
 
 import android.content.SharedPreferences
 import com.example.wafflestudio_toyproject.AuthApi
 import com.example.wafflestudio_toyproject.RefreshTokenRequest
-import com.example.wafflestudio_toyproject.UserApi
-import com.example.wafflestudio_toyproject.UserRepository
-import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
-import retrofit2.Retrofit
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
