@@ -2,6 +2,7 @@ package com.example.wafflestudio_toyproject.fragments
 
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +45,7 @@ class CreateVoteFragment : Fragment() {
             binding.participationCodeInput.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
         
-        // 투표글 생성ㅅ
+        // 투표글 생성
         binding.buttonSubmitVote.setOnClickListener {
             createVote()
         }
@@ -67,8 +68,6 @@ class CreateVoteFragment : Fragment() {
     
     // 투표글 생성
     private fun createVote() {
-        binding.errorTextView.visibility = View.GONE
-       
         val title = binding.voteTitle.text.toString().trim()
         val content = binding.voteDescription.text.toString().trim()
         val participationCodeRequired = binding.checkboxCreateParticipationCode.isChecked
@@ -121,18 +120,21 @@ class CreateVoteFragment : Fragment() {
                 } else {
                     showError("Failed to create vote: ${response.message()}")
                 }
-                binding.buttonSubmitVote.isEnabled = true // 버튼 활성화
             }
 
             override fun onFailure(call: Call<CreateVoteResponse>, t: Throwable) {
                 showError("Network error: ${t.message}")
             }
         })
+
+        Log.d("ButtonDebug", "Button Visibility: ${binding.buttonSubmitVote.visibility}")
+
     }
 
     private fun showError(message: String) {
         binding.errorTextView.text = message
         binding.errorTextView.visibility = View.VISIBLE
+        binding.errorTextView.requestLayout()
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
