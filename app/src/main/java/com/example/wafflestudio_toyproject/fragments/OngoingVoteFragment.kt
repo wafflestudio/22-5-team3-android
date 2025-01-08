@@ -54,7 +54,10 @@ class OngoingVoteFragment : Fragment() {
 
         // RecyclerView 설정
         adapter = VoteItemAdapter(voteItems) { voteItem ->
-            Toast.makeText(requireContext(), "Clicked: ${voteItem.title}", Toast.LENGTH_SHORT).show()
+            val bundle = Bundle().apply {
+                putInt("vote_id", voteItem.id)
+            }
+            navController.navigate(R.id.action_ongoingVoteFragment_to_voteDetailFragment, bundle)
         }
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
