@@ -5,4 +5,6 @@
     <color name="primaryColor">#000000</color> <!-- 버튼 기본 색상 -->
     <color name="primaryContainerColor">#333333</color> <!-- 버튼 강조 배경 -->
     <color name="customAccentColor">#FF5722</color>
+    <color name="selected_color">#BEF2BE</color>
+    <color name="unselected_color">#F2F2F2</color>
 </resources>

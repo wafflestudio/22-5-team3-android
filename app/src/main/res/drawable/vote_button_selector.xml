@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 선택된 상태 -->
+    <item android:state_selected="true" android:drawable="@color/selected_color" />
+    <!-- 비선택 상태 -->
+    <item android:drawable="@color/unselected_color" />
+</selector>

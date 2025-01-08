@@ -1,12 +1,16 @@
 package com.example.wafflestudio_toyproject.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteDetailResponse
@@ -89,20 +93,86 @@ class VoteDetailFragment : Fragment() {
         binding.voteDetailTitle.text = voteDetail.title
         binding.voteDetailDescription.text = voteDetail.content
 
+        if (voteDetail.participation_code_required) {
+            binding.participationCodeLayout.visibility = View.VISIBLE
+            binding.voteButton.isEnabled = false
+        } else {
+            binding.participationCodeLayout.visibility = View.GONE
+            binding.voteButton.isEnabled = true
+        }
+
+        if (voteDetail.multiple_choice) {
+            binding.multipleChoiceMessage.visibility = View.VISIBLE
+        } else {
+            binding.multipleChoiceMessage.visibility = View.GONE
+        }
+
+        if (voteDetail.annonymous_choice) {
+            binding.anonymousMessage.visibility = View.VISIBLE
+        } else {
+            binding.anonymousMessage.visibility = View.GONE
+        }
+
+        binding.validateCodeButton.setOnClickListener {
+            val code = binding.participationCodeInput.text.toString()
+            if (code.isNotEmpty()) {
+                if(voteDetail.participation_code==code){
+                    binding.voteButton.isEnabled = true
+                    Toast.makeText(requireContext(), "참여 코드가 확인되었습니다.", Toast.LENGTH_SHORT).show()
+                } else{
+                    val correct_code=voteDetail.participation_code
+                    Log.d("VoteDetail", "Code: $correct_code")
+                    Toast.makeText(requireContext(), "참여 코드가 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(requireContext(), "참여 코드를 입력하세요", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
         // 투표 선택지 표시하기
+        val selectedChoices = mutableSetOf<Int>() // 선택된 choice_id 저장
+
         voteDetail.choices.forEach { choice ->
             val button = Button(requireContext()).apply {
                 text = choice.choice_content
-                isEnabled = !choice.participated
+                isEnabled = true
+                setBackgroundResource(R.drawable.vote_button_selector)
+
+                //버튼 스타일 지정
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    120
+                ).apply {
+                    setMargins(0, 0, 0, 16)
+                }
+
+                // 선택 상태 초기화
+                isSelected = choice.participated
+
                 setOnClickListener {
-                    Toast.makeText(
-                        requireContext(),
-                        "${choice.choice_content} 선택됨",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (voteDetail.multiple_choice) {
+                        // 다중 선택 가능
+                        if (selectedChoices.contains(choice.choice_id)) {
+                            selectedChoices.remove(choice.choice_id)
+                            isSelected = false
+                        } else {
+                            selectedChoices.add(choice.choice_id)
+                            isSelected = true
+                        }
+                    } else {
+                        // 단일 선택: 기존 선택 해제
+                        selectedChoices.clear()
+                        selectedChoices.add(choice.choice_id)
+                        binding.choicesContainer.forEach { child ->
+                            if (child is Button) child.isSelected = false
+                        }
+                        isSelected = true
+                    }
                 }
             }
             binding.choicesContainer.addView(button)
         }
     }
+
 }
