@@ -1,11 +1,9 @@
-package com.example.wafflestudio_toyproject
+package com.example.wafflestudio_toyproject.adapter
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.wafflestudio_toyproject.fragments.HotVoteFragment
-import com.example.wafflestudio_toyproject.fragments.OngoingVoteFragment
 import com.example.wafflestudio_toyproject.fragments.VoteFragment
 import com.example.wafflestudio_toyproject.fragments.VoteResultFragment
 

@@ -1,9 +1,9 @@
 package com.example.wafflestudio_toyproject
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
+import com.example.wafflestudio_toyproject.adapter.ViewPagerAdapter
 import com.example.wafflestudio_toyproject.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator

@@ -126,9 +126,6 @@ class CreateVoteFragment : Fragment() {
                 showError("Network error: ${t.message}")
             }
         })
-
-        Log.d("ButtonDebug", "Button Visibility: ${binding.buttonSubmitVote.visibility}")
-
     }
 
     private fun showError(message: String) {

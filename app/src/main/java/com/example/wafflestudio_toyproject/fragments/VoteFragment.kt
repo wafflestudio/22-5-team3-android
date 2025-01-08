@@ -9,6 +9,8 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteBinding
 
+
+// 내비게이션 호스트
 class VoteFragment : Fragment() {
     private var _binding: FragmentVoteBinding? = null
     private val binding get() = _binding!!
