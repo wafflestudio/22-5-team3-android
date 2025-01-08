@@ -1,11 +1,16 @@
 package com.example.wafflestudio_toyproject
 import android.R
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wafflestudio_toyproject.databinding.ActivitySignupBinding
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONException
+import org.json.JSONObject
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -22,9 +27,11 @@ class SignupActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //학과 선택 스피너 세팅
-        val departments = listOf("인문대학", "사회과학대학", "자연과학대학", "간호대학", "경영대학", "공과대학",
+        val departments = listOf(
+            "인문대학", "사회과학대학", "자연과학대학", "간호대학", "경영대학", "공과대학",
             "농업생명과학대학", "미술대학", "사범대학", "생활과학대학", "수의과대학", "약학대학", "음악대학", "의과대학",
-            "자유전공학부", "첨단융합학부")
+            "자유전공학부", "첨단융합학부"
+        )
         val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, departments)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.departmentSpinner.adapter = adapter
@@ -37,15 +44,40 @@ class SignupActivity : AppCompatActivity() {
             val realname = binding.nameEditText.text.toString()
             val department = binding.departmentSpinner.selectedItemPosition + 1
 
-            if (username.isNotEmpty() && password.isNotEmpty() && email.isNotEmpty()  && realname.isNotEmpty()) {
-                signup(username, email, password, realname, department)
-            } else {
-                Toast.makeText(this, "모든 항목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            val errorMessage = when {
+                username.isEmpty() -> "UserID is required."
+                password.isEmpty() -> "Password is required."
+                email.isEmpty() -> "Email is required."
+                realname.isEmpty() -> "Name is required."
+                !android.util.Patterns.EMAIL_ADDRESS.matcher(email)
+                    .matches() -> "Invalid email format."
+
+                else -> null
             }
+
+            if (errorMessage != null) {
+                printErrorMessage(errorMessage)
+            } else {
+                binding.errorTextView.visibility = View.GONE
+                signup(username, email, password, realname, department)
+            }
+        }
+
+
+        // loginButton 클릭 리스너
+        binding.loginButton.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    private fun signup(username: String, email: String, password: String, realname: String, college: Int) {
+    private fun signup(
+        username: String,
+        email: String,
+        password: String,
+        realname: String,
+        college: Int
+    ) {
         userRepository.signup(
             username,
             email,
@@ -56,8 +88,38 @@ class SignupActivity : AppCompatActivity() {
                 Toast.makeText(this, "회원가입 성공: ${response.email}", Toast.LENGTH_SHORT).show()
             },
             onError = { errorMessage ->
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+                val parsedErrorMessage = parseErrorDetail(errorMessage)
+                printErrorMessage(parsedErrorMessage)
             }
         )
     }
+
+    private fun printErrorMessage(errorMessage: String) {
+        binding.errorTextView.text = errorMessage
+        binding.errorTextView.visibility = View.VISIBLE
+    }
+
+    private fun parseErrorDetail(errorMessage: String?): String {
+        return try {
+            if (errorMessage.isNullOrEmpty()) {
+                "알 수 없는 오류가 발생했습니다." // errorMessage가 null이거나 비어있을 경우
+            } else {
+                // 에러 메시지에서 상태 코드 추출
+                val parts = errorMessage.split(":").map { it.trim() } // ":" 기준으로 나눔
+                if (parts.size == 2) {
+                    val statusCode = parts[1].toIntOrNull() // 상태 코드를 정수로 변환
+                    when (statusCode) {
+                        400 -> "Invalid field format" // userid 또는 password 형식 오류
+                        409 -> "Username or Email already exists" // ID 또는 이메일 중복
+                        else -> "알 수 없는 오류가 발생했습니다." // 정의되지 않은 상태 코드
+                    }
+                } else {
+                    "알 수 없는 오류가 발생했습니다." // 메시지 형식이 올바르지 않을 경우
+                }
+            }
+        } catch (e: Exception) {
+            "서버 오류가 발생했습니다. 다시 시도해주세요."
+        }
+    }
+
 }

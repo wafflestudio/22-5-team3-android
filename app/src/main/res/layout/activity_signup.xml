@@ -247,7 +247,21 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
+                app:layout_constraintTop_toBottomOf="@+id/errorTextView" />
+
+            <TextView
+                android:id="@+id/errorTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="14sp"
+                android:gravity="center"
                 app:layout_constraintTop_toBottomOf="@+id/departmentSpinner" />
+
 
             <Button
                 android:id="@+id/loginButton"
