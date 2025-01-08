@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:id="@+id/snuVote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SNU vote"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/snuVote" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Voting Title Input -->
+            <EditText
+                android:id="@+id/vote_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="투표 제목을 입력하세요"
+                android:inputType="text" />
+
+            <!-- Voting Description Input -->
+            <EditText
+                android:id="@+id/vote_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="투표 설명을 입력하세요"
+                android:inputType="textMultiLine"
+                android:minLines="3" />
+
+            <!-- Voting Options -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vote Options"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:id="@+id/options_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Option 1" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Option 2" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_add_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+"
+                android:layout_marginTop="8dp" />
+
+            <!-- Options for Voting Settings -->
+            <CheckBox
+                android:id="@+id/checkbox_anonymous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="익명 투표" />
+
+            <CheckBox
+                android:id="@+id/checkbox_reveal_results"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="결과 바로 공개" />
+
+            <CheckBox
+                android:id="@+id/checkbox_allow_duplicates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="중복 가능" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <CheckBox
+                    android:id="@+id/checkbox_create_participation_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="참여 코드" />
+
+                <EditText
+                    android:id="@+id/participation_code_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="참여 코드 6자리"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+
+            <!-- Voting Deadline -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="투표 종료 시각"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/deadline_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="YYYY-MM-DD"
+                    android:inputType="date" />
+
+                <EditText
+                    android:id="@+id/deadline_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="HH:MM"
+                    android:inputType="time" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/errorTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:textColor="#FF0000"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonSubmitVote"
+                android:padding="8dp" />
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/button_submit_vote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create Vote"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

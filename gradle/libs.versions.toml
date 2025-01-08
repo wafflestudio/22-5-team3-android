@@ -13,6 +13,8 @@ constraintlayout = "2.2.0"
 retrofit = "2.11.0"
 hilt = "2.52"
 okhttp3 = "4.10.0"
+navigation = "2.5.3"
+navigationFragment = "2.8.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,6 +31,9 @@ hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 okhttp3-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3"}
 okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3"}
+navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version = "navigation" }
+navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version = "navigation" }
+androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -5,6 +5,13 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!-- 탭 강조 색상 -->
+        <item name="colorControlActivated">@color/customAccentColor</item>
+
+        <!-- 버튼 색상 -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryContainer">@color/primaryContainerColor</item>
     </style>
 
     <style name="Theme.Wafflestudio_toyproject" parent="Base.Theme.Wafflestudio_toyproject" />
