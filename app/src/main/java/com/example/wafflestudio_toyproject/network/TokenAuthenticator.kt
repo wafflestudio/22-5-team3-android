@@ -1,8 +1,8 @@
 package com.example.wafflestudio_toyproject.network
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.example.wafflestudio_toyproject.AuthApi
-import com.example.wafflestudio_toyproject.RefreshTokenRequest
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
@@ -19,46 +19,43 @@ class TokenAuthenticator @Inject constructor(
 
     override fun authenticate(route: Route?, response: Response): Request? {
         val refreshToken = sharedPreferences.getString("refresh_token", null)
-            ?: throw IllegalStateException("No Refresh Token Found")
+        if (refreshToken.isNullOrEmpty()) {
+            Log.e("TokenAuthenticator", "No Refresh Token Found")
+            return null
+        }
+
+        Log.d("TokenAuthenticator", "Attempting to refresh access token with refresh token: $refreshToken")
 
         val newAccessToken = refreshAccessToken(refreshToken)
         return if (!newAccessToken.isNullOrEmpty()) {
+            Log.d("TokenAuthenticator", "New access token acquired: $newAccessToken")
             response.request.newBuilder()
                 .removeHeader("Authorization")
                 .addHeader("Authorization", "Bearer $newAccessToken")
                 .build()
         } else {
+            Log.e("TokenAuthenticator", "Failed to refresh access token")
             null
         }
     }
 
     private fun refreshAccessToken(refreshToken: String): String? {
         return try {
-            val refreshRequest = RefreshTokenRequest(refreshToken)
-            val response = authApi.refreshToken(refreshRequest).execute()
+            val authorizationHeader = "Bearer $refreshToken"
+            val response = authApi.refreshToken(authorizationHeader).execute()
 
             if (response.isSuccessful) {
-                val newAccessToken = response.body()?.access_token
-                if (!newAccessToken.isNullOrEmpty()) {
-                    sharedPreferences.edit().apply {
-                        putString("access_token", newAccessToken)
-                        apply()
-                    }
-                    newAccessToken
-                } else {
-                    null
+                response.body()?.access_token?.also { newAccessToken ->
+                    sharedPreferences.edit().putString("access_token", newAccessToken).apply()
                 }
             } else {
+                Log.e("TokenAuthenticator", "Refresh token failed: ${response.code()} ${response.message()}")
                 null
             }
         } catch (e: Exception) {
+            Log.e("TokenAuthenticator", "Exception during token refresh", e)
             null
         }
     }
+
 }
-
-
-
-
-
-

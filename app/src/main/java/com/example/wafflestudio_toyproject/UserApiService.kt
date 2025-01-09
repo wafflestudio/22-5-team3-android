@@ -19,9 +19,11 @@ interface UserApi {
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 }
 
-interface AuthApi{
-    @GET("api/users/refresh")
-    fun refreshToken(@Body request: RefreshTokenRequest): Call<RefreshTokenResponse>
+interface AuthApi {
+    @GET("/api/users/refresh")
+    fun refreshToken(
+        @Header("Authorization") authorization: String
+    ): Call<RefreshTokenResponse>
 }
 
 interface VoteApi {
@@ -29,7 +31,9 @@ interface VoteApi {
     fun createVote(@Body request: CreateVoteRequest): Call<CreateVoteResponse>
 
     @GET("api/votes/ongoing_list")
-    fun getOngoingVotes(): Call<OngoingVoteResponse>
+    fun getOngoingVotes(
+        @Header("Authorization") authToken: String
+    ): Call<OngoingVoteResponse>
 
     @GET("/api/votes/{vote_id}")
     fun getVoteDetails(
@@ -72,10 +76,6 @@ data class SignupResponse(
 
 data class LoginResponse(
     val access_token: String,
-    val refresh_token: String
-)
-
-data class RefreshTokenRequest(
     val refresh_token: String
 )
 

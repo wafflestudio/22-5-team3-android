@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.wafflestudio_toyproject.OngoingVoteResponse
 import com.example.wafflestudio_toyproject.R
+import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteItem
 import com.example.wafflestudio_toyproject.adapter.VoteItemAdapter
@@ -33,6 +34,9 @@ class OngoingVoteFragment : Fragment() {
 
     private lateinit var adapter: VoteItemAdapter
     private val voteItems = mutableListOf<VoteItem>()
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,7 +71,9 @@ class OngoingVoteFragment : Fragment() {
     }
 
     private fun fetchOngoingVotes(cursor: String? = null) {
-        voteApi.getOngoingVotes().enqueue(object : Callback<OngoingVoteResponse> {
+        val accessToken = userRepository.getAccessToken()
+
+        voteApi.getOngoingVotes("Bearer $accessToken").enqueue(object : Callback<OngoingVoteResponse> {
             override fun onResponse(
                 call: Call<OngoingVoteResponse>,
                 response: Response<OngoingVoteResponse>
