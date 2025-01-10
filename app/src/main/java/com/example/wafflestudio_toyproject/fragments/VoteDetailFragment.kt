@@ -10,7 +10,9 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+
 import com.example.wafflestudio_toyproject.ParticipationRequest
+
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
@@ -98,7 +100,7 @@ class VoteDetailFragment : Fragment() {
             binding.participationCodeLayout.visibility = View.VISIBLE
         } else {
             binding.participationCodeLayout.visibility = View.GONE
-        }
+        } 
 
         if (voteDetail.multiple_choice) {
             binding.multipleChoiceMessage.visibility = View.VISIBLE
@@ -111,7 +113,6 @@ class VoteDetailFragment : Fragment() {
         } else {
             binding.anonymousMessage.visibility = View.GONE
         }
-
 
 
         // 투표 선택지 표시하기
@@ -157,6 +158,7 @@ class VoteDetailFragment : Fragment() {
             }
             binding.choicesContainer.addView(button)
         }
+
 
         // voteButton 클릭 이벤트 추가
         binding.voteButton.setOnClickListener {
@@ -204,5 +206,6 @@ class VoteDetailFragment : Fragment() {
                 })
 
         }
+    }
     }
 }

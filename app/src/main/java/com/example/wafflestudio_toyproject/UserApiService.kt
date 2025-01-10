@@ -41,12 +41,14 @@ interface VoteApi {
         @Header("Authorization") authToken: String
     ): Call<VoteDetailResponse>
 
+
     @POST("/api/votes/{vote_id}/participate")
     fun participateInVote(
         @Path("vote_id") voteId: Int,
         @Header("Authorization") authorization: String,
         @Body requestBody: ParticipationRequest
     ): Call<VoteDetailResponse>
+
 }
 
 // 요청 데이터 클래스
