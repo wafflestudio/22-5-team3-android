@@ -44,7 +44,10 @@ class LoginActivity : AppCompatActivity() {
         if(isUserLoggedIn()){
             navigateToMainScreen()
         }
-*/
+
+
+ */
+
     }
 
     private fun isUserLoggedIn(): Boolean {
