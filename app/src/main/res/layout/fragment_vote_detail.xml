@@ -12,7 +12,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:layout_marginTop="36dp">
 
             <TextView
                 android:id="@+id/voteDetailTitle"
@@ -53,27 +54,6 @@
                 android:visibility="gone"
                 android:gravity="center" />
 
-            <LinearLayout
-                android:id="@+id/participationCodeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp">
-
-                <EditText
-                    android:id="@+id/participationCodeInput"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="참여 코드를 입력하세요"
-                    android:inputType="text"
-                    android:background="@android:drawable/edit_text"
-                    android:padding="8dp"
-                    android:gravity="center_vertical" />
-            </LinearLayout>
-
             <!-- 선택지 리스트 -->
             <LinearLayout
                 android:id="@+id/choicesContainer"
@@ -81,7 +61,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="16dp"
-                android:paddingTop="8dp"/>
+                android:paddingTop="16dp"/>
+
+
+            <TextView
+                android:id="@+id/errorTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="14sp"
+                android:gravity="center" />
 
             <!-- 투표하기 버튼 -->
             <Button
@@ -91,8 +84,7 @@
                 android:text="투표하기"
                 android:backgroundTint="@color/design_default_color_secondary"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp" />
+                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 

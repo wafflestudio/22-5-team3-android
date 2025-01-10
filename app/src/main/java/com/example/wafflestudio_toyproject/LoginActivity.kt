@@ -25,11 +25,9 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // 자동 로그인 체크
-
         if (isUserLoggedIn()) {
             navigateToMainScreen()
         }
-
 
 
         binding.signUpButton.setOnClickListener {
