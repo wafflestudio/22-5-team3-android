@@ -40,10 +40,12 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "모든 항목을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
-
+/*
         if(isUserLoggedIn()){
             navigateToMainScreen()
         }
+
+ */
     }
 
     private fun isUserLoggedIn(): Boolean {
