@@ -12,10 +12,22 @@
         <action
             android:id="@+id/action_ongoingVoteFragment_to_createVoteFragment"
             app:destination="@id/createVoteFragment" />
+        <action
+            android:id="@+id/action_ongoingVoteFragment_to_voteDetailFragment"
+            app:destination="@id/voteDetailFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/createVoteFragment"
         android:name="com.example.wafflestudio_toyproject.fragments.CreateVoteFragment"
         android:label="Create Vote" />
+
+    <fragment
+        android:id="@+id/voteDetailFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.VoteDetailFragment"
+        android:label="Create Vote">
+        <argument
+            android:name="vote_id"
+            app:argType="integer" />
+    </fragment>
 </navigation>

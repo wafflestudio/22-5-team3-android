@@ -15,6 +15,10 @@ hilt = "2.52"
 okhttp3 = "4.10.0"
 navigation = "2.5.3"
 navigationFragment = "2.8.3"
+<<<<<<< HEAD
+=======
+navigationRuntimeKtx = "2.8.5"
+>>>>>>> upstream/main
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +38,10 @@ okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okht
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version = "navigation" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version = "navigation" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+<<<<<<< HEAD
+=======
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+>>>>>>> upstream/main
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
