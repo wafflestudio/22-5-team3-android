@@ -66,23 +66,19 @@ class CreateVoteFragment : Fragment() {
             navController.navigate(R.id.action_createVoteFragment_to_ongoingVoteFragment)
         }
 
-        // 날짜 및 시간 선택
+        // 날짜 선택
         binding.deadlineDate.setOnClickListener {
-            showCustomDateTimePicker { selectedDateTime ->
-                val (date, time) = selectedDateTime.split(" ")
-                binding.deadlineDate.text = date
-                binding.deadlineTime.text = time
+            showCustomDatePicker { selectedDate ->
+                binding.deadlineDate.text = selectedDate
             }
         }
 
+        // 시간 선택
         binding.deadlineTime.setOnClickListener {
-            showCustomDateTimePicker { selectedDateTime ->
-                val (date, time) = selectedDateTime.split(" ")
-                binding.deadlineDate.text = date
-                binding.deadlineTime.text = time
+            showCustomTimePicker { selectedTime ->
+                binding.deadlineTime.text = selectedTime
             }
         }
-
 
         return binding.root
     }
@@ -175,24 +171,21 @@ class CreateVoteFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    // 날짜 시간 선택
-    private fun showCustomDateTimePicker(onDateTimeSelected: (String) -> Unit) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_date_time_picker, null)
+    // 날짜 선택 다이얼로그
+    private fun showCustomDatePicker(onDateSelected: (String) -> Unit) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_date_picker, null)
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
+            .setTitle("Select Date")
             .create()
 
-        // NumberPickers
         val yearPicker = dialogView.findViewById<NumberPicker>(R.id.yearPicker)
         val monthPicker = dialogView.findViewById<NumberPicker>(R.id.monthPicker)
         val dayPicker = dialogView.findViewById<NumberPicker>(R.id.dayPicker)
-        val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker)
-        val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker)
 
-        // 현재 날짜와 14일 후 날짜
         val calendar = Calendar.getInstance()
         val currentYear = calendar.get(Calendar.YEAR)
-        val currentMonth = calendar.get(Calendar.MONTH) + 1 // Month is 0-indexed
+        val currentMonth = calendar.get(Calendar.MONTH) + 1
         val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
 
         calendar.add(Calendar.DAY_OF_YEAR, 14)
@@ -214,19 +207,45 @@ class CreateVoteFragment : Fragment() {
         val updateDayPicker = {
             val selectedYear = yearPicker.value
             val selectedMonth = monthPicker.value
-            calendar.set(selectedYear, selectedMonth - 1, 1) // Set to the first day of the selected month
+            calendar.set(selectedYear, selectedMonth - 1, 1)
             val maxDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-            // Adjust min and max day range
             dayPicker.minValue = if (selectedYear == currentYear && selectedMonth == currentMonth) currentDay else 1
             dayPicker.maxValue = if (selectedYear == maxYear && selectedMonth == maxMonth) maxDay else maxDaysInMonth
         }
-
         updateDayPicker()
 
-        // Add listeners to update Day Picker dynamically
         yearPicker.setOnValueChangedListener { _, _, _ -> updateDayPicker() }
         monthPicker.setOnValueChangedListener { _, _, _ -> updateDayPicker() }
+
+        dialogView.findViewById<Button>(R.id.confirmButton).setOnClickListener {
+            val selectedDate = String.format(
+                "%04d-%02d-%02d",
+                yearPicker.value,
+                monthPicker.value,
+                dayPicker.value
+            )
+            onDateSelected(selectedDate)
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<Button>(R.id.cancelButton).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    // 시간 선택 다이얼로그
+    private fun showCustomTimePicker(onTimeSelected: (String) -> Unit) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_time_picker, null)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setTitle("Select Time")
+            .create()
+
+        val hourPicker = dialogView.findViewById<NumberPicker>(R.id.hourPicker)
+        val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker)
 
         // Configure Hour Picker
         hourPicker.minValue = 0
@@ -236,29 +255,23 @@ class CreateVoteFragment : Fragment() {
         minutePicker.minValue = 0
         minutePicker.maxValue = 59
 
-        // Buttons
-        val cancelButton = dialogView.findViewById<Button>(R.id.cancelButton)
-        val confirmButton = dialogView.findViewById<Button>(R.id.confirmButton)
-
-        cancelButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        confirmButton.setOnClickListener {
-            val selectedDateTime = String.format(
-                "%04d-%02d-%02d %02d:%02d",
-                yearPicker.value,
-                monthPicker.value,
-                dayPicker.value,
+        dialogView.findViewById<Button>(R.id.confirmButton).setOnClickListener {
+            val selectedTime = String.format(
+                "%02d:%02d",
                 hourPicker.value,
                 minutePicker.value
             )
-            onDateTimeSelected(selectedDateTime)
+            onTimeSelected(selectedTime)
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<Button>(R.id.cancelButton).setOnClickListener {
             dialog.dismiss()
         }
 
         dialog.show()
     }
+
 
 
     override fun onDestroyView() {

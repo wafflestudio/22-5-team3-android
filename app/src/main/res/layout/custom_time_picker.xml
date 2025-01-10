@@ -3,38 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
-
-    <!-- 연도, 월, 일 선택 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <NumberPicker
-            android:id="@+id/yearPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <NumberPicker
-            android:id="@+id/monthPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <NumberPicker
-            android:id="@+id/dayPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+    android:padding="16dp"
+    android:gravity="center">
 
     <!-- 시간 선택 -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="16dp">
+        android:gravity="center">
 
         <NumberPicker
             android:id="@+id/hourPicker"
@@ -68,5 +45,6 @@
             android:text="확인"
             android:layout_marginStart="16dp" />
     </LinearLayout>
-
 </LinearLayout>
+
+
