@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/voteDetailTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="투표 제목"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingBottom="8dp" />
+
+            <TextView
+                android:id="@+id/voteDetailDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="투표 설명"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:paddingBottom="8dp" />
+
+            <TextView
+                android:id="@+id/multipleChoiceMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="중복 가능"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="gone"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/anonymousMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="익명 투표"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="gone"
+                android:gravity="center" />
+
+            <LinearLayout
+                android:id="@+id/participationCodeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp">
+
+                <EditText
+                    android:id="@+id/participationCodeInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="참여 코드를 입력하세요"
+                    android:inputType="text"
+                    android:background="@android:drawable/edit_text"
+                    android:padding="8dp"
+                    android:gravity="center_vertical" />
+
+                <Button
+                    android:id="@+id/validateCodeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="확인"
+                    android:layout_marginStart="8dp"
+                    android:backgroundTint="@color/design_default_color_secondary"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+            <!-- 선택지 리스트 -->
+            <LinearLayout
+                android:id="@+id/choicesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingTop="8dp"/>
+
+            <!-- 투표하기 버튼 -->
+            <Button
+                android:id="@+id/voteButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="투표하기"
+                android:backgroundTint="@color/design_default_color_secondary"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

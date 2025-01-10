@@ -16,12 +16,10 @@ class VoteItemAdapter(
             binding.voteTitle.text = voteItem.title
             binding.voteTimeRemaining.text = voteItem.calculateTimeRemaining()
 
-            /*
+
             binding.root.setOnClickListener {
                 onClick(voteItem)
             }
-
-             */
         }
     }
 

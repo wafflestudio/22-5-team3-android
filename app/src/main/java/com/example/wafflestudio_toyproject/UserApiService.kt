@@ -1,9 +1,12 @@
 package com.example.wafflestudio_toyproject
 
+import com.example.wafflestudio_toyproject.CreateVoteResponse.Choice
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -16,9 +19,11 @@ interface UserApi {
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 }
 
-interface AuthApi{
-    @GET("api/users/refresh")
-    fun refreshToken(@Body request: RefreshTokenRequest): Call<RefreshTokenResponse>
+interface AuthApi {
+    @GET("/api/users/refresh")
+    fun refreshToken(
+        @Header("Authorization") authorization: String
+    ): Call<RefreshTokenResponse>
 }
 
 interface VoteApi {
@@ -26,7 +31,15 @@ interface VoteApi {
     fun createVote(@Body request: CreateVoteRequest): Call<CreateVoteResponse>
 
     @GET("api/votes/ongoing_list")
-    fun getOngoingVotes(): Call<OngoingVoteResponse>
+    fun getOngoingVotes(
+        @Header("Authorization") authToken: String
+    ): Call<OngoingVoteResponse>
+
+    @GET("/api/votes/{vote_id}")
+    fun getVoteDetails(
+        @Path("vote_id") voteId: Int,
+        @Header("Authorization") authToken: String
+    ): Call<VoteDetailResponse>
 }
 
 // 요청 데이터 클래스
@@ -66,10 +79,6 @@ data class LoginResponse(
     val refresh_token: String
 )
 
-data class RefreshTokenRequest(
-    val refresh_token: String
-)
-
 data class RefreshTokenResponse(
     val access_token: String,
     val refresh_token: String
@@ -91,6 +100,30 @@ data class CreateVoteResponse(
         val vote_id: Int,
         val choice_content: String,
         val id: Int
+    )
+}
+
+data class VoteDetailResponse(
+    val vote_id: Int,
+    val writer_name: String,
+    val is_writer: Boolean,
+    val title: String,
+    val content: String,
+    val participation_code_required: Boolean,
+    val choices: List<Choice>,
+    val participation_code: String?,
+    val realtime_result: Boolean,
+    val multiple_choice: Boolean,
+    val annonymous_choice: Boolean,
+    val create_datetime: String,
+    val end_datetime: String
+){
+    data class Choice(
+        val choice_id: Int,
+        val choice_content: String,
+        val participated: Boolean,
+        val choice_num_participants: Int?,
+        val choice_participants_name: List<String>?
     )
 }
 

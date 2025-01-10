@@ -3,6 +3,7 @@ package com.example.wafflestudio_toyproject
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,13 +24,13 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-    /*
         // 자동 로그인 체크
+
         if (isUserLoggedIn()) {
             navigateToMainScreen()
         }
 
-     */
+
 
         binding.signUpButton.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
@@ -50,7 +51,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun isUserLoggedIn(): Boolean {
         val accessToken = userRepository.getAccessToken()
-        return !accessToken.isNullOrEmpty()
+        Log.d("LoginActivity", "Access Token: $accessToken")
+        return !accessToken.isNullOrEmpty() && accessToken != "null"
     }
 
     private fun navigateToMainScreen() {
