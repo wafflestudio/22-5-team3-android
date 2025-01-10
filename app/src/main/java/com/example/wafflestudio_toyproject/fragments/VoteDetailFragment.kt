@@ -1,11 +1,13 @@
 package com.example.wafflestudio_toyproject.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.forEach
@@ -96,12 +98,6 @@ class VoteDetailFragment : Fragment() {
         binding.voteDetailTitle.text = voteDetail.title
         binding.voteDetailDescription.text = voteDetail.content
 
-        if (voteDetail.participation_code_required) {
-            binding.participationCodeLayout.visibility = View.VISIBLE
-        } else {
-            binding.participationCodeLayout.visibility = View.GONE
-        } 
-
         if (voteDetail.multiple_choice) {
             binding.multipleChoiceMessage.visibility = View.VISIBLE
         } else {
@@ -113,6 +109,15 @@ class VoteDetailFragment : Fragment() {
         } else {
             binding.anonymousMessage.visibility = View.GONE
         }
+
+        val hasParticipated = voteDetail.choices.any { it.participated }
+
+        if (hasParticipated) { // 투표 여부를 서버에서 반환하는 경우
+            binding.voteButton.text = "다시 투표하기"
+        } else {
+            binding.voteButton.text = "투표하기"
+        }
+
 
 
         // 투표 선택지 표시하기
@@ -160,51 +165,68 @@ class VoteDetailFragment : Fragment() {
         }
 
 
-        // voteButton 클릭 이벤트 추가
-        binding.voteButton.setOnClickListener {
-            if (selectedChoices.isEmpty()) {
-                Toast.makeText(requireContext(), "최소 하나의 선택지를 선택하세요", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+        fun showParticipationCodeDialog(onCodeEntered: (String) -> Unit) {
+            val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_participation_code, null)
+            val codeInput = dialogView.findViewById<EditText>(R.id.participationCodeInput)
 
-            // 투표 API 요청 데이터 구성
+            AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setPositiveButton("확인") { _, _ ->
+                    val enteredCode = codeInput.text.toString()
+                    if (enteredCode.isNotEmpty()) {
+                        onCodeEntered(enteredCode)
+                    } else {
+                        binding.errorTextView.text = "참여 코드를 입력하세요."
+                        binding.errorTextView.visibility = View.VISIBLE
+                    }
+                }
+                .create()
+                .show()
+        }
+
+        fun performVote(enteredCode: String?) {
+            val accessToken = userRepository.getAccessToken()
             val participationRequest = ParticipationRequest(
                 participated_choice_ids = selectedChoices.toList(),
-                participation_code = if (voteDetail.participation_code_required) {
-                    binding.participationCodeInput.text.toString()
-                } else {
-                   null
-                }
+                participation_code = enteredCode
             )
 
-            val accessToken = userRepository.getAccessToken()
-
-            // 투표 참여 API 호출
             voteApi.participateInVote(voteId, "Bearer $accessToken", participationRequest)
                 .enqueue(object : Callback<VoteDetailResponse> {
                     override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
                         if (response.isSuccessful) {
-                            response.body()?.let {
-                                Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
-                            }
+                            Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
+                            binding.errorTextView.visibility = View.GONE
+                            binding.voteButton.text = "다시 투표하기"
                         } else {
-                            Toast.makeText(
-                                requireContext(),
-                                "투표 참여 실패: ${response.message()}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if(response.message() == "Forbidden") {
+                                binding.errorTextView.text = "참여 코드가 틀렸습니다."
+                                binding.errorTextView.visibility = View.VISIBLE
+                            }
+                            //Toast.makeText(requireContext(), "투표 참여 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
                         }
                     }
 
                     override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
-                        Toast.makeText(
-                            requireContext(),
-                            "네트워크 오류: ${t.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(requireContext(), "네트워크 오류: ${t.message}", Toast.LENGTH_SHORT).show()
                     }
                 })
+        }
 
+        // voteButton 클릭 이벤트 추가
+        binding.voteButton.setOnClickListener {
+            if (selectedChoices.toList().isEmpty()){
+                binding.errorTextView.text = "투표 항목을 선택해주세요."
+                binding.errorTextView.visibility = View.VISIBLE
+            } else {
+                if (voteDetail.participation_code_required) {
+                    showParticipationCodeDialog { enteredCode ->
+                        performVote(enteredCode)
+                    }
+                } else {
+                    performVote(null) // 참여 코드가 필요 없는 경우 바로 투표 진행
+                }
+            }
         }
     }
 }

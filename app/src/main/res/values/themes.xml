@@ -19,4 +19,5 @@
     <style name="CustomSpinner" parent="Theme.AppCompat.Light">
         <item name="android:popupBackground">@android:color/white</item> <!-- 팝업 배경색 -->
     </style>
+
 </resources>

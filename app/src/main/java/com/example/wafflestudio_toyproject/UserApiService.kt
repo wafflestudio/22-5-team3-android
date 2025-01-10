@@ -120,7 +120,6 @@ data class VoteDetailResponse(
     val content: String,
     val participation_code_required: Boolean,
     val choices: List<Choice>,
-    val participation_code: String?,
     val realtime_result: Boolean,
     val multiple_choice: Boolean,
     val annonymous_choice: Boolean,
