@@ -12,6 +12,8 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 
 import com.example.wafflestudio_toyproject.ParticipationRequest
 
@@ -28,6 +30,7 @@ import retrofit2.Response
 
 @AndroidEntryPoint
 class VoteDetailFragment : Fragment() {
+    private lateinit var navController: NavController
     private var _binding: FragmentVoteDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -44,11 +47,18 @@ class VoteDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentVoteDetailBinding.inflate(inflater, container, false)
+
+        // 뒤로가기 버튼
+        binding.backButton.setOnClickListener {
+            navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navController = findNavController()
 
         // 전달된 vote_id 가져오기
         arguments?.let {

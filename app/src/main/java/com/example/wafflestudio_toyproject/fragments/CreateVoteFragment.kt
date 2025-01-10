@@ -10,9 +10,11 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.wafflestudio_toyproject.CreateVoteRequest
 import com.example.wafflestudio_toyproject.CreateVoteResponse
+import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.databinding.FragmentCreateVoteBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +25,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreateVoteFragment : Fragment() {
+    private lateinit var navController: NavController
     private var _binding: FragmentCreateVoteBinding? = null
     private val binding get() = _binding!!
 
@@ -50,7 +53,18 @@ class CreateVoteFragment : Fragment() {
             createVote()
         }
 
+        // 뒤로가기 버튼
+        binding.backButton.setOnClickListener {
+            navController.navigate(R.id.action_createVoteFragment_to_ongoingVoteFragment)
+        }
+
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        navController = findNavController()
     }
     
     // 투표 항목 추가
