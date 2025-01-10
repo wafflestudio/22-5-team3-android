@@ -132,6 +132,28 @@ data class VoteDetailResponse(
         val choice_num_participants: Int?,
         val choice_participants_name: List<String>?
     )
+
+    fun calculateTimeRemaining(): String {
+        return try {
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            val endDate = format.parse(end_datetime) ?: return "시간 계산 불가"
+            val now = Date()
+
+            val diff = endDate.time - now.time
+            val days = diff / (1000 * 60 * 60 * 24)
+            val hours = (diff / (1000 * 60 * 60)) % 24
+            val minutes = (diff / (1000 * 60)) % 60
+
+            when {
+                diff <= 0 -> "종료됨"
+                days > 0 -> "${days}일 ${hours}시간 남음"
+                hours > 0 -> "${hours}시간 ${minutes}분 남음"
+                else -> "${minutes}분 남음"
+            }
+        } catch (e: Exception) {
+            "시간 계산 불가"
+        }
+    }
 }
 
 data class OngoingVoteResponse(

@@ -45,7 +45,9 @@ class LoginActivity : AppCompatActivity() {
             navigateToMainScreen()
         }
 
+
  */
+
     }
 
     private fun isUserLoggedIn(): Boolean {
@@ -68,7 +70,7 @@ class LoginActivity : AppCompatActivity() {
                 navigateToMainScreen()
             },
             onError = { errorMessage ->
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "아이디나 비밀번호가 틀렸습니다.", Toast.LENGTH_SHORT).show()
             }
         )
     }
