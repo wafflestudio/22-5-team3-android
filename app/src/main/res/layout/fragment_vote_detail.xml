@@ -72,15 +72,6 @@
                     android:background="@android:drawable/edit_text"
                     android:padding="8dp"
                     android:gravity="center_vertical" />
-
-                <Button
-                    android:id="@+id/validateCodeButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="확인"
-                    android:layout_marginStart="8dp"
-                    android:backgroundTint="@color/design_default_color_secondary"
-                    android:textColor="@android:color/white" />
             </LinearLayout>
 
             <!-- 선택지 리스트 -->
