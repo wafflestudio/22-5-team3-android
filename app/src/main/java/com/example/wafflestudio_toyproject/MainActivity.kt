@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                     tab.setIcon(R.drawable.hot_vote)
                 }
                 2-> {
-                    tab.text = "투표글 보기"
+                    tab.text = "종료된 투표"
                     tab.setIcon(R.drawable.vote_result)
                 }
             }

@@ -48,7 +48,6 @@ interface VoteApi {
         @Header("Authorization") authorization: String,
         @Body requestBody: ParticipationRequest
     ): Call<VoteDetailResponse>
-
 }
 
 // 요청 데이터 클래스
@@ -169,6 +168,10 @@ data class VoteItem(
         } catch (e: Exception) {
             "시간 계산 불가"
         }
+    }
+
+    fun isClosed(): Boolean {
+        return calculateTimeRemaining() == "종료됨"
     }
 }
 

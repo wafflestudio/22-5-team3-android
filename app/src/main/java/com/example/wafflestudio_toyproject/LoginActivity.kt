@@ -24,12 +24,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 자동 로그인 체크
-        if (isUserLoggedIn()) {
-            navigateToMainScreen()
-        }
-
-
         binding.signUpButton.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
