@@ -18,6 +18,16 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="13dp"
+        android:src="@drawable/back_button"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
@@ -147,22 +157,32 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
 
-                <EditText
+                <TextView
                     android:id="@+id/deadline_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="YYYY-MM-DD" />
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:text="YYYY-MM-DD"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/black"
+                    android:hint="Select Date" />
 
-                <EditText
+                <TextView
                     android:id="@+id/deadline_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="HH:MM"
-                    android:inputType="time" />
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:text="HH:MM"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/black"
+                    android:hint="Select Time" />
             </LinearLayout>
 
             <TextView

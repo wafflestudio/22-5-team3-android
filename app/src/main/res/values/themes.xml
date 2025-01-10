@@ -20,4 +20,9 @@
         <item name="android:popupBackground">@android:color/white</item> <!-- 팝업 배경색 -->
     </style>
 
+    <style name="MyDatePickerDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorControlNormal">@color/primaryColor</item>
+        <item name="android:textColorPrimary">@color/primaryColor</item>
+    </style>
+
 </resources>

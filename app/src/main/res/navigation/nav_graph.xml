@@ -20,7 +20,11 @@
     <fragment
         android:id="@+id/createVoteFragment"
         android:name="com.example.wafflestudio_toyproject.fragments.CreateVoteFragment"
-        android:label="Create Vote" />
+        android:label="Create Vote" >
+        <action
+            android:id="@+id/action_createVoteFragment_to_ongoingVoteFragment"
+            app:destination="@id/ongoingVoteFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/voteDetailFragment"
@@ -29,6 +33,8 @@
         <argument
             android:name="vote_id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_voteDetailFragment_to_ongoingVoteFragment"
+            app:destination="@id/ongoingVoteFragment" />
     </fragment>
-
 </navigation>
