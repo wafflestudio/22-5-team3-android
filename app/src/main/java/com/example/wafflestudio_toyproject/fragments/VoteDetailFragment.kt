@@ -10,6 +10,9 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+
+import com.example.wafflestudio_toyproject.ParticipationRequest
+
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
@@ -95,11 +98,9 @@ class VoteDetailFragment : Fragment() {
 
         if (voteDetail.participation_code_required) {
             binding.participationCodeLayout.visibility = View.VISIBLE
-            binding.voteButton.isEnabled = false
         } else {
             binding.participationCodeLayout.visibility = View.GONE
-            binding.voteButton.isEnabled = true
-        }
+        } 
 
         if (voteDetail.multiple_choice) {
             binding.multipleChoiceMessage.visibility = View.VISIBLE
@@ -111,22 +112,6 @@ class VoteDetailFragment : Fragment() {
             binding.anonymousMessage.visibility = View.VISIBLE
         } else {
             binding.anonymousMessage.visibility = View.GONE
-        }
-
-        binding.validateCodeButton.setOnClickListener {
-            val code = binding.participationCodeInput.text.toString()
-            if (code.isNotEmpty()) {
-                if(voteDetail.participation_code==code){
-                    binding.voteButton.isEnabled = true
-                    Toast.makeText(requireContext(), "참여 코드가 확인되었습니다.", Toast.LENGTH_SHORT).show()
-                } else{
-                    val correct_code=voteDetail.participation_code
-                    Log.d("VoteDetail", "Code: $correct_code")
-                    Toast.makeText(requireContext(), "참여 코드가 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(requireContext(), "참여 코드를 입력하세요", Toast.LENGTH_SHORT).show()
-            }
         }
 
 
@@ -173,6 +158,54 @@ class VoteDetailFragment : Fragment() {
             }
             binding.choicesContainer.addView(button)
         }
-    }
 
+
+        // voteButton 클릭 이벤트 추가
+        binding.voteButton.setOnClickListener {
+            if (selectedChoices.isEmpty()) {
+                Toast.makeText(requireContext(), "최소 하나의 선택지를 선택하세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 투표 API 요청 데이터 구성
+            val participationRequest = ParticipationRequest(
+                participated_choice_ids = selectedChoices.toList(),
+                participation_code = if (voteDetail.participation_code_required) {
+                    binding.participationCodeInput.text.toString()
+                } else {
+                   null
+                }
+            )
+
+            val accessToken = userRepository.getAccessToken()
+
+            // 투표 참여 API 호출
+            voteApi.participateInVote(voteId, "Bearer $accessToken", participationRequest)
+                .enqueue(object : Callback<VoteDetailResponse> {
+                    override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
+                        if (response.isSuccessful) {
+                            response.body()?.let {
+                                Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "투표 참여 실패: ${response.message()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
+                        Toast.makeText(
+                            requireContext(),
+                            "네트워크 오류: ${t.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
+
+        }
+    }
+    }
 }

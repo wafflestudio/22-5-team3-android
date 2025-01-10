@@ -40,6 +40,15 @@ interface VoteApi {
         @Path("vote_id") voteId: Int,
         @Header("Authorization") authToken: String
     ): Call<VoteDetailResponse>
+
+
+    @POST("/api/votes/{vote_id}/participate")
+    fun participateInVote(
+        @Path("vote_id") voteId: Int,
+        @Header("Authorization") authorization: String,
+        @Body requestBody: ParticipationRequest
+    ): Call<VoteDetailResponse>
+
 }
 
 // 요청 데이터 클래스
@@ -163,6 +172,11 @@ data class VoteItem(
         }
     }
 }
+
+data class ParticipationRequest(
+    val participated_choice_ids: List<Int>,
+    val participation_code: String? = null
+)
 
 
 
