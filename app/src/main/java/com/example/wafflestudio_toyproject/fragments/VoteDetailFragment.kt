@@ -2,6 +2,7 @@ package com.example.wafflestudio_toyproject.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -128,7 +129,7 @@ class VoteDetailFragment : Fragment() {
             binding.voteButton.text = "투표하기"
         }
 
-
+        startTrackingTime(voteDetail)
 
         // 투표 선택지 표시하기
         val selectedChoices = mutableSetOf<Int>() // 선택된 choice_id 저장
@@ -244,5 +245,42 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private val handler = android.os.Handler(Looper.getMainLooper())
+    private lateinit var runnable: Runnable
+
+    private fun startTrackingTime(voteDetail: VoteDetailResponse) {
+        runnable = Runnable {
+            val timeRemaining = voteDetail.calculateTimeRemaining()
+            binding.voteTimeRemaining.text = timeRemaining
+
+            // 투표 종료 상태 확인
+            val isVoteClosed = timeRemaining == "종료됨"
+            binding.voteButton.isEnabled = !isVoteClosed
+
+            // 종료 시 오류 메시지
+            if (isVoteClosed) {
+                binding.errorTextView.text = "투표가 종료되었습니다."
+                binding.errorTextView.visibility = View.VISIBLE
+            }
+
+            // 1초마다 업데이트
+            if (!isVoteClosed) {
+                handler.postDelayed(runnable, 1000)
+            }
+        }
+
+        handler.post(runnable)
+    }
+
+    private fun stopTrackingTime() {
+        handler.removeCallbacks(runnable)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopTrackingTime()
+        _binding = null
     }
 }

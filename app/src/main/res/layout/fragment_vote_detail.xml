@@ -134,6 +134,16 @@
                 android:backgroundTint="@color/design_default_color_secondary"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/voteTimeRemaining"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="N시간 N분 남음"
+                android:textSize="14sp"
+                android:textColor="#CCCCCC"
+                android:gravity="end" />
         </LinearLayout>
     </ScrollView>
 
