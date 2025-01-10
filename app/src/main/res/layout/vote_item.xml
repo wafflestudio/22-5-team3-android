@@ -25,7 +25,7 @@
         android:id="@+id/postImage"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/post_image"
         android:layout_gravity="center"
         android:scaleType="centerCrop"/>
@@ -34,7 +34,7 @@
         android:id="@+id/voteTimeRemaining"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="16dp"
         android:text="N시간 N분 남음"
         android:textSize="14sp"
         android:textColor="#CCCCCC"

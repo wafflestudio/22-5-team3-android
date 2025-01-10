@@ -133,9 +133,14 @@ class VoteDetailFragment : Fragment() {
         // 투표 선택지 표시하기
         val selectedChoices = mutableSetOf<Int>() // 선택된 choice_id 저장
 
+        binding.choicesContainer.removeAllViews()
         voteDetail.choices.forEach { choice ->
             val button = Button(requireContext()).apply {
-                text = choice.choice_content
+                text = if (voteDetail.realtime_result) {
+                    "${choice.choice_content} - ${choice.choice_num_participants ?: 0}명 참여"
+                } else {
+                    choice.choice_content
+                }
                 isEnabled = true
                 setBackgroundResource(R.drawable.vote_button_selector)
 
@@ -207,6 +212,7 @@ class VoteDetailFragment : Fragment() {
                         if (response.isSuccessful) {
                             Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
                             binding.errorTextView.visibility = View.GONE
+                            fetchVoteDetails(voteId)
                             binding.voteButton.text = "다시 투표하기"
                         } else {
                             if(response.message() == "Forbidden") {
