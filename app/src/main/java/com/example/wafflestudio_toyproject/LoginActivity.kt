@@ -24,6 +24,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         binding.signUpButton.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
@@ -38,6 +39,10 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "모든 항목을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        if(isUserLoggedIn()){
+            navigateToMainScreen()
         }
     }
 
