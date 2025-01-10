@@ -11,14 +11,24 @@
     <TextView
         android:id="@+id/voteTitle"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:text="투표 제목"
+        android:gravity="center"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#000000"
         android:maxLines="2"
         android:ellipsize="end" />
+
+    <ImageView
+        android:id="@+id/postImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/post_image"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"/>
 
     <TextView
         android:id="@+id/voteTimeRemaining"
