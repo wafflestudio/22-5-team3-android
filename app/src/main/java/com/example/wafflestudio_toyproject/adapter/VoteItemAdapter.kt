@@ -7,7 +7,7 @@ import com.example.wafflestudio_toyproject.VoteItem
 import com.example.wafflestudio_toyproject.databinding.VoteItemBinding
 
 class VoteItemAdapter(
-    private val voteItems: List<VoteItem>,
+    private var voteItems: List<VoteItem>,
     private val onClick: (VoteItem) -> Unit
 ) : RecyclerView.Adapter<VoteItemAdapter.VoteViewHolder>() {
 
@@ -29,6 +29,11 @@ class VoteItemAdapter(
 
     override fun onBindViewHolder(holder: VoteViewHolder, position: Int) {
         holder.bind(voteItems[position])
+    }
+
+    fun updateItems(newItems: List<VoteItem>) {
+        voteItems = newItems
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = voteItems.size

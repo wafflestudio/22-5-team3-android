@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -15,6 +16,7 @@ import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteItem
+import com.example.wafflestudio_toyproject.VoteViewModel
 import com.example.wafflestudio_toyproject.adapter.VoteItemAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentOngoingvoteBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,6 +39,8 @@ class OngoingVoteFragment : Fragment() {
 
     @Inject
     lateinit var userRepository: UserRepository
+
+    private val voteViewModel: VoteViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,33 +71,11 @@ class OngoingVoteFragment : Fragment() {
         binding.voteItemRecyclerView.adapter = adapter
 
         // API 호출
-        fetchOngoingVotes()
-    }
+        voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
+            adapter.updateItems(allVotes)
+        }
 
-    private fun fetchOngoingVotes(cursor: String? = null) {
-        val accessToken = userRepository.getAccessToken()
-
-        voteApi.getOngoingVotes("Bearer $accessToken").enqueue(object : Callback<OngoingVoteResponse> {
-            override fun onResponse(
-                call: Call<OngoingVoteResponse>,
-                response: Response<OngoingVoteResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val ongoingVoteResponse = response.body()
-                    if (ongoingVoteResponse != null) {
-                        voteItems.addAll(ongoingVoteResponse.votes_list)
-                        adapter.notifyDataSetChanged()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Failed to fetch votes: ${response.message()}", Toast.LENGTH_SHORT).show()
-                }
-
-            }
-
-            override fun onFailure(call: Call<OngoingVoteResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        voteViewModel.fetchVotes()
     }
 
     override fun onDestroyView() {
