@@ -176,7 +176,8 @@ class VoteDetailFragment : Fragment() {
                     if (enteredCode.isNotEmpty()) {
                         onCodeEntered(enteredCode)
                     } else {
-                        Toast.makeText(requireContext(), "참여 코드를 입력하세요.", Toast.LENGTH_SHORT).show()
+                        binding.errorTextView.text = "참여 코드를 입력하세요."
+                        binding.errorTextView.visibility = View.VISIBLE
                     }
                 }
                 .create()
@@ -195,9 +196,14 @@ class VoteDetailFragment : Fragment() {
                     override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
                         if (response.isSuccessful) {
                             Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
+                            binding.errorTextView.visibility = View.GONE
                             binding.voteButton.text = "다시 투표하기"
                         } else {
-                            Toast.makeText(requireContext(), "투표 참여 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
+                            if(response.message() == "Forbidden") {
+                                binding.errorTextView.text = "참여 코드가 틀렸습니다."
+                                binding.errorTextView.visibility = View.VISIBLE
+                            }
+                            //Toast.makeText(requireContext(), "투표 참여 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
                         }
                     }
 
@@ -209,12 +215,17 @@ class VoteDetailFragment : Fragment() {
 
         // voteButton 클릭 이벤트 추가
         binding.voteButton.setOnClickListener {
-            if (voteDetail.participation_code_required) {
-                showParticipationCodeDialog { enteredCode ->
-                    performVote(enteredCode)
-                }
+            if (selectedChoices.toList().isEmpty()){
+                binding.errorTextView.text = "투표 항목을 선택해주세요."
+                binding.errorTextView.visibility = View.VISIBLE
             } else {
-                performVote(null) // 참여 코드가 필요 없는 경우 바로 투표 진행
+                if (voteDetail.participation_code_required) {
+                    showParticipationCodeDialog { enteredCode ->
+                        performVote(enteredCode)
+                    }
+                } else {
+                    performVote(null) // 참여 코드가 필요 없는 경우 바로 투표 진행
+                }
             }
         }
     }
