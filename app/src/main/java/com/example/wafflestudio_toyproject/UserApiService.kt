@@ -170,6 +170,10 @@ data class VoteItem(
             "시간 계산 불가"
         }
     }
+
+    fun isClosed(): Boolean {
+        return calculateTimeRemaining() == "종료됨"
+    }
 }
 
 data class ParticipationRequest(
