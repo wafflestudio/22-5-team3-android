@@ -48,5 +48,4 @@
     <action
         android:id="@+id/action_voteParticipantsDetailFragment_to_ongoingVoteFragment"
         app:destination="@id/ongoingVoteFragment"/>
-
 </navigation>
