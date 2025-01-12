@@ -19,7 +19,8 @@
         android:textStyle="bold"
         android:textColor="#000000"
         android:maxLines="2"
-        android:ellipsize="end" />
+        android:ellipsize="end"
+        android:fontFamily="@font/nanum_square_ac_b"/>
 
     <ImageView
         android:id="@+id/postImage"
@@ -38,5 +39,6 @@
         android:text="N시간 N분 남음"
         android:textSize="14sp"
         android:textColor="#CCCCCC"
-        android:gravity="end" />
+        android:gravity="end"
+        android:fontFamily="@font/nanum_square_ac_b"/>
 </LinearLayout>

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 선택된 상태 -->
-    <item android:state_selected="true" android:drawable="@color/selected_color" />
-    <!-- 비선택 상태 -->
-    <item android:drawable="@color/unselected_color" />
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFF9C4" /> <!-- 선택된 배경색 -->
+            <corners android:radius="16dp" /> <!-- 둥근 모서리 -->
+            <stroke android:width="2dp" android:color="#FFC107" /> <!-- 테두리 -->
+        </shape>
+    </item>
+
+    <!-- 기본 상태 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" /> <!-- 기본 배경색 -->
+            <corners android:radius="16dp" />
+            <stroke android:width="2dp" android:color="#BDBDBD" /> <!-- 테두리 -->
+        </shape>
+    </item>
 </selector>
+

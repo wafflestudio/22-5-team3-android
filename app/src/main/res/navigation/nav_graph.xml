@@ -36,5 +36,17 @@
         <action
             android:id="@+id/action_voteDetailFragment_to_ongoingVoteFragment"
             app:destination="@id/ongoingVoteFragment" />
+        <action
+            android:id="@+id/action_voteDetailFragment_to_voteParticipantsDetailFragment"
+            app:destination="@id/voteParticipantsDetailFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/voteParticipantsDetailFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.VoteParticipantsDetailFragment"
+        android:label="Participants Detail" />
+    <action
+        android:id="@+id/action_voteParticipantsDetailFragment_to_ongoingVoteFragment"
+        app:destination="@id/ongoingVoteFragment"/>
+
 </navigation>

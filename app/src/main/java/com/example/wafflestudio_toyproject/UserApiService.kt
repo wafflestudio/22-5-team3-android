@@ -1,5 +1,6 @@
 package com.example.wafflestudio_toyproject
 
+import android.os.Bundle
 import com.example.wafflestudio_toyproject.CreateVoteResponse.Choice
 import retrofit2.Call
 import retrofit2.http.Body
@@ -155,6 +156,8 @@ data class VoteDetailResponse(
         }
     }
 }
+
+
 
 data class OngoingVoteResponse(
     val votes_list: List<VoteItem>,

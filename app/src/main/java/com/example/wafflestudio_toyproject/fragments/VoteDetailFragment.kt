@@ -1,17 +1,25 @@
 package com.example.wafflestudio_toyproject.fragments
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.VisibleForTesting
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.forEach
+import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -108,6 +116,7 @@ class VoteDetailFragment : Fragment() {
     private fun displayVoteDetails(voteDetail: VoteDetailResponse) {
         binding.voteDetailTitle.text = voteDetail.title
         binding.voteDetailDescription.text = voteDetail.content
+        binding.userId.text = voteDetail.writer_name
 
         if (voteDetail.multiple_choice) {
             binding.multipleChoiceMessage.visibility = View.VISIBLE
@@ -129,57 +138,114 @@ class VoteDetailFragment : Fragment() {
             binding.voteButton.text = "투표하기"
         }
 
+        val totalParticipants = voteDetail.choices.sumOf { it.choice_num_participants ?: 0 }
+        binding.participantCount.text = "${totalParticipants}명 참여"
+        if (hasParticipated)
+            binding.participantCount.visibility = View.VISIBLE
+
+        // 참여자 목록으로 이동
+        binding.participantCount.setOnClickListener {
+            val bundle = Bundle().apply {
+                val choicesBundle = ArrayList<Bundle>()
+                voteDetail.choices.forEach { choice ->
+                    val choiceBundle = Bundle().apply {
+                        putInt("choice_id", choice.choice_id)
+                        putString("choice_content", choice.choice_content)
+                        putBoolean("participated", choice.participated)
+                        choice.choice_num_participants?.let { putInt("choice_num_participants", it) }
+                        putStringArrayList(
+                            "choice_participants_name",
+                            ArrayList(choice.choice_participants_name ?: emptyList())
+                        )
+                    }
+                    choicesBundle.add(choiceBundle)
+                }
+                putParcelableArrayList("choices", choicesBundle)
+            }
+
+            navController.navigate(
+                R.id.action_voteDetailFragment_to_voteParticipantsDetailFragment,
+                bundle
+            )
+        }
+
+
+
+
         startTrackingTime(voteDetail)
+
+        // 기존 선택지 제거 (중복 방지)
+        binding.choicesContainer.removeAllViews()
 
         // 투표 선택지 표시하기
         val selectedChoices = mutableSetOf<Int>() // 선택된 choice_id 저장
 
-        binding.choicesContainer.removeAllViews()
         voteDetail.choices.forEach { choice ->
-            val button = Button(requireContext()).apply {
-                text = if (voteDetail.realtime_result) {
-                    "${choice.choice_content} - ${choice.choice_num_participants ?: 0}명 참여"
-                } else {
-                    choice.choice_content
-                }
-                isEnabled = true
-                setBackgroundResource(R.drawable.vote_button_selector)
+            // 선택지 UI 생성
+            val choiceLayout = LayoutInflater.from(requireContext())
+                .inflate(R.layout.item_choice_button, binding.choicesContainer, false)
 
-                //버튼 스타일 지정
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    120
-                ).apply {
-                    setMargins(0, 0, 0, 16)
-                }
+            val choiceText = choiceLayout.findViewById<TextView>(R.id.choiceText)
+            val checkCircle = choiceLayout.findViewById<FrameLayout>(R.id.checkCircle)
+            val checkIcon = choiceLayout.findViewById<ImageView>(R.id.checkIcon)
 
-                // 선택 상태 초기화
-                isSelected = choice.participated
+            // 선택지 텍스트 표시
+            choiceText.text = choice.choice_content
 
-                setOnClickListener {
-                    if (voteDetail.multiple_choice) {
-                        // 다중 선택 가능
-                        if (selectedChoices.contains(choice.choice_id)) {
-                            selectedChoices.remove(choice.choice_id)
-                            isSelected = false
-                        } else {
-                            selectedChoices.add(choice.choice_id)
-                            isSelected = true
-                        }
+            checkCircle.isSelected = choice.participated
+            checkIcon.setColorFilter(
+                if (choice.participated) resources.getColor(R.color.selected_icon_color, null)
+                else resources.getColor(R.color.unselected_icon_color, null)
+            )
+            if (hasParticipated) {
+                updateColorBar(voteDetail)
+            }
+
+            // 클릭 이벤트 처리
+            checkCircle.setOnClickListener {
+                if (voteDetail.multiple_choice) {
+                    // 다중 선택
+                    if (selectedChoices.contains(choice.choice_id)) {
+                        selectedChoices.remove(choice.choice_id)
+                        checkCircle.isSelected = false
+                        checkIcon.setColorFilter(
+                            resources.getColor(R.color.unselected_icon_color, null)
+                        )
                     } else {
-                        // 단일 선택: 기존 선택 해제
-                        selectedChoices.clear()
                         selectedChoices.add(choice.choice_id)
-                        binding.choicesContainer.forEach { child ->
-                            if (child is Button) child.isSelected = false
-                        }
-                        isSelected = true
+                        checkCircle.isSelected = true
+                        checkIcon.setColorFilter(
+                            resources.getColor(R.color.selected_icon_color, null)
+                        )
                     }
+                } else {
+                    // 단일 선택
+                    selectedChoices.clear()
+                    selectedChoices.add(choice.choice_id)
+
+                    // 모든 선택지 상태 초기화
+                    binding.choicesContainer.forEach { child ->
+                        if (child is ConstraintLayout) {
+                            val childCheckCircle = child.findViewById<FrameLayout>(R.id.checkCircle)
+                            val childCheckIcon = child.findViewById<ImageView>(R.id.checkIcon)
+                            childCheckCircle.isSelected = false
+                            childCheckIcon.setColorFilter(
+                                resources.getColor(R.color.unselected_icon_color, null)
+                            )
+                        }
+                    }
+
+                    // 현재 선택된 항목만 활성화
+                    checkCircle.isSelected = true
+                    checkIcon.setColorFilter(
+                        resources.getColor(R.color.selected_icon_color, null)
+                    )
                 }
             }
-            binding.choicesContainer.addView(button)
-        }
 
+            // 선택지를 컨테이너에 추가
+            binding.choicesContainer.addView(choiceLayout)
+        }
 
         fun showParticipationCodeDialog(onCodeEntered: (String) -> Unit) {
             val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_participation_code, null)
@@ -213,6 +279,9 @@ class VoteDetailFragment : Fragment() {
                         if (response.isSuccessful) {
                             Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
                             binding.errorTextView.visibility = View.GONE
+                            response.body()?.let { updatedVoteDetail ->
+                                updateColorBar(updatedVoteDetail) // 선택지 배경 색칠
+                            }
                             fetchVoteDetails(voteId)
                             binding.voteButton.text = "다시 투표하기"
                         } else {
@@ -242,6 +311,42 @@ class VoteDetailFragment : Fragment() {
                     }
                 } else {
                     performVote(null) // 참여 코드가 필요 없는 경우 바로 투표 진행
+                }
+            }
+        }
+    }
+    
+    // 투표 선택지 색칠
+    private fun updateColorBar(voteDetail: VoteDetailResponse) {
+        // 뷰의 레이아웃이 완료된 후에 실행
+        binding.choicesContainer.post {
+            val totalParticipants = voteDetail.choices.sumOf { it.choice_num_participants ?: 0 }
+            val parentWidth = binding.choicesContainer.width // 레이아웃 완료 후 너비 가져오기
+
+            binding.choicesContainer.forEachIndexed { index, view ->
+                if (view is ConstraintLayout) {
+                    val colorBar = view.findViewById<View>(R.id.colorBar)
+                    val choice = voteDetail.choices.getOrNull(index)
+
+                    if (choice != null) {
+                        val participants = choice.choice_num_participants ?: 0
+                        val ratio = if (totalParticipants > 0) participants.toFloat() / totalParticipants else 0f
+
+                        // 비율에 따라 막대 너비 계산
+                        val barWidth = (parentWidth * ratio).toInt()
+                        Log.d("colorBar", "bar width: ${barWidth}")
+
+                        // 막대 표시 여부와 너비 설정
+                        if (participants > 0 && ratio > 0) {
+                            val layoutParams = colorBar.layoutParams
+                            layoutParams.width = barWidth
+                            colorBar.layoutParams = layoutParams
+
+                            colorBar.visibility = View.VISIBLE // 참여자가 있는 경우 표시
+                        } else {
+                            colorBar.visibility = View.GONE // 참여자가 없는 경우 숨김
+                        }
+                    }
                 }
             }
         }
@@ -277,6 +382,7 @@ class VoteDetailFragment : Fragment() {
     private fun stopTrackingTime() {
         handler.removeCallbacks(runnable)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
