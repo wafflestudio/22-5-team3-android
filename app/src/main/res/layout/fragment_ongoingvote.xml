@@ -90,8 +90,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchLayout"
-        />
+        app:layout_constraintTop_toBottomOf="@id/searchLayout" />
 
     <ImageView
         android:id="@+id/createVoteIcon"

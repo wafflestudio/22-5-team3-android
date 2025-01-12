@@ -54,6 +54,37 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <LinearLayout
+                android:id="@+id/profileSection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <!-- Profile Image -->
+                <ImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/round_background"
+                    android:clipToOutline="true"
+                    android:outlineProvider="background" />
+
+                <!-- User ID -->
+                <TextView
+                    android:id="@+id/userId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="User ID"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
             <ImageView
                 android:id="@+id/postImage"
                 android:layout_width="280dp"
@@ -80,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:text="투표 설명"
                 android:textSize="14sp"
-                android:gravity="center"
+                android:gravity="start"
                 android:paddingBottom="8dp" />
 
             <TextView
@@ -91,7 +122,7 @@
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
                 android:visibility="gone"
-                android:gravity="center"/>
+                android:gravity="start"/>
 
             <TextView
                 android:id="@+id/anonymousMessage"
@@ -101,7 +132,7 @@
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
                 android:visibility="gone"
-                android:gravity="center" />
+                android:gravity="start" />
 
             <!-- 선택지 리스트 -->
             <LinearLayout
@@ -111,7 +142,6 @@
                 android:orientation="vertical"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"/>
-
 
             <TextView
                 android:id="@+id/errorTextView"
@@ -131,9 +161,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="투표하기"
-                android:backgroundTint="@color/design_default_color_secondary"
+                android:backgroundTint="@color/primaryColor"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/participantCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="end"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/voteTimeRemaining"
@@ -146,5 +186,4 @@
                 android:gravity="end" />
         </LinearLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

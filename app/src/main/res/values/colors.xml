@@ -7,4 +7,6 @@
     <color name="customAccentColor">#FF5722</color>
     <color name="selected_color">#BEF2BE</color>
     <color name="unselected_color">#F2F2F2</color>
+    <color name="unselected_icon_color">#BDBDBD</color>
+    <color name="selected_icon_color">#FFFFFF</color>
 </resources>
