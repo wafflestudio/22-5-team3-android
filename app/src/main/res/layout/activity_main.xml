@@ -20,7 +20,6 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@id/tabLayout"
         app:layout_constraintTop_toTopOf="parent"/>
 
