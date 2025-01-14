@@ -1,13 +1,18 @@
 package com.example.wafflestudio_toyproject.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wafflestudio_toyproject.VoteDetailResponse
 import com.example.wafflestudio_toyproject.databinding.CommentItemBinding
+import com.example.wafflestudio_toyproject.fragments.VoteDetailFragment
 
-class CommentItemAdapter(private val comments: MutableList<VoteDetailResponse.Comment>) :
+class CommentItemAdapter(
+    private val comments: MutableList<VoteDetailResponse.Comment>,
+    private val onEditComment: (VoteDetailResponse.Comment) -> Unit
+) :
     RecyclerView.Adapter<CommentItemAdapter.CommentViewHolder>() {
 
     inner class CommentViewHolder(private val binding: CommentItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -15,7 +20,21 @@ class CommentItemAdapter(private val comments: MutableList<VoteDetailResponse.Co
             binding.writerName.text = if (comment.writer_name=="") "String" else comment.writer_name
             binding.commentContent.text = comment.comment_content
             binding.createDatetime.text = comment.formatDatetime(comment.created_datetime)
-            binding.editedFlag.visibility = if (comment.is_edited) View.VISIBLE else View.GONE
+
+            // 수정된 시간 표시
+            if (comment.is_edited && comment.edited_datetime != null) {
+                val editedDate = comment.formatDatetime(comment.edited_datetime)
+                binding.editedFlag.text = "($editedDate 편집됨)"
+                binding.editedFlag.visibility = View.VISIBLE
+            } else {
+                binding.editedFlag.visibility = View.GONE
+            }
+
+            // 댓글 수정 버튼
+            binding.editButton.setOnClickListener {
+                Log.d("edit", "clicked")
+                onEditComment(comment)
+            }
         }
     }
 

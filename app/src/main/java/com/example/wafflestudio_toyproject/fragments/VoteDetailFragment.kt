@@ -96,7 +96,9 @@ class VoteDetailFragment : Fragment() {
     }
 
     private fun setupCommentRecyclerView() {
-        commentAdapter = CommentItemAdapter(comments)
+        commentAdapter = CommentItemAdapter(comments) { comment ->
+            onEditCommentClicked(comment) // 클릭 이벤트 처리
+        }
         binding.commentRecyclerView.apply {
             adapter = commentAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -359,17 +361,29 @@ class VoteDetailFragment : Fragment() {
             val content = binding.commentEditText.text.toString()
             val token = userRepository.getAccessToken()
 
-            if (content.isNotBlank()) {
-                postComment(voteId, content, token!!)
-            } else {
+            if (content.isBlank()) {
                 Toast.makeText(context, "댓글 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            binding.commentEditText.text.clear()
+            // 수정 작업 처리
+            if (editingCommentId != null) {
+                val commentId = editingCommentId!!
+                editingCommentId = null // 상태 초기화
+                editComment(voteId, commentId, content, token!!)
+                binding.postCommentButton.text = "게시" // 버튼 텍스트 복구
+            } else {
+                // 새로운 댓글 게시
+                postComment(voteId, content, token!!)
+            }
+
+            binding.commentEditText.text.clear() // 입력 필드 초기화
         }
+
     }
 
-    fun postComment(voteId: Int, content: String, token: String) {
+    // 댓글 게시
+    private fun postComment(voteId: Int, content: String, token: String) {
         val commentRequest = CommentRequest(content)
 
         voteApi.postComment(voteId, "Bearer $token", commentRequest)
@@ -386,6 +400,37 @@ class VoteDetailFragment : Fragment() {
                     Toast.makeText(context, "네트워크 오류로 댓글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    // 댓글 수정
+    private fun editComment(voteId: Int, commentId: Int, updatedContent: String, token: String) {
+        val commentRequest = CommentRequest(updatedContent)
+
+        voteApi.updateComment(voteId, commentId, "Bearer $token", commentRequest)
+            .enqueue(object : Callback<VoteDetailResponse> {
+                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "댓글이 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                        fetchVoteDetails(voteId) // 수정된 댓글 업데이트
+                    } else {
+                        Toast.makeText(context, "댓글 수정에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
+                    Toast.makeText(context, "네트워크 오류로 댓글 수정에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    private var editingCommentId: Int? = null // 현재 수정 중인 댓글 ID 저장
+
+    fun onEditCommentClicked(comment: VoteDetailResponse.Comment) {
+        // 댓글 수정 시작
+        Log.d("edit", "commendt id: ${comment.comment_id}")
+        editingCommentId = comment.comment_id
+        binding.commentEditText.setText(comment.comment_content) // 기존 댓글 복사
+        binding.postCommentButton.text = "수정" // 버튼 텍스트 변경
     }
     
     // 투표 선택지 색칠
@@ -454,8 +499,7 @@ class VoteDetailFragment : Fragment() {
     private fun stopTrackingTime() {
         handler.removeCallbacks(runnable)
     }
-
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         stopTrackingTime()
