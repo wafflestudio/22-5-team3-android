@@ -67,6 +67,7 @@ class VoteDetailFragment : Fragment() {
         binding.backButton.setOnClickListener {
             navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
         }
+
         return binding.root
     }
 
@@ -102,6 +103,7 @@ class VoteDetailFragment : Fragment() {
         binding.commentRecyclerView.apply {
             adapter = commentAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(false)
         }
     }
 

@@ -38,7 +38,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/snuVote" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -54,122 +54,123 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
             <LinearLayout
-                android:id="@+id/profileSection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <!-- Profile Image -->
-                <ImageView
-                    android:id="@+id/profileImage"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/round_background"
-                    android:clipToOutline="true"
-                    android:outlineProvider="background" />
-
-                <!-- User ID -->
-                <TextView
-                    android:id="@+id/userId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="User ID"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/postImage"
-                android:layout_width="300dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:src="@drawable/post_image"
-                android:layout_gravity="center"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/voteDetailTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="투표 제목"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:paddingBottom="8dp" />
-
-            <TextView
-                android:id="@+id/voteDetailDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="투표 설명"
-                android:textSize="14sp"
-                android:gravity="start"
-                android:paddingBottom="8dp" />
-
-            <LinearLayout
+                android:id="@+id/voteDetailsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_background">
+                android:padding="16dp">
 
                 <LinearLayout
-                    android:id="@+id/voteOptionSection"
+                    android:id="@+id/profileSection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
+                    app:layout_constraintStart_toStartOf="parent">
 
+                    <!-- Profile Image -->
+                    <ImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/round_background"
+                        android:clipToOutline="true"
+                        android:outlineProvider="background" />
+
+                    <!-- User ID -->
                     <TextView
-                        android:id="@+id/realtimeMessage"
-                        android:layout_width="match_parent"
+                        android:id="@+id/userId"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="실시간 결과 공개"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:gravity="start"/>
-
-                    <TextView
-                        android:id="@+id/multipleChoiceMessage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=" · 중복 선택 가능"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:gravity="start"/>
-
-                    <TextView
-                        android:id="@+id/anonymousMessage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=" · 익명 투표"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:gravity="start" />
-
-                    <TextView
-                        android:id="@+id/participationcodeMessage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=" · 참여코드 필요"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:gravity="start" />
-
+                        android:layout_marginStart="8dp"
+                        android:layout_gravity="center_vertical"
+                        android:text="User ID"
+                        android:textColor="#000000"
+                        android:textSize="16sp" />
                 </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/postImage"
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:src="@drawable/post_image"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/voteDetailTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="투표 제목"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/voteDetailDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="투표 설명"
+                    android:textSize="14sp"
+                    android:gravity="start"
+                    android:paddingBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/rounded_background">
+
+                    <LinearLayout
+                        android:id="@+id/voteOptionSection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            android:id="@+id/realtimeMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="실시간 결과 공개"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/darker_gray"
+                            android:gravity="start"/>
+
+                        <TextView
+                            android:id="@+id/multipleChoiceMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=" · 중복 선택 가능"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/darker_gray"
+                            android:gravity="start"/>
+
+                        <TextView
+                            android:id="@+id/anonymousMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=" · 익명 투표"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/darker_gray"
+                            android:gravity="start" />
+
+                        <TextView
+                            android:id="@+id/participationcodeMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=" · 참여코드 필요"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/darker_gray"
+                            android:gravity="start" />
+
+                    </LinearLayout>
 
 
                     <TextView
@@ -191,49 +192,47 @@
                         android:paddingBottom="16dp"
                         android:paddingTop="16dp"/>
 
-                    <TextView
-                        android:id="@+id/errorTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginEnd="32dp"
-                        android:layout_marginBottom="8dp"
-                        android:visibility="gone"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="14sp"
-                        android:gravity="center" />
+                        <TextView
+                            android:id="@+id/errorTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="32dp"
+                            android:layout_marginEnd="32dp"
+                            android:layout_marginBottom="8dp"
+                            android:visibility="gone"
+                            android:textColor="@android:color/holo_red_dark"
+                            android:textSize="14sp"
+                            android:gravity="center" />
 
-                    <!-- 투표하기 버튼 -->
-                    <Button
-                        android:id="@+id/voteButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="투표하기"
-                        android:backgroundTint="@color/primaryColor"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp" />
+                        <!-- 투표하기 버튼 -->
+                        <Button
+                            android:id="@+id/voteButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="투표하기"
+                            android:backgroundTint="@color/primaryColor"
+                            android:textColor="@android:color/white"
+                            android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/participantCount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="end"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/darker_gray"
-                    android:visibility="gone" />
-
+                        <TextView
+                            android:id="@+id/participantCount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="end"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/darker_gray"
+                            android:visibility="gone" />
+                </LinearLayout>
             </LinearLayout>
-
-        </LinearLayout>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commentRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white" />
+                android:background="@color/white"
+                android:nestedScrollingEnabled="false" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/commentInputContainer"
