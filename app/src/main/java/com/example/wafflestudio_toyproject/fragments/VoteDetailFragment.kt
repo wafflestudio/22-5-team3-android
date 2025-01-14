@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.forEach
@@ -23,6 +24,8 @@ import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.wafflestudio_toyproject.CommentRequest
 
 import com.example.wafflestudio_toyproject.ParticipationRequest
 
@@ -30,6 +33,7 @@ import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteDetailResponse
+import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
@@ -50,6 +54,8 @@ class VoteDetailFragment : Fragment() {
     lateinit var userRepository: UserRepository
 
     private var voteId: Int = -1
+    private lateinit var commentAdapter: CommentItemAdapter
+    private val comments = mutableListOf<VoteDetailResponse.Comment>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -79,6 +85,22 @@ class VoteDetailFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "Invalid vote ID", Toast.LENGTH_SHORT).show()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
+            }
+        })
+
+        setupCommentRecyclerView()
+    }
+
+    private fun setupCommentRecyclerView() {
+        commentAdapter = CommentItemAdapter(comments)
+        binding.commentRecyclerView.apply {
+            adapter = commentAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
     }
 
     private fun fetchVoteDetails(voteId: Int) {
@@ -93,6 +115,8 @@ class VoteDetailFragment : Fragment() {
                     if (response.isSuccessful) {
                         response.body()?.let { voteDetail ->
                             displayVoteDetails(voteDetail)
+                            loadComments(voteDetail.comments)
+                            Log.d("VoteDetailFragment", "Response body: ${response.body()}")
                         }
                     } else {
                         Toast.makeText(
@@ -111,6 +135,12 @@ class VoteDetailFragment : Fragment() {
                     ).show()
                 }
             })
+    }
+
+    private fun loadComments(newComments: List<VoteDetailResponse.Comment>) {
+        comments.clear()
+        comments.addAll(newComments)
+        commentAdapter.notifyDataSetChanged()
     }
 
     private fun displayVoteDetails(voteDetail: VoteDetailResponse) {
@@ -328,6 +358,19 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
+
+        binding.postCommentButton.setOnClickListener {
+            val content = binding.commentEditText.text.toString()
+            val token = userRepository.getAccessToken()
+
+            if (content.isNotBlank()) {
+                postComment(voteId, content, token!!)
+            } else {
+                Toast.makeText(context, "댓글 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
+            }
+
+            binding.commentEditText.text.clear()
+        }
     }
     
     // 투표 선택지 색칠
@@ -364,6 +407,25 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
+    }
+
+    fun postComment(voteId: Int, content: String, token: String) {
+        val commentRequest = CommentRequest(content)
+
+        voteApi.postComment(voteId, "Bearer $token", commentRequest)
+            .enqueue(object : Callback<VoteDetailResponse> {
+                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "댓글이 성공적으로 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "댓글 추가에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
+                    Toast.makeText(context, "네트워크 오류로 댓글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
     private val handler = android.os.Handler(Looper.getMainLooper())
