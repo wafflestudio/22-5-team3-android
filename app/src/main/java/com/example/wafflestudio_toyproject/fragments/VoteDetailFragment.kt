@@ -100,6 +100,12 @@ class VoteDetailFragment : Fragment() {
 
         setupCommentRecyclerView()
         setupCommentEditTextListener()
+
+        // 화면 새로고침
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            fetchVoteDetails(voteId) // 데이터 새로고침
+            binding.swipeRefreshLayout.isRefreshing = false // 새로고침 완료 후 로딩 종료
+        }
     }
 
     private fun setupCommentRecyclerView() {
@@ -405,6 +411,7 @@ class VoteDetailFragment : Fragment() {
                 override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
                     if (response.isSuccessful) {
                         Toast.makeText(context, "댓글이 성공적으로 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                        fetchVoteDetails(voteId)
                     } else {
                         Toast.makeText(context, "댓글 추가에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
                     }
