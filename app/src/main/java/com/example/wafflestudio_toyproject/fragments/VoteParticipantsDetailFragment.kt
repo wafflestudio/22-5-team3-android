@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,8 @@ class VoteParticipantsDetailFragment : Fragment() {
     private var _binding: FragmentVoteParticipantsDetailBinding? = null
     private val binding get() = _binding!!
 
+    private var voteId: Int = -1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -24,7 +27,7 @@ class VoteParticipantsDetailFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
-            navController.navigate(R.id.action_voteParticipantsDetailFragment_to_ongoingVoteFragment)
+            navigateBack()
         }
 
         return binding.root
@@ -34,6 +37,8 @@ class VoteParticipantsDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
+
+        voteId = arguments?.getInt("vote_id", -1) ?: -1
 
         // Bundle에서 choices 데이터 복원
         val choices: List<VoteDetailResponse.Choice> = arguments?.getParcelableArrayList<Bundle>("choices")
@@ -49,6 +54,11 @@ class VoteParticipantsDetailFragment : Fragment() {
 
         // 참여자 목록 표시
         displayParticipants(choices)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigateBack()
+            }
+        })
     }
 
     private fun displayParticipants(choices: List<VoteDetailResponse.Choice>) {
@@ -60,6 +70,16 @@ class VoteParticipantsDetailFragment : Fragment() {
             participantText.append("\n\n")
         }
         binding.participantList.text = participantText.toString()
+    }
+
+    private fun navigateBack() {
+        val bundle = Bundle().apply {
+            putInt("vote_id", voteId) // voteId를 다시 전달
+        }
+        navController.navigate(
+            R.id.action_voteParticipantsDetailFragment_to_voteDetailFragment,
+            bundle
+        )
     }
 
     override fun onDestroyView() {
