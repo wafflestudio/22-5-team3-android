@@ -119,15 +119,27 @@ class VoteDetailFragment : Fragment() {
         binding.userId.text = voteDetail.writer_name
 
         if (voteDetail.multiple_choice) {
-            binding.multipleChoiceMessage.visibility = View.VISIBLE
+            binding.multipleChoiceMessage.text = " · 중복 선택 가능"
         } else {
-            binding.multipleChoiceMessage.visibility = View.GONE
+            binding.multipleChoiceMessage.text = " · 중복 선택 불가능"
         }
 
         if (voteDetail.annonymous_choice) {
-            binding.anonymousMessage.visibility = View.VISIBLE
+            binding.anonymousMessage.text = " · 익명 투표"
         } else {
-            binding.anonymousMessage.visibility = View.GONE
+            binding.anonymousMessage.text = " · 기명 투표"
+        }
+
+        if (voteDetail.realtime_result) {
+            binding.realtimeMessage.text = "실시간 결과 공개"
+        } else {
+            binding.realtimeMessage.text = "실시간 결과 비공개"
+        }
+
+        if (voteDetail.participation_code_required) {
+            binding.participationcodeMessage.text = " · 참여코드 필요"
+        } else {
+            binding.participationcodeMessage.text = " · 참여코드 불필요"
         }
 
         val hasParticipated = voteDetail.choices.any { it.participated }
@@ -161,6 +173,8 @@ class VoteDetailFragment : Fragment() {
                     choicesBundle.add(choiceBundle)
                 }
                 putParcelableArrayList("choices", choicesBundle)
+
+                putInt("vote_id", voteId)
             }
 
             navController.navigate(

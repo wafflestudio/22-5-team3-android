@@ -58,16 +58,14 @@
                 android:id="@+id/profileSection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
                 android:orientation="horizontal"
-                android:padding="8dp"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <!-- Profile Image -->
                 <ImageView
                     android:id="@+id/profileImage"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:scaleType="centerCrop"
                     android:background="@drawable/round_background"
                     android:clipToOutline="true"
@@ -87,13 +85,13 @@
 
             <ImageView
                 android:id="@+id/postImage"
-                android:layout_width="280dp"
+                android:layout_width="300dp"
                 android:layout_height="200dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 android:src="@drawable/post_image"
                 android:layout_gravity="center"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/voteDetailTitle"
@@ -114,56 +112,101 @@
                 android:gravity="start"
                 android:paddingBottom="8dp" />
 
-            <TextView
-                android:id="@+id/multipleChoiceMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="중복 가능"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
-                android:visibility="gone"
-                android:gravity="start"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_background">
 
-            <TextView
-                android:id="@+id/anonymousMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="익명 투표"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
-                android:visibility="gone"
-                android:gravity="start" />
-
-            <!-- 선택지 리스트 -->
             <LinearLayout
-                android:id="@+id/choicesContainer"
-                android:layout_width="match_parent"
+                android:id="@+id/voteOptionSection"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="16dp"
-                android:paddingTop="16dp"/>
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/errorTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="14sp"
-                android:gravity="center" />
+                <TextView
+                    android:id="@+id/realtimeMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="실시간 결과 공개"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:gravity="start"/>
 
-            <!-- 투표하기 버튼 -->
-            <Button
-                android:id="@+id/voteButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="투표하기"
-                android:backgroundTint="@color/primaryColor"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/multipleChoiceMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=" · 중복 선택 가능"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:gravity="start"/>
+
+
+                <TextView
+                    android:id="@+id/anonymousMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=" · 익명 투표"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:gravity="start" />
+
+                <TextView
+                    android:id="@+id/participationcodeMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=" · 참여코드 필요"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:gravity="start" />
+
+            </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/voteTimeRemaining"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="N시간 N분 남음"
+                    android:textSize="14sp"
+                    android:textColor="#CCCCCC"
+                    android:gravity="start" />
+
+                <!-- 선택지 리스트 -->
+                <LinearLayout
+                    android:id="@+id/choicesContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/errorTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="14sp"
+                    android:gravity="center" />
+
+                <!-- 투표하기 버튼 -->
+                <Button
+                    android:id="@+id/voteButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="투표하기"
+                    android:backgroundTint="@color/primaryColor"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/participantCount"
@@ -175,15 +218,10 @@
                 android:textColor="@android:color/darker_gray"
                 android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/voteTimeRemaining"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="N시간 N분 남음"
-                android:textSize="14sp"
-                android:textColor="#CCCCCC"
-                android:gravity="end" />
+        </LinearLayout>
+
+
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
