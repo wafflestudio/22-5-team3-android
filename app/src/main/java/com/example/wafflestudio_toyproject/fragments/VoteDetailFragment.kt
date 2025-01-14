@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -57,6 +59,9 @@ class VoteDetailFragment : Fragment() {
     private lateinit var commentAdapter: CommentItemAdapter
     private val comments = mutableListOf<VoteDetailResponse.Comment>()
 
+    private var editingCommentId: Int? = null // 현재 수정 중인 댓글 ID 저장
+    private var originalCommentContent: String? = null // 원본 댓글 내용 저장
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,6 +99,7 @@ class VoteDetailFragment : Fragment() {
         })
 
         setupCommentRecyclerView()
+        setupCommentEditTextListener()
     }
 
     private fun setupCommentRecyclerView() {
@@ -362,7 +368,13 @@ class VoteDetailFragment : Fragment() {
         binding.postCommentButton.setOnClickListener {
             val content = binding.commentEditText.text.toString()
             val token = userRepository.getAccessToken()
-
+            
+            // 수정 버튼 비활성화
+            if (!binding.postCommentButton.isEnabled) {
+                return@setOnClickListener
+            }
+            
+            // 공백 댓글 처리
             if (content.isBlank()) {
                 Toast.makeText(context, "댓글 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -425,14 +437,40 @@ class VoteDetailFragment : Fragment() {
             })
     }
 
-    private var editingCommentId: Int? = null // 현재 수정 중인 댓글 ID 저장
-
     fun onEditCommentClicked(comment: VoteDetailResponse.Comment) {
-        // 댓글 수정 시작
-        Log.d("edit", "commendt id: ${comment.comment_id}")
         editingCommentId = comment.comment_id
+        originalCommentContent = comment.comment_content // 원본 댓글 저장
+
         binding.commentEditText.setText(comment.comment_content) // 기존 댓글 복사
         binding.postCommentButton.text = "수정" // 버튼 텍스트 변경
+
+        // 버튼 초기 상태 설정
+        updatePostCommentButtonState()
+    }
+
+    // 텍스트 변경 리스너 추가
+    private fun setupCommentEditTextListener() {
+        binding.commentEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updatePostCommentButtonState() // 텍스트 변경 시 버튼 상태 업데이트
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    // 버튼 활성화 상태 업데이트
+    private fun updatePostCommentButtonState() {
+        val currentText = binding.commentEditText.text.toString()
+        val isModified = currentText != originalCommentContent
+
+        binding.postCommentButton.isEnabled = isModified
+        binding.postCommentButton.setBackgroundColor(
+            if (isModified) resources.getColor(R.color.primaryColor, null)
+            else resources.getColor(R.color.unselected_color, null) // 회색으로 표시
+        )
     }
     
     // 투표 선택지 색칠
