@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -26,13 +27,7 @@ class VoteParticipantsDetailFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
-            val bundle = Bundle().apply {
-                putInt("vote_id", voteId) // voteId를 다시 전달
-            }
-            navController.navigate(
-                R.id.action_voteParticipantsDetailFragment_to_voteDetailFragment,
-                bundle
-            )
+            navigateBack()
         }
 
         return binding.root
@@ -59,6 +54,13 @@ class VoteParticipantsDetailFragment : Fragment() {
 
         // 참여자 목록 표시
         displayParticipants(choices)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigateBack()
+            }
+        })
+
     }
 
     private fun displayParticipants(choices: List<VoteDetailResponse.Choice>) {
@@ -70,6 +72,16 @@ class VoteParticipantsDetailFragment : Fragment() {
             participantText.append("\n\n")
         }
         binding.participantList.text = participantText.toString()
+    }
+
+    private fun navigateBack() {
+        val bundle = Bundle().apply {
+            putInt("vote_id", voteId) // voteId를 다시 전달
+        }
+        navController.navigate(
+            R.id.action_voteParticipantsDetailFragment_to_voteDetailFragment,
+            bundle
+        )
     }
 
     override fun onDestroyView() {

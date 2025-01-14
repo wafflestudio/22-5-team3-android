@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.forEach
@@ -79,6 +80,12 @@ class VoteDetailFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "Invalid vote ID", Toast.LENGTH_SHORT).show()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
+            }
+        })
     }
 
     private fun fetchVoteDetails(voteId: Int) {
