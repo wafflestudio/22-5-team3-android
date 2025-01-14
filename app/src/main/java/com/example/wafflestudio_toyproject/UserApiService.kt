@@ -49,6 +49,13 @@ interface VoteApi {
         @Header("Authorization") authorization: String,
         @Body requestBody: ParticipationRequest
     ): Call<VoteDetailResponse>
+
+    @POST("api/votes/{voteId}/comment")
+    fun postComment(
+        @Path("voteId") voteId: Int,
+        @Header("Authorization") token: String,
+        @Body commentRequest: CommentRequest
+    ): Call<VoteDetailResponse>
 }
 
 // 요청 데이터 클래스
@@ -120,6 +127,7 @@ data class VoteDetailResponse(
     val content: String,
     val participation_code_required: Boolean,
     val choices: List<Choice>,
+    val comments: List<Comment>,
     val realtime_result: Boolean,
     val multiple_choice: Boolean,
     val annonymous_choice: Boolean,
@@ -132,6 +140,16 @@ data class VoteDetailResponse(
         val participated: Boolean,
         val choice_num_participants: Int?,
         val choice_participants_name: List<String>?
+    )
+
+    data class Comment(
+        val comment_id: Int,
+        val writer_name: String,
+        val is_writer: Boolean,
+        val comment_content: String,
+        val create_datetime: String,
+        val is_edited: Boolean,
+        val edited_datetime: String
     )
 
     fun calculateTimeRemaining(): String {
@@ -199,6 +217,10 @@ data class VoteItem(
 data class ParticipationRequest(
     val participated_choice_ids: List<Int>,
     val participation_code: String? = null
+)
+
+data class CommentRequest(
+    val content: String
 )
 
 

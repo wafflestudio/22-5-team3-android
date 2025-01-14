@@ -24,6 +24,7 @@ import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.example.wafflestudio_toyproject.CommentRequest
 
 import com.example.wafflestudio_toyproject.ParticipationRequest
 
@@ -335,6 +336,19 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
+
+        binding.postCommentButton.setOnClickListener {
+            val content = binding.commentEditText.text.toString()
+            val token = userRepository.getAccessToken()
+
+            if (content.isNotBlank()) {
+                postComment(voteId, content, token!!)
+            } else {
+                Toast.makeText(context, "댓글 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
+            }
+
+            binding.commentEditText.text.clear()
+        }
     }
     
     // 투표 선택지 색칠
@@ -371,6 +385,25 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
+    }
+
+    fun postComment(voteId: Int, content: String, token: String) {
+        val commentRequest = CommentRequest(content)
+
+        voteApi.postComment(voteId, "Bearer $token", commentRequest)
+            .enqueue(object : Callback<VoteDetailResponse> {
+                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "댓글이 성공적으로 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "댓글 추가에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
+                    Toast.makeText(context, "네트워크 오류로 댓글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
     private val handler = android.os.Handler(Looper.getMainLooper())
