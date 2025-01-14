@@ -5,9 +5,8 @@
     android:id="@+id/choiceLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
-    android:background="@drawable/vote_button_selector"
-    android:padding="16dp">
+    android:layout_marginBottom="8dp"
+    android:padding="8dp">
 
     <View
         android:id="@+id/colorBar"

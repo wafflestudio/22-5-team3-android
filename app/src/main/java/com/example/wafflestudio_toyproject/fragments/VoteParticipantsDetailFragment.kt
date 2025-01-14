@@ -16,6 +16,8 @@ class VoteParticipantsDetailFragment : Fragment() {
     private var _binding: FragmentVoteParticipantsDetailBinding? = null
     private val binding get() = _binding!!
 
+    private var voteId: Int = -1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -24,7 +26,13 @@ class VoteParticipantsDetailFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
-            navController.navigate(R.id.action_voteParticipantsDetailFragment_to_ongoingVoteFragment)
+            val bundle = Bundle().apply {
+                putInt("vote_id", voteId) // voteId를 다시 전달
+            }
+            navController.navigate(
+                R.id.action_voteParticipantsDetailFragment_to_voteDetailFragment,
+                bundle
+            )
         }
 
         return binding.root
@@ -34,6 +42,8 @@ class VoteParticipantsDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
+
+        voteId = arguments?.getInt("vote_id", -1) ?: -1
 
         // Bundle에서 choices 데이터 복원
         val choices: List<VoteDetailResponse.Choice> = arguments?.getParcelableArrayList<Bundle>("choices")
