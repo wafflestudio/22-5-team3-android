@@ -24,6 +24,7 @@ import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wafflestudio_toyproject.CommentRequest
 
 import com.example.wafflestudio_toyproject.ParticipationRequest
@@ -32,6 +33,7 @@ import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteDetailResponse
+import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
@@ -52,6 +54,8 @@ class VoteDetailFragment : Fragment() {
     lateinit var userRepository: UserRepository
 
     private var voteId: Int = -1
+    private lateinit var commentAdapter: CommentItemAdapter
+    private val comments = mutableListOf<VoteDetailResponse.Comment>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,6 +91,16 @@ class VoteDetailFragment : Fragment() {
                 navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
             }
         })
+
+        setupCommentRecyclerView()
+    }
+
+    private fun setupCommentRecyclerView() {
+        commentAdapter = CommentItemAdapter(comments)
+        binding.commentRecyclerView.apply {
+            adapter = commentAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
     }
 
     private fun fetchVoteDetails(voteId: Int) {
@@ -101,6 +115,8 @@ class VoteDetailFragment : Fragment() {
                     if (response.isSuccessful) {
                         response.body()?.let { voteDetail ->
                             displayVoteDetails(voteDetail)
+                            loadComments(voteDetail.comments)
+                            Log.d("VoteDetailFragment", "Response body: ${response.body()}")
                         }
                     } else {
                         Toast.makeText(
@@ -119,6 +135,12 @@ class VoteDetailFragment : Fragment() {
                     ).show()
                 }
             })
+    }
+
+    private fun loadComments(newComments: List<VoteDetailResponse.Comment>) {
+        comments.clear()
+        comments.addAll(newComments)
+        commentAdapter.notifyDataSetChanged()
     }
 
     private fun displayVoteDetails(voteDetail: VoteDetailResponse) {

@@ -147,10 +147,21 @@ data class VoteDetailResponse(
         val writer_name: String,
         val is_writer: Boolean,
         val comment_content: String,
-        val create_datetime: String,
+        val created_datetime: String,
         val is_edited: Boolean,
-        val edited_datetime: String
-    )
+        val edited_datetime: String?
+    ){
+        fun formatDatetime(isoDatetime: String): String {
+            return try {
+                val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()) // 서버에서 오는 ISO 8601 형식
+                val displayFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())  // 표시할 형식
+                val date = serverFormat.parse(isoDatetime) // 문자열을 Date 객체로 변환
+                displayFormat.format(date!!) // Date 객체를 원하는 형식으로 변환 후 반환
+            } catch (e: Exception) {
+                "날짜 형식 오류"
+            }
+        }
+    }
 
     fun calculateTimeRemaining(): String {
         return try {
