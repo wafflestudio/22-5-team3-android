@@ -7,11 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.wafflestudio_toyproject.LoginActivity
+import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.databinding.FragmentUserProfileBinding
 
 class UserProfileFragment : Fragment() {
+    private lateinit var navController: NavController
     private var _binding: FragmentUserProfileBinding? = null
     private val binding get() = _binding!!
 
@@ -26,7 +31,23 @@ class UserProfileFragment : Fragment() {
             logout()
         }
 
+        binding.backButton.setOnClickListener {
+            navController.navigate(R.id.action_userProfileFragment_to_ongoingVoteFragment)
+        }
+
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        navController = findNavController()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navController.navigate(R.id.action_userProfileFragment_to_ongoingVoteFragment)
+            }
+        })
     }
 
     private fun logout() {
