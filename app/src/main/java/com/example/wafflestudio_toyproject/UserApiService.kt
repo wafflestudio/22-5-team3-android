@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.example.wafflestudio_toyproject.CreateVoteResponse.Choice
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -64,6 +65,13 @@ interface VoteApi {
         @Path("comment_id") commentId: Int,
         @Header("Authorization") token: String,
         @Body request: CommentRequest
+    ): Call<VoteDetailResponse>
+
+    @DELETE("api/votes/{vote_id}/comment/{comment_id}")
+    fun deleteComment(
+        @Path("vote_id") voteId: Int,
+        @Path("comment_id") commentId: Int,
+        @Header("Authorization") token: String
     ): Call<VoteDetailResponse>
 }
 
