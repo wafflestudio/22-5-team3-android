@@ -32,6 +32,7 @@ import android.provider.MediaStore
 import android.view.ContextThemeWrapper
 import android.widget.Button
 import android.widget.NumberPicker
+import androidx.activity.OnBackPressedCallback
 import java.util.Calendar
 
 
@@ -101,6 +102,12 @@ class CreateVoteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navController.navigate(R.id.action_createVoteFragment_to_ongoingVoteFragment)
+            }
+        })
     }
     
     // 투표 항목 추가

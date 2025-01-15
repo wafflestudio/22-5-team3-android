@@ -24,11 +24,6 @@ class TokenAuthenticator @Inject constructor(
     override fun authenticate(route: Route?, response: Response): Request? {
         val refreshToken = sharedPreferences.getString("refresh_token", null)
 
-        val requestUrl = response.request.url.toString()
-        if (requestUrl.contains("/signin")) {
-            Log.e("TokenAuthenticator", "Authentication failed: Login endpoint")
-            return null // 로그인 요청은 Access Token 갱신을 시도하지 않음
-        }
 
         if (refreshToken.isNullOrEmpty()) {
             Log.e("TokenAuthenticator", "No Refresh Token Found")
