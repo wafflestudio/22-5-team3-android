@@ -67,4 +67,6 @@ dependencies {
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
     implementation(libs.androidx.navigation.fragment)
+
+    implementation(libs.swiperefreshlayout)
 }
