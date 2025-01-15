@@ -14,7 +14,6 @@ class CommentItemAdapter(
     private val onEditComment: (VoteDetailResponse.Comment) -> Unit,
     private val onDeleteComment: (VoteDetailResponse.Comment) -> Unit
 ) : RecyclerView.Adapter<CommentItemAdapter.CommentViewHolder>() {
-
     inner class CommentViewHolder(private val binding: CommentItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(comment: VoteDetailResponse.Comment){
             binding.writerName.text = if (comment.writer_name=="") "String" else comment.writer_name
