@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import java.text.SimpleDateFormat
@@ -55,6 +56,14 @@ interface VoteApi {
         @Path("voteId") voteId: Int,
         @Header("Authorization") token: String,
         @Body commentRequest: CommentRequest
+    ): Call<VoteDetailResponse>
+
+    @PATCH("api/votes/{vote_id}/comment/{comment_id}")
+    fun updateComment(
+        @Path("vote_id") voteId: Int,
+        @Path("comment_id") commentId: Int,
+        @Header("Authorization") token: String,
+        @Body request: CommentRequest
     ): Call<VoteDetailResponse>
 }
 
@@ -185,8 +194,6 @@ data class VoteDetailResponse(
         }
     }
 }
-
-
 
 data class OngoingVoteResponse(
     val votes_list: List<VoteItem>,

@@ -54,13 +54,11 @@ class VoteParticipantsDetailFragment : Fragment() {
 
         // 참여자 목록 표시
         displayParticipants(choices)
-
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 navigateBack()
             }
         })
-
     }
 
     private fun displayParticipants(choices: List<VoteDetailResponse.Choice>) {

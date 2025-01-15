@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -57,6 +59,9 @@ class VoteDetailFragment : Fragment() {
     private lateinit var commentAdapter: CommentItemAdapter
     private val comments = mutableListOf<VoteDetailResponse.Comment>()
 
+    private var editingCommentId: Int? = null // 현재 수정 중인 댓글 ID 저장
+    private var originalCommentContent: String? = null // 원본 댓글 내용 저장
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,6 +72,7 @@ class VoteDetailFragment : Fragment() {
         binding.backButton.setOnClickListener {
             navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
         }
+
         return binding.root
     }
 
@@ -93,13 +99,23 @@ class VoteDetailFragment : Fragment() {
         })
 
         setupCommentRecyclerView()
+        setupCommentEditTextListener()
+
+        // 화면 새로고침
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            fetchVoteDetails(voteId) // 데이터 새로고침
+            binding.swipeRefreshLayout.isRefreshing = false // 새로고침 완료 후 로딩 종료
+        }
     }
 
     private fun setupCommentRecyclerView() {
-        commentAdapter = CommentItemAdapter(comments)
+        commentAdapter = CommentItemAdapter(comments) { comment ->
+            onEditCommentClicked(comment) // 클릭 이벤트 처리
+        }
         binding.commentRecyclerView.apply {
             adapter = commentAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(false)
         }
     }
 
@@ -212,10 +228,6 @@ class VoteDetailFragment : Fragment() {
                 bundle
             )
         }
-
-
-
-
         startTrackingTime(voteDetail)
 
         // 기존 선택지 제거 (중복 방지)
@@ -362,15 +374,110 @@ class VoteDetailFragment : Fragment() {
         binding.postCommentButton.setOnClickListener {
             val content = binding.commentEditText.text.toString()
             val token = userRepository.getAccessToken()
-
-            if (content.isNotBlank()) {
-                postComment(voteId, content, token!!)
-            } else {
+            
+            // 수정 버튼 비활성화
+            if (!binding.postCommentButton.isEnabled) {
+                return@setOnClickListener
+            }
+            
+            // 공백 댓글 처리
+            if (content.isBlank()) {
                 Toast.makeText(context, "댓글 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            binding.commentEditText.text.clear()
+            // 수정 작업 처리
+            if (editingCommentId != null) {
+                val commentId = editingCommentId!!
+                editingCommentId = null // 상태 초기화
+                editComment(voteId, commentId, content, token!!)
+                binding.postCommentButton.text = "게시" // 버튼 텍스트 복구
+            } else {
+                // 새로운 댓글 게시
+                postComment(voteId, content, token!!)
+            }
+
+            binding.commentEditText.text.clear() // 입력 필드 초기화
         }
+
+    }
+
+    // 댓글 게시
+    private fun postComment(voteId: Int, content: String, token: String) {
+        val commentRequest = CommentRequest(content)
+
+        voteApi.postComment(voteId, "Bearer $token", commentRequest)
+            .enqueue(object : Callback<VoteDetailResponse> {
+                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "댓글이 성공적으로 추가되었습니다.", Toast.LENGTH_SHORT).show()
+                        fetchVoteDetails(voteId)
+                    } else {
+                        Toast.makeText(context, "댓글 추가에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
+                    Toast.makeText(context, "네트워크 오류로 댓글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    // 댓글 수정
+    private fun editComment(voteId: Int, commentId: Int, updatedContent: String, token: String) {
+        val commentRequest = CommentRequest(updatedContent)
+
+        voteApi.updateComment(voteId, commentId, "Bearer $token", commentRequest)
+            .enqueue(object : Callback<VoteDetailResponse> {
+                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "댓글이 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                        fetchVoteDetails(voteId) // 수정된 댓글 업데이트
+                    } else {
+                        Toast.makeText(context, "댓글 수정에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
+                    Toast.makeText(context, "네트워크 오류로 댓글 수정에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    fun onEditCommentClicked(comment: VoteDetailResponse.Comment) {
+        editingCommentId = comment.comment_id
+        originalCommentContent = comment.comment_content // 원본 댓글 저장
+
+        binding.commentEditText.setText(comment.comment_content) // 기존 댓글 복사
+        binding.postCommentButton.text = "수정" // 버튼 텍스트 변경
+
+        // 버튼 초기 상태 설정
+        updatePostCommentButtonState()
+    }
+
+    // 텍스트 변경 리스너 추가
+    private fun setupCommentEditTextListener() {
+        binding.commentEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updatePostCommentButtonState() // 텍스트 변경 시 버튼 상태 업데이트
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    // 버튼 활성화 상태 업데이트
+    private fun updatePostCommentButtonState() {
+        val currentText = binding.commentEditText.text.toString()
+        val isModified = currentText != originalCommentContent
+
+        binding.postCommentButton.isEnabled = isModified
+        binding.postCommentButton.setBackgroundColor(
+            if (isModified) resources.getColor(R.color.primaryColor, null)
+            else resources.getColor(R.color.unselected_color, null) // 회색으로 표시
+        )
     }
     
     // 투표 선택지 색칠
@@ -409,25 +516,6 @@ class VoteDetailFragment : Fragment() {
         }
     }
 
-    fun postComment(voteId: Int, content: String, token: String) {
-        val commentRequest = CommentRequest(content)
-
-        voteApi.postComment(voteId, "Bearer $token", commentRequest)
-            .enqueue(object : Callback<VoteDetailResponse> {
-                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(context, "댓글이 성공적으로 추가되었습니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "댓글 추가에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
-                    Toast.makeText(context, "네트워크 오류로 댓글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            })
-    }
-
     private val handler = android.os.Handler(Looper.getMainLooper())
     private lateinit var runnable: Runnable
 
@@ -458,8 +546,7 @@ class VoteDetailFragment : Fragment() {
     private fun stopTrackingTime() {
         handler.removeCallbacks(runnable)
     }
-
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         stopTrackingTime()
