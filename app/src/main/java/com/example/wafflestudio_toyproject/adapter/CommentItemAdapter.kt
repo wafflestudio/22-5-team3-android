@@ -30,14 +30,18 @@ class CommentItemAdapter(
             }
 
             // 댓글 수정 버튼 클릭 리스너
-            binding.editButton.setOnClickListener {
-                Log.d("edit", "clicked")
-                onEditComment(comment)
+            if (comment.is_writer) {
+                binding.editButton.visibility = View.VISIBLE
+                binding.deleteButton.visibility = View.VISIBLE
+                binding.divider2.visibility = View.VISIBLE
+            } else {
+                binding.editButton.visibility = View.GONE
+                binding.deleteButton.visibility = View.GONE
+                binding.divider2.visibility = View.GONE
             }
 
-            binding.deleteButton.setOnClickListener {
-                onDeleteComment(comment)
-            }
+            binding.editButton.setOnClickListener { onEditComment(comment) }
+            binding.deleteButton.setOnClickListener { onDeleteComment(comment) }
         }
     }
 
