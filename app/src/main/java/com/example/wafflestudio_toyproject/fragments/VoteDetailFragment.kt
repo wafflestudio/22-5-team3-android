@@ -118,6 +118,8 @@ class VoteDetailFragment : Fragment() {
                     Toast.makeText(requireContext(), "투표가 취소되었습니다.", Toast.LENGTH_SHORT).show()
                     binding.voteButton.text = "투표하기"
                 }
+                Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
+
                 binding.errorTextView.visibility = View.GONE
                 updateColorBar(updatedVoteDetail) // 선택지 배경 색칠
                 fetchVoteDetails(voteId) // UI 업데이트
@@ -317,6 +319,7 @@ class VoteDetailFragment : Fragment() {
 
         // voteButton 클릭 이벤트 추가
         viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
+
             val hasParticipated = viewModel.hasParticipated.value ?: false
 
             binding.voteButton.setOnClickListener {
@@ -344,6 +347,13 @@ class VoteDetailFragment : Fragment() {
                     }
                 } else {
                     binding.errorTextView.visibility = View.GONE
+            binding.voteButton.setOnClickListener {
+                if (selectedChoices.isEmpty()) {
+                    binding.errorTextView.text = "투표 항목을 선택해주세요."
+                    binding.errorTextView.visibility = View.VISIBLE
+                } else {
+                    binding.errorTextView.visibility = View.GONE
+                    val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
                     if (voteDetail.participation_code_required) {
                         showParticipationCodeDialog { enteredCode ->
                             viewModel.performVote(voteId, accessToken, selectedChoices.toList(), enteredCode)
@@ -354,7 +364,6 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
-
 
 
         binding.postCommentButton.setOnClickListener {
