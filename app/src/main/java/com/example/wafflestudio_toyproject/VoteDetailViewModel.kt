@@ -20,6 +20,9 @@ class VoteDetailViewModel @Inject constructor(private val repository: VoteDetail
     private val _selectedChoices = MutableLiveData<MutableSet<Int>>(mutableSetOf())
     val selectedChoices: LiveData<Set<Int>> get() = _selectedChoices.map { it.toSet() }
 
+    private val _hasParticipated = MutableLiveData<Boolean>(false)
+    val hasParticipated: LiveData<Boolean> get() = _hasParticipated
+
     private val _commentResult = MutableLiveData<Result<VoteDetailResponse>>()
     val commentResult: LiveData<Result<VoteDetailResponse>> get() = _commentResult
 
@@ -46,6 +49,7 @@ class VoteDetailViewModel @Inject constructor(private val repository: VoteDetail
     fun setInitialChoices(choices: List<VoteDetailResponse.Choice>) {
         val initialChoices = choices.filter { it.participated }.map { it.choice_id }.toMutableSet()
         _selectedChoices.value = initialChoices
+        _hasParticipated.value = initialChoices.isNotEmpty()
     }
 
     fun toggleChoice(choiceId: Int, isMultipleChoice: Boolean) {

@@ -109,7 +109,15 @@ class VoteDetailFragment : Fragment() {
 
         viewModel.voteResult.observe(viewLifecycleOwner) { result ->
             result.onSuccess { updatedVoteDetail ->
-                Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
+                val hasParticipated = updatedVoteDetail.choices.any { it.participated }
+
+                if (hasParticipated) {
+                    Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
+                    binding.voteButton.text = "다시 투표하기"
+                } else {
+                    Toast.makeText(requireContext(), "투표가 취소되었습니다.", Toast.LENGTH_SHORT).show()
+                    binding.voteButton.text = "투표하기"
+                }
                 binding.errorTextView.visibility = View.GONE
                 updateColorBar(updatedVoteDetail) // 선택지 배경 색칠
                 fetchVoteDetails(voteId) // UI 업데이트
@@ -309,14 +317,33 @@ class VoteDetailFragment : Fragment() {
 
         // voteButton 클릭 이벤트 추가
         viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
+            val hasParticipated = viewModel.hasParticipated.value ?: false
+
             binding.voteButton.setOnClickListener {
+                val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
+
                 if (selectedChoices.isEmpty()) {
-                    binding.errorTextView.text = "투표 항목을 선택해주세요."
-                    binding.errorTextView.visibility = View.VISIBLE
+                    if (hasParticipated) {
+                        AlertDialog.Builder(requireContext())
+                            .setMessage("투표 참여를 취소하시겠습니까?")
+                            .setPositiveButton("예") { _, _ ->
+                                if (voteDetail.participation_code_required) {
+                                    showParticipationCodeDialog { enteredCode ->
+                                        viewModel.performVote(voteId, accessToken, emptyList(), enteredCode)
+                                    }
+                                } else {
+                                    viewModel.performVote(voteId, accessToken, emptyList(), null)
+                                }
+                            }
+                            .setNegativeButton("아니요", null)
+                            .create()
+                            .show()
+                    } else {
+                        binding.errorTextView.text = "투표 항목을 선택해주세요."
+                        binding.errorTextView.visibility = View.VISIBLE
+                    }
                 } else {
                     binding.errorTextView.visibility = View.GONE
-                    val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
-
                     if (voteDetail.participation_code_required) {
                         showParticipationCodeDialog { enteredCode ->
                             viewModel.performVote(voteId, accessToken, selectedChoices.toList(), enteredCode)
@@ -327,6 +354,7 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
+
 
 
         binding.postCommentButton.setOnClickListener {
