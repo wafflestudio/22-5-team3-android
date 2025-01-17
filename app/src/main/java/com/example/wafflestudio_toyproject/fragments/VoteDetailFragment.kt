@@ -109,9 +109,11 @@ class VoteDetailFragment : Fragment() {
     }
 
     private fun setupCommentRecyclerView() {
-        commentAdapter = CommentItemAdapter(comments) { comment ->
-            onEditCommentClicked(comment) // 클릭 이벤트 처리
-        }
+        commentAdapter = CommentItemAdapter(
+            comments = comments,
+            onEditComment = { comment -> onEditCommentClicked(comment) }, // 수정 이벤트 처리
+            onDeleteComment = { comment -> onDeleteCommentClicked(comment) } // 삭제 이벤트 처리
+        )
         binding.commentRecyclerView.apply {
             adapter = commentAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -478,6 +480,40 @@ class VoteDetailFragment : Fragment() {
             if (isModified) resources.getColor(R.color.primaryColor, null)
             else resources.getColor(R.color.unselected_color, null) // 회색으로 표시
         )
+    }
+
+    // 댓글 삭제
+    private fun deleteComment(voteId: Int, commentId: Int, token: String) {
+        voteApi.deleteComment(voteId, commentId, "Bearer $token")
+            .enqueue(object : Callback<VoteDetailResponse> {
+                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "댓글이 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                        fetchVoteDetails(voteId) // 수정된 댓글 업데이트
+                    } else {
+                        Toast.makeText(context, "댓글 삭제에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
+                    Toast.makeText(context, "네트워크 오류로 댓글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    fun onDeleteCommentClicked(comment: VoteDetailResponse.Comment) {
+        val commentId = comment.comment_id
+        val token = userRepository.getAccessToken()
+        
+        // 댓글 삭제 창
+        AlertDialog.Builder(requireContext())
+            .setMessage("댓글을 삭제하시겠습니까?")
+            .setPositiveButton("삭제") { _, _ ->
+                deleteComment(voteId, commentId, token!!)
+            }
+            .setNegativeButton("취소", null)
+            .create()
+            .show()
     }
     
     // 투표 선택지 색칠

@@ -11,10 +11,9 @@ import com.example.wafflestudio_toyproject.fragments.VoteDetailFragment
 
 class CommentItemAdapter(
     private val comments: MutableList<VoteDetailResponse.Comment>,
-    private val onEditComment: (VoteDetailResponse.Comment) -> Unit
-) :
-    RecyclerView.Adapter<CommentItemAdapter.CommentViewHolder>() {
-
+    private val onEditComment: (VoteDetailResponse.Comment) -> Unit,
+    private val onDeleteComment: (VoteDetailResponse.Comment) -> Unit
+) : RecyclerView.Adapter<CommentItemAdapter.CommentViewHolder>() {
     inner class CommentViewHolder(private val binding: CommentItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(comment: VoteDetailResponse.Comment){
             binding.writerName.text = if (comment.writer_name=="") "String" else comment.writer_name
@@ -30,10 +29,14 @@ class CommentItemAdapter(
                 binding.editedFlag.visibility = View.GONE
             }
 
-            // 댓글 수정 버튼
+            // 댓글 수정 버튼 클릭 리스너
             binding.editButton.setOnClickListener {
                 Log.d("edit", "clicked")
                 onEditComment(comment)
+            }
+
+            binding.deleteButton.setOnClickListener {
+                onDeleteComment(comment)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.wafflestudio_toyproject.fragments
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -25,9 +26,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 import android.app.TimePickerDialog
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import android.view.ContextThemeWrapper
 import android.widget.Button
 import android.widget.NumberPicker
+import androidx.activity.OnBackPressedCallback
 import java.util.Calendar
 
 
@@ -36,9 +41,14 @@ class CreateVoteFragment : Fragment() {
     private lateinit var navController: NavController
     private var _binding: FragmentCreateVoteBinding? = null
     private val binding get() = _binding!!
+    private var selectedImageUriForApi: Uri? = null
 
     @Inject
     lateinit var voteApi: VoteApi
+
+    companion object {
+        private const val PICK_IMAGE_REQUEST = 1
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,6 +90,11 @@ class CreateVoteFragment : Fragment() {
             }
         }
 
+        // 이미지 선택
+        binding.postImage.setOnClickListener {
+            openImagePicker()
+        }
+
         return binding.root
     }
 
@@ -87,6 +102,12 @@ class CreateVoteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navController.navigate(R.id.action_createVoteFragment_to_ongoingVoteFragment)
+            }
+        })
     }
     
     // 투표 항목 추가
@@ -272,6 +293,25 @@ class CreateVoteFragment : Fragment() {
         dialog.show()
     }
 
+    // 이미지 선택
+    private fun openImagePicker() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            val selectedImageUri = data?.data
+            if (selectedImageUri != null) {
+                binding.postImage.setImageURI(selectedImageUri)
+                selectedImageUriForApi = selectedImageUri
+            } else {
+                Toast.makeText(requireContext(), "이미지를 선택하지 않았습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
 
     override fun onDestroyView() {
