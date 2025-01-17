@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +36,7 @@ import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteDetailResponse
+import com.example.wafflestudio_toyproject.VoteDetailViewModel
 import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,6 +56,8 @@ class VoteDetailFragment : Fragment() {
 
     @Inject
     lateinit var userRepository: UserRepository
+
+    private val viewModel: VoteDetailViewModel by viewModels()
 
     private var voteId: Int = -1
     private lateinit var commentAdapter: CommentItemAdapter
@@ -92,6 +96,57 @@ class VoteDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "Invalid vote ID", Toast.LENGTH_SHORT).show()
         }
 
+        viewModel.voteDetails.observe(viewLifecycleOwner) { result ->
+            Log.d("VoteDetailFragment", "Received vote details: $result")
+            result.onSuccess { voteDetail ->
+                displayVoteDetails(voteDetail)
+                loadComments(voteDetail.comments)
+                Log.d("VoteDetailFragment", "Response body: $voteDetail")
+            }.onFailure { error ->
+                Toast.makeText(requireContext(), "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.voteResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess { updatedVoteDetail ->
+                val hasParticipated = updatedVoteDetail.choices.any { it.participated }
+
+                if (hasParticipated) {
+                    Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
+                    binding.voteButton.text = "다시 투표하기"
+                } else {
+                    Toast.makeText(requireContext(), "투표가 취소되었습니다.", Toast.LENGTH_SHORT).show()
+                    binding.voteButton.text = "투표하기"
+                }
+                Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
+
+                binding.errorTextView.visibility = View.GONE
+                updateColorBar(updatedVoteDetail) // 선택지 배경 색칠
+                fetchVoteDetails(voteId) // UI 업데이트
+                binding.voteButton.text = "다시 투표하기"
+            }.onFailure { error ->
+                if (error.message == "Forbidden") {
+                    binding.errorTextView.text = "참여 코드가 틀렸습니다."
+                    binding.errorTextView.visibility = View.VISIBLE
+                } else {
+                    Toast.makeText(requireContext(), "투표 참여 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
+            updateChoiceUI(selectedChoices)
+        }
+
+        viewModel.commentResult.observe(viewLifecycleOwner) { result ->
+            result.onSuccess { updatedVoteDetail ->
+                Toast.makeText(requireContext(), "댓글이 성공적으로 반영되었습니다.", Toast.LENGTH_SHORT).show()
+                fetchVoteDetails(voteId) // UI 갱신
+            }.onFailure { error ->
+                Toast.makeText(requireContext(), "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
@@ -108,6 +163,11 @@ class VoteDetailFragment : Fragment() {
         }
     }
 
+    private fun fetchVoteDetails(voteId: Int) {
+        val accessToken = userRepository.getAccessToken()
+        viewModel.fetchVoteDetails(voteId, accessToken!!)
+    }
+
     private fun setupCommentRecyclerView() {
         commentAdapter = CommentItemAdapter(
             comments = comments,
@@ -119,40 +179,6 @@ class VoteDetailFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(false)
         }
-    }
-
-    private fun fetchVoteDetails(voteId: Int) {
-        val accessToken = userRepository.getAccessToken()
-
-        voteApi.getVoteDetails(voteId, "Bearer $accessToken")
-            .enqueue(object : Callback<VoteDetailResponse> {
-                override fun onResponse(
-                    call: Call<VoteDetailResponse>,
-                    response: Response<VoteDetailResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { voteDetail ->
-                            displayVoteDetails(voteDetail)
-                            loadComments(voteDetail.comments)
-                            Log.d("VoteDetailFragment", "Response body: ${response.body()}")
-                        }
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to fetch vote details: ${response.message()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Network error: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
     }
 
     private fun loadComments(newComments: List<VoteDetailResponse.Comment>) {
@@ -232,14 +258,17 @@ class VoteDetailFragment : Fragment() {
         }
         startTrackingTime(voteDetail)
 
+        viewModel.setInitialChoices(voteDetail.choices)
         // 기존 선택지 제거 (중복 방지)
         binding.choicesContainer.removeAllViews()
 
-        // 투표 선택지 표시하기
-        val selectedChoices = mutableSetOf<Int>() // 선택된 choice_id 저장
+        if (voteDetail.realtime_result) {
+            Log.d("updateColorBar", "Updating color bar in displayVoteDetails")
+            updateColorBar(voteDetail)
+        }
 
+        // 투표 선택지 표시하기
         voteDetail.choices.forEach { choice ->
-            // 선택지 UI 생성
             val choiceLayout = LayoutInflater.from(requireContext())
                 .inflate(R.layout.item_choice_button, binding.choicesContainer, false)
 
@@ -247,61 +276,24 @@ class VoteDetailFragment : Fragment() {
             val checkCircle = choiceLayout.findViewById<FrameLayout>(R.id.checkCircle)
             val checkIcon = choiceLayout.findViewById<ImageView>(R.id.checkIcon)
 
-            // 선택지 텍스트 표시
+            choiceLayout.tag = choice.choice_id // 선택지 ID 저장
             choiceText.text = choice.choice_content
 
-            checkCircle.isSelected = choice.participated
-            checkIcon.setColorFilter(
-                if (choice.participated) resources.getColor(R.color.selected_icon_color, null)
-                else resources.getColor(R.color.unselected_icon_color, null)
-            )
-            if (hasParticipated) {
-                updateColorBar(voteDetail)
+            // 선택 상태 UI 반영
+            viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
+                val isSelected = selectedChoices.contains(choice.choice_id)
+                checkCircle.isSelected = isSelected
+                checkIcon.setColorFilter(
+                    if (isSelected) resources.getColor(R.color.selected_icon_color, null)
+                    else resources.getColor(R.color.unselected_icon_color, null)
+                )
             }
 
-            // 클릭 이벤트 처리
+            // 클릭 이벤트 → ViewModel에 선택 상태 변경 요청
             checkCircle.setOnClickListener {
-                if (voteDetail.multiple_choice) {
-                    // 다중 선택
-                    if (selectedChoices.contains(choice.choice_id)) {
-                        selectedChoices.remove(choice.choice_id)
-                        checkCircle.isSelected = false
-                        checkIcon.setColorFilter(
-                            resources.getColor(R.color.unselected_icon_color, null)
-                        )
-                    } else {
-                        selectedChoices.add(choice.choice_id)
-                        checkCircle.isSelected = true
-                        checkIcon.setColorFilter(
-                            resources.getColor(R.color.selected_icon_color, null)
-                        )
-                    }
-                } else {
-                    // 단일 선택
-                    selectedChoices.clear()
-                    selectedChoices.add(choice.choice_id)
-
-                    // 모든 선택지 상태 초기화
-                    binding.choicesContainer.forEach { child ->
-                        if (child is ConstraintLayout) {
-                            val childCheckCircle = child.findViewById<FrameLayout>(R.id.checkCircle)
-                            val childCheckIcon = child.findViewById<ImageView>(R.id.checkIcon)
-                            childCheckCircle.isSelected = false
-                            childCheckIcon.setColorFilter(
-                                resources.getColor(R.color.unselected_icon_color, null)
-                            )
-                        }
-                    }
-
-                    // 현재 선택된 항목만 활성화
-                    checkCircle.isSelected = true
-                    checkIcon.setColorFilter(
-                        resources.getColor(R.color.selected_icon_color, null)
-                    )
-                }
+                viewModel.toggleChoice(choice.choice_id, voteDetail.multiple_choice)
             }
 
-            // 선택지를 컨테이너에 추가
             binding.choicesContainer.addView(choiceLayout)
         }
 
@@ -324,64 +316,65 @@ class VoteDetailFragment : Fragment() {
                 .show()
         }
 
-        fun performVote(enteredCode: String?) {
-            val accessToken = userRepository.getAccessToken()
-            val participationRequest = ParticipationRequest(
-                participated_choice_ids = selectedChoices.toList(),
-                participation_code = enteredCode
-            )
-
-            voteApi.participateInVote(voteId, "Bearer $accessToken", participationRequest)
-                .enqueue(object : Callback<VoteDetailResponse> {
-                    override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
-                        if (response.isSuccessful) {
-                            Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
-                            binding.errorTextView.visibility = View.GONE
-                            response.body()?.let { updatedVoteDetail ->
-                                updateColorBar(updatedVoteDetail) // 선택지 배경 색칠
-                            }
-                            fetchVoteDetails(voteId)
-                            binding.voteButton.text = "다시 투표하기"
-                        } else {
-                            if(response.message() == "Forbidden") {
-                                binding.errorTextView.text = "참여 코드가 틀렸습니다."
-                                binding.errorTextView.visibility = View.VISIBLE
-                            }
-                            //Toast.makeText(requireContext(), "투표 참여 실패: ${response.message()}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
-                        Toast.makeText(requireContext(), "네트워크 오류: ${t.message}", Toast.LENGTH_SHORT).show()
-                    }
-                })
-        }
 
         // voteButton 클릭 이벤트 추가
-        binding.voteButton.setOnClickListener {
-            if (selectedChoices.toList().isEmpty()){
-                binding.errorTextView.text = "투표 항목을 선택해주세요."
-                binding.errorTextView.visibility = View.VISIBLE
-            } else {
-                if (voteDetail.participation_code_required) {
-                    showParticipationCodeDialog { enteredCode ->
-                        performVote(enteredCode)
+        viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
+
+            val hasParticipated = viewModel.hasParticipated.value ?: false
+
+            binding.voteButton.setOnClickListener {
+                val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
+
+                if (selectedChoices.isEmpty()) {
+                    if (hasParticipated) {
+                        AlertDialog.Builder(requireContext())
+                            .setMessage("투표 참여를 취소하시겠습니까?")
+                            .setPositiveButton("예") { _, _ ->
+                                if (voteDetail.participation_code_required) {
+                                    showParticipationCodeDialog { enteredCode ->
+                                        viewModel.performVote(voteId, accessToken, emptyList(), enteredCode)
+                                    }
+                                } else {
+                                    viewModel.performVote(voteId, accessToken, emptyList(), null)
+                                }
+                            }
+                            .setNegativeButton("아니요", null)
+                            .create()
+                            .show()
+                    } else {
+                        binding.errorTextView.text = "투표 항목을 선택해주세요."
+                        binding.errorTextView.visibility = View.VISIBLE
                     }
                 } else {
-                    performVote(null) // 참여 코드가 필요 없는 경우 바로 투표 진행
+                    binding.errorTextView.visibility = View.GONE
+            binding.voteButton.setOnClickListener {
+                if (selectedChoices.isEmpty()) {
+                    binding.errorTextView.text = "투표 항목을 선택해주세요."
+                    binding.errorTextView.visibility = View.VISIBLE
+                } else {
+                    binding.errorTextView.visibility = View.GONE
+                    val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
+                    if (voteDetail.participation_code_required) {
+                        showParticipationCodeDialog { enteredCode ->
+                            viewModel.performVote(voteId, accessToken, selectedChoices.toList(), enteredCode)
+                        }
+                    } else {
+                        viewModel.performVote(voteId, accessToken, selectedChoices.toList(), null)
+                    }
                 }
             }
         }
 
+
         binding.postCommentButton.setOnClickListener {
             val content = binding.commentEditText.text.toString()
             val token = userRepository.getAccessToken()
-            
+
             // 수정 버튼 비활성화
             if (!binding.postCommentButton.isEnabled) {
                 return@setOnClickListener
             }
-            
+
             // 공백 댓글 처리
             if (content.isBlank()) {
                 Toast.makeText(context, "댓글 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
@@ -404,46 +397,58 @@ class VoteDetailFragment : Fragment() {
 
     }
 
+    private fun updateChoiceUI(selectedChoices: Set<Int>) {
+        binding.choicesContainer.forEach { child ->
+            if (child is ConstraintLayout) {
+                val checkCircle = child.findViewById<FrameLayout>(R.id.checkCircle)
+                val checkIcon = child.findViewById<ImageView>(R.id.checkIcon)
+                val choiceId = child.tag as? Int ?: return@forEach
+
+                val isSelected = selectedChoices.contains(choiceId)
+                checkCircle.isSelected = isSelected
+                checkIcon.setColorFilter(
+                    if (isSelected) resources.getColor(R.color.selected_icon_color, null)
+                    else resources.getColor(R.color.unselected_icon_color, null)
+                )
+            }
+        }
+    }
+
     // 댓글 게시
     private fun postComment(voteId: Int, content: String, token: String) {
-        val commentRequest = CommentRequest(content)
+        val content = binding.commentEditText.text.toString()
+        val token = userRepository.getAccessToken()
 
-        voteApi.postComment(voteId, "Bearer $token", commentRequest)
-            .enqueue(object : Callback<VoteDetailResponse> {
-                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(context, "댓글이 성공적으로 추가되었습니다.", Toast.LENGTH_SHORT).show()
-                        fetchVoteDetails(voteId)
-                    } else {
-                        Toast.makeText(context, "댓글 추가에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        if (content.isBlank()) {
+            Toast.makeText(context, "댓글 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
-                    Toast.makeText(context, "네트워크 오류로 댓글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            })
+        if (editingCommentId != null) {
+            val commentId = editingCommentId!!
+            editingCommentId = null // 상태 초기화
+            viewModel.editComment(voteId, commentId, content, token!!)
+            binding.postCommentButton.text = "게시"
+        } else {
+            viewModel.postComment(voteId, content, token!!)
+        }
+
+        binding.commentEditText.text.clear()
     }
 
     // 댓글 수정
     private fun editComment(voteId: Int, commentId: Int, updatedContent: String, token: String) {
-        val commentRequest = CommentRequest(updatedContent)
+        val content = binding.commentEditText.text.toString()
+        val token = userRepository.getAccessToken()
 
-        voteApi.updateComment(voteId, commentId, "Bearer $token", commentRequest)
-            .enqueue(object : Callback<VoteDetailResponse> {
-                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(context, "댓글이 성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show()
-                        fetchVoteDetails(voteId) // 수정된 댓글 업데이트
-                    } else {
-                        Toast.makeText(context, "댓글 수정에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        if (content.isBlank()) {
+            Toast.makeText(context, "댓글 내용을 입력하세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
-                    Toast.makeText(context, "네트워크 오류로 댓글 수정에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            })
+        viewModel.editComment(voteId, commentId, content, token!!)
+        binding.commentEditText.text.clear()
+        binding.postCommentButton.text = "게시"
     }
 
     fun onEditCommentClicked(comment: VoteDetailResponse.Comment) {
@@ -482,40 +487,21 @@ class VoteDetailFragment : Fragment() {
         )
     }
 
-    // 댓글 삭제
-    private fun deleteComment(voteId: Int, commentId: Int, token: String) {
-        voteApi.deleteComment(voteId, commentId, "Bearer $token")
-            .enqueue(object : Callback<VoteDetailResponse> {
-                override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(context, "댓글이 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                        fetchVoteDetails(voteId) // 수정된 댓글 업데이트
-                    } else {
-                        Toast.makeText(context, "댓글 삭제에 실패했습니다. (${response.code()})", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<VoteDetailResponse>, t: Throwable) {
-                    Toast.makeText(context, "네트워크 오류로 댓글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            })
-    }
-
     fun onDeleteCommentClicked(comment: VoteDetailResponse.Comment) {
         val commentId = comment.comment_id
         val token = userRepository.getAccessToken()
-        
+
         // 댓글 삭제 창
         AlertDialog.Builder(requireContext())
             .setMessage("댓글을 삭제하시겠습니까?")
             .setPositiveButton("삭제") { _, _ ->
-                deleteComment(voteId, commentId, token!!)
+                viewModel.deleteComment(voteId, commentId, token!!)
             }
             .setNegativeButton("취소", null)
             .create()
             .show()
     }
-    
+
     // 투표 선택지 색칠
     private fun updateColorBar(voteDetail: VoteDetailResponse) {
         // 뷰의 레이아웃이 완료된 후에 실행
@@ -582,7 +568,7 @@ class VoteDetailFragment : Fragment() {
     private fun stopTrackingTime() {
         handler.removeCallbacks(runnable)
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         stopTrackingTime()
