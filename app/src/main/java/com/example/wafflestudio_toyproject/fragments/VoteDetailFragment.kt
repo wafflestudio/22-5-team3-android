@@ -319,9 +319,7 @@ class VoteDetailFragment : Fragment() {
 
         // voteButton 클릭 이벤트 추가
         viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
-
             val hasParticipated = viewModel.hasParticipated.value ?: false
-
             binding.voteButton.setOnClickListener {
                 val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
 
@@ -347,19 +345,21 @@ class VoteDetailFragment : Fragment() {
                     }
                 } else {
                     binding.errorTextView.visibility = View.GONE
-            binding.voteButton.setOnClickListener {
-                if (selectedChoices.isEmpty()) {
-                    binding.errorTextView.text = "투표 항목을 선택해주세요."
-                    binding.errorTextView.visibility = View.VISIBLE
-                } else {
-                    binding.errorTextView.visibility = View.GONE
-                    val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
-                    if (voteDetail.participation_code_required) {
-                        showParticipationCodeDialog { enteredCode ->
-                            viewModel.performVote(voteId, accessToken, selectedChoices.toList(), enteredCode)
+                    binding.voteButton.setOnClickListener {
+                        if (selectedChoices.isEmpty()) {
+                            binding.errorTextView.text = "투표 항목을 선택해주세요."
+                            binding.errorTextView.visibility = View.VISIBLE
+                        } else {
+                            binding.errorTextView.visibility = View.GONE
+                            val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
+                            if (voteDetail.participation_code_required) {
+                                showParticipationCodeDialog { enteredCode ->
+                                    viewModel.performVote(voteId, accessToken, selectedChoices.toList(), enteredCode)
+                                }
+                            } else {
+                                viewModel.performVote(voteId, accessToken, selectedChoices.toList(), null)
+                            }
                         }
-                    } else {
-                        viewModel.performVote(voteId, accessToken, selectedChoices.toList(), null)
                     }
                 }
             }
@@ -391,10 +391,8 @@ class VoteDetailFragment : Fragment() {
                 // 새로운 댓글 게시
                 postComment(voteId, content, token!!)
             }
-
             binding.commentEditText.text.clear() // 입력 필드 초기화
         }
-
     }
 
     private fun updateChoiceUI(selectedChoices: Set<Int>) {
