@@ -21,14 +21,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wafflestudio_toyproject.CreateVoteRequest
 import com.example.wafflestudio_toyproject.CreateVoteResponse
 import com.example.wafflestudio_toyproject.FileUtil
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.VoteApi
+import com.example.wafflestudio_toyproject.adapter.SelectedImagesAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentCreateVoteBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.selects.select
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -37,6 +40,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.io.FileOutputStream
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -46,15 +50,12 @@ class CreateVoteFragment : Fragment() {
     private lateinit var navController: NavController
     private var _binding: FragmentCreateVoteBinding? = null
     private val binding get() = _binding!!
-    private var selectedImageUriForApi: Uri? = null
+    private var selectedImages = mutableListOf<Uri>()
     private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
+    private lateinit var selectedImagesAdapter: SelectedImagesAdapter
 
     @Inject
     lateinit var voteApi: VoteApi
-
-    companion object {
-        private const val PICK_IMAGE_REQUEST = 1
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,7 +98,7 @@ class CreateVoteFragment : Fragment() {
         }
 
         // 이미지 선택
-        binding.postImage.setOnClickListener {
+        binding.addImageButton.setOnClickListener {
             openImagePicker()
         }
 
@@ -115,12 +116,37 @@ class CreateVoteFragment : Fragment() {
             }
         })
 
+        selectedImagesAdapter = SelectedImagesAdapter(
+            items = selectedImages,
+            onRemoveImage = { uri ->
+                selectedImages.remove(uri)
+                selectedImagesAdapter.notifyDataSetChanged()
+            },
+        )
+
+        binding.postImage.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = selectedImagesAdapter
+        }
+
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val selectedImageUri = result.data?.data
-                if (selectedImageUri != null) {
-                    binding.postImage.setImageURI(selectedImageUri)
-                    selectedImageUriForApi = selectedImageUri
+                val data = result.data
+                if (data?.clipData != null) {
+                    val count = data.clipData?.itemCount ?: 0
+                    for (i in 0 until count) {
+                        data.clipData?.getItemAt(i)?.uri?.let { uri ->
+                            selectedImages.add(uri)
+                        }
+                    }
+                } else if (data?.data != null) {
+                    data.data?.let { uri ->
+                        selectedImages.add(uri)
+                    }
+                }
+
+                if (selectedImages.isNotEmpty()) {
+                    displaySelectedImages()
                 } else {
                     Toast.makeText(requireContext(), "이미지를 선택하지 않았습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -186,14 +212,27 @@ class CreateVoteFragment : Fragment() {
 
         val jsonRequestBody = Gson().toJson(createVoteJson).toRequestBody("application/json".toMediaType())
 
-        val imagePart = selectedImageUriForApi?.let { uri ->
-            val file = File(FileUtil.getPath(requireContext(), uri))
-            val requestBody = file.asRequestBody("image/jpeg".toMediaType())
-            MultipartBody.Part.createFormData("images", file.name, requestBody)
+        val imageParts = selectedImages.mapNotNull { uri ->
+            try {
+                val inputStream = requireContext().contentResolver.openInputStream(uri)
+                val tempFile = File(requireContext().cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+                inputStream?.use { input ->
+                    FileOutputStream(tempFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+
+                val requestBody = tempFile.asRequestBody("image/jpeg".toMediaType())
+                MultipartBody.Part.createFormData("images", tempFile.name, requestBody)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
 
-        val call = if (imagePart != null) {
-            voteApi.createVoteWithImage(jsonRequestBody, imagePart)
+
+        val call = if (imageParts != null) {
+            voteApi.createVoteWithImage(jsonRequestBody, imageParts)
         } else {
             voteApi.createVoteWithoutImage(jsonRequestBody)
         }
@@ -327,9 +366,22 @@ class CreateVoteFragment : Fragment() {
 
     // 이미지 선택
     private fun openImagePicker() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.type = "image/*"
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true) // 다중 선택 허용
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
         imagePickerLauncher.launch(intent)
+    }
+
+    private fun displaySelectedImages() {
+        if (selectedImages.isNotEmpty()) {
+            binding.postImage.visibility = View.VISIBLE
+            selectedImagesAdapter.notifyDataSetChanged()
+        } else {
+            binding.addImageButton.visibility = View.VISIBLE
+            binding.postImage.visibility = View.GONE
+        }
     }
 
     override fun onDestroyView() {

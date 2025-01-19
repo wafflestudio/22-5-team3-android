@@ -37,7 +37,7 @@ interface VoteApi {
     @POST("api/votes/create")
     fun createVoteWithImage(
         @Part("create_vote_json") createVoteJson: RequestBody,
-        @Part images: MultipartBody.Part
+        @Part images: List<MultipartBody.Part>
     ): Call<CreateVoteResponse>
 
     @Multipart
