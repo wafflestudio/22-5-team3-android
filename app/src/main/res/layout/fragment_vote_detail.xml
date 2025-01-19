@@ -96,15 +96,13 @@
                             android:textSize="16sp" />
                     </LinearLayout>
 
-                    <ImageView
+                    <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/postImage"
                         android:layout_width="300dp"
                         android:layout_height="200dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:src="@drawable/post_image"
-                        android:layout_gravity="center"
-                        android:scaleType="centerCrop" />
+                        android:layout_gravity="center" />
 
                     <TextView
                         android:id="@+id/voteDetailTitle"

@@ -3,6 +3,8 @@ package com.example.wafflestudio_toyproject.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.VoteItem
 import com.example.wafflestudio_toyproject.databinding.VoteItemBinding
 
@@ -15,6 +17,9 @@ class VoteItemAdapter(
         fun bind(voteItem: VoteItem) {
             binding.voteTitle.text = voteItem.title
             binding.voteTimeRemaining.text = voteItem.calculateTimeRemaining()
+
+            // 이미지 로드
+            binding.postImage.load(voteItem.image)
 
             binding.root.setOnClickListener {
                 onClick(voteItem)

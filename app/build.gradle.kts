@@ -42,16 +42,25 @@ android {
     viewBinding {
         enable = true
     }
+
+    packaging {
+        resources {
+            excludes += "META-INF/NOTICE.md"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/NOTICE"
+            excludes += "META-INF/LICENSE"
+        }
+    }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.databinding.compiler.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,4 +78,8 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
 
     implementation(libs.swiperefreshlayout)
+
+    implementation(libs.coil)
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
 }

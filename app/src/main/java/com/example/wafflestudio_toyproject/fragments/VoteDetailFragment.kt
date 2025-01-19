@@ -28,6 +28,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.example.wafflestudio_toyproject.CommentRequest
 
 import com.example.wafflestudio_toyproject.ParticipationRequest
@@ -38,6 +39,7 @@ import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteDetailResponse
 import com.example.wafflestudio_toyproject.VoteDetailViewModel
 import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
+import com.example.wafflestudio_toyproject.adapter.ImageSliderAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
@@ -163,6 +165,19 @@ class VoteDetailFragment : Fragment() {
         }
     }
 
+    private fun setupImageSlider(imageUrls: List<String>) {
+        Log.d("VoteDetailFragment", "Setting up Image Slider with URLs: $imageUrls")
+        val adapter = ImageSliderAdapter(imageUrls)
+        binding.postImage.adapter = adapter
+
+        binding.postImage.apply {
+            offscreenPageLimit = 1 // 캐싱할 페이지 수 설정
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL // 슬라이드 방향 설정 (기본값은 가로)
+        }
+
+        adapter.notifyDataSetChanged()
+    }
+
     private fun fetchVoteDetails(voteId: Int) {
         val accessToken = userRepository.getAccessToken()
         viewModel.fetchVoteDetails(voteId, accessToken!!)
@@ -191,6 +206,12 @@ class VoteDetailFragment : Fragment() {
         binding.voteDetailTitle.text = voteDetail.title
         binding.voteDetailDescription.text = voteDetail.content
         binding.userId.text = voteDetail.writer_name
+
+        if (voteDetail.images.isNotEmpty()) {
+            setupImageSlider(voteDetail.images)
+        } else {
+            binding.postImage.visibility = View.GONE
+        }
 
         if (voteDetail.multiple_choice) {
             binding.multipleChoiceMessage.text = " · 중복 선택 가능"
@@ -316,7 +337,6 @@ class VoteDetailFragment : Fragment() {
                 .show()
         }
 
-
         // voteButton 클릭 이벤트 추가
         viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
             val hasParticipated = viewModel.hasParticipated.value ?: false
@@ -364,7 +384,6 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
-
 
         binding.postCommentButton.setOnClickListener {
             val content = binding.commentEditText.text.toString()
