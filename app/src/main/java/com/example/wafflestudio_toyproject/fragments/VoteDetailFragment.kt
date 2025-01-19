@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -167,15 +168,10 @@ class VoteDetailFragment : Fragment() {
 
     private fun setupImageSlider(imageUrls: List<String>) {
         Log.d("VoteDetailFragment", "Setting up Image Slider with URLs: $imageUrls")
-        val adapter = ImageSliderAdapter(imageUrls)
-        binding.postImage.adapter = adapter
-
         binding.postImage.apply {
-            offscreenPageLimit = 1 // 캐싱할 페이지 수 설정
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL // 슬라이드 방향 설정 (기본값은 가로)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = ImageSliderAdapter(imageUrls)
         }
-
-        adapter.notifyDataSetChanged()
     }
 
     private fun fetchVoteDetails(voteId: Int) {
@@ -245,8 +241,7 @@ class VoteDetailFragment : Fragment() {
             binding.voteButton.text = "투표하기"
         }
 
-        val totalParticipants = voteDetail.choices.sumOf { it.choice_num_participants ?: 0 }
-        binding.participantCount.text = "${totalParticipants}명 참여"
+        binding.participantCount.text = "${voteDetail.participantCount}명 참여"
         if (hasParticipated)
             binding.participantCount.visibility = View.VISIBLE
 

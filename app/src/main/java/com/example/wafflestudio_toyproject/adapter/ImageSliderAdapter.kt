@@ -14,17 +14,18 @@ class ImageSliderAdapter(private val imageUrls: List<String>) :
     inner class ImageViewHolder(private val binding: ItemImageSliderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(imageUrl: String) {
-            Glide.with(binding.imageView.context) // Context를 사용
+            Glide.with(binding.imageView.context)
                 .load(imageUrl)
-                .placeholder(R.drawable.post_image) // 로드 중 보여줄 이미지
-                .error(R.drawable.post_image) // 로드 실패 시 보여줄 이미지
+                .placeholder(R.drawable.post_image)
+                .error(R.drawable.post_image)
                 .into(binding.imageView)
-            Log.d("ImageSliderAdapter", "Loaded image: $imageUrl")
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val binding = ItemImageSliderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemImageSliderBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
         return ImageViewHolder(binding)
     }
 
@@ -34,3 +35,6 @@ class ImageSliderAdapter(private val imageUrls: List<String>) :
 
     override fun getItemCount(): Int = imageUrls.size
 }
+
+
+

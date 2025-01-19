@@ -96,7 +96,7 @@
                             android:textSize="16sp" />
                     </LinearLayout>
 
-                    <androidx.viewpager2.widget.ViewPager2
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/postImage"
                         android:layout_width="300dp"
                         android:layout_height="200dp"
