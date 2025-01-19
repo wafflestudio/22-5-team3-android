@@ -10,6 +10,7 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,9 +34,10 @@ interface VoteApi {
     @POST("api/votes/create")
     fun createVote(@Body request: CreateVoteRequest): Call<CreateVoteResponse>
 
-    @GET("api/votes/ongoing_list")
+    @GET("/api/votes/ongoing_list")
     fun getOngoingVotes(
-        @Header("Authorization") authToken: String
+        @Query("start_cursor") startCursor: String? = null,
+        @Header("Authorization") token: String
     ): Call<OngoingVoteResponse>
 
     @GET("/api/votes/{vote_id}")
