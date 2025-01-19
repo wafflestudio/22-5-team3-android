@@ -13,12 +13,29 @@ class VoteViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _allVotes = MutableLiveData<List<VoteItem>>()
-
     val allVotes: LiveData<List<VoteItem>> get() = _allVotes
 
+    private var nextCursor: String? = null
+    private var isLoading = false
+
     fun fetchVotes() {
-        voteRepository.getOngoingVotes().observeForever { votes ->
-            _allVotes.value = votes
+        if (isLoading) return  // 이미 요청 중이면 중복 요청 방지
+        isLoading = true
+
+        voteRepository.getOngoingVotes(nextCursor).observeForever { response ->
+            response?.let {
+                val updatedList = _allVotes.value?.toMutableList() ?: mutableListOf()
+                updatedList.addAll(it.votes_list)
+
+                _allVotes.value = updatedList
+                nextCursor = if (it.has_next) it.next_cursor else null
+            }
+            isLoading = false
         }
+    }
+
+    // 다음 페이지 요청
+    fun loadMoreVotes() {
+        nextCursor?.let { fetchVotes() }
     }
 }

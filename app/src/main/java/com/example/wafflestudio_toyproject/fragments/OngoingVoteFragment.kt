@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.wafflestudio_toyproject.OngoingVoteResponse
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
@@ -20,6 +22,7 @@ import com.example.wafflestudio_toyproject.VoteViewModel
 import com.example.wafflestudio_toyproject.adapter.VoteItemAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentOngoingvoteBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -73,13 +76,31 @@ class OngoingVoteFragment : Fragment() {
         }
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
+        binding.voteItemRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                val lastVisibleItemPosition = layoutManager.findLastCompletelyVisibleItemPosition()
+                val totalItemCount = layoutManager.itemCount
+
+                if (lastVisibleItemPosition >= totalItemCount - 2) {  // 마지막에서 두 번째 아이템이 보이면 로드
+                    lifecycleScope.launch {
+                        voteViewModel.loadMoreVotes()
+                    }
+                }
+            }
+        })
+
 
         // API 호출
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
             adapter.updateItems(allVotes)
         }
 
-        voteViewModel.fetchVotes()
+        lifecycleScope.launch {
+            voteViewModel.fetchVotes()
+        }
     }
 
     override fun onDestroyView() {
