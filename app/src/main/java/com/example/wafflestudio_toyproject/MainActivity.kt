@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         viewPager = binding.viewPager
         viewPager.adapter = ViewPagerAdapter(this)
+        viewPager.isUserInputEnabled = false // 탭 스와이프 기능 비활성화
 
         setTabLayout()
     }

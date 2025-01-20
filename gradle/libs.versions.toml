@@ -21,6 +21,7 @@ swiperefreshlayout = "1.1.0"
 databindingCompilerCommon = "8.8.0"
 coil = "2.4.0"
 glide = "4.16.0"
+circleindicator = "2.1.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ androidx-databinding-compiler-common = { group = "androidx.databinding", name = 
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+circleindicator = { module = "me.relex:circleindicator", version.ref = "circleindicator"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

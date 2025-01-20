@@ -26,5 +26,4 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
     override fun getItemViewType(position: Int): Int {
         return position
     }
-
 }

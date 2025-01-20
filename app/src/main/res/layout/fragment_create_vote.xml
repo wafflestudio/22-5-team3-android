@@ -54,32 +54,15 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/postImage"
                     android:layout_width="wrap_content"
                     android:layout_height="200dp"
                     app:layout_constraintEnd_toStartOf="@+id/addImageButton"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:orientation="horizontal"
                     android:padding="8dp" />
-
-                <Button
-                    android:id="@+id/addImageButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="사진 추가"
-                    android:layout_marginTop="16dp" />
-
-            </LinearLayout>
-
-
-
+          
             <!-- Voting Title Input -->
             <EditText
                 android:id="@+id/vote_title"
