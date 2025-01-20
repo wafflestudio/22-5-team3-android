@@ -42,6 +42,7 @@ import com.example.wafflestudio_toyproject.VoteDetailViewModel
 import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
 import com.example.wafflestudio_toyproject.adapter.ImageSliderAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteDetailBinding
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import retrofit2.Call
@@ -168,11 +169,13 @@ class VoteDetailFragment : Fragment() {
 
     private fun setupImageSlider(imageUrls: List<String>) {
         Log.d("VoteDetailFragment", "Setting up Image Slider with URLs: $imageUrls")
-        
+
         binding.postImage.apply {
             adapter = ImageSliderAdapter(imageUrls) // 어댑터 연결
             orientation = ViewPager2.ORIENTATION_HORIZONTAL // 가로 스와이프 설정
         }
+        binding.indicator.setViewPager(binding.postImage)
+        Log.d("CircleIndicator3", "Indicator child count: ${binding.indicator.childCount}")
     }
 
     private fun fetchVoteDetails(voteId: Int) {

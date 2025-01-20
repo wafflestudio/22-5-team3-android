@@ -105,6 +105,19 @@
                         android:layout_gravity="center"
                         />
 
+                    <me.relex.circleindicator.CircleIndicator3
+                        android:id="@+id/indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        app:ci_width="3dp"
+                        app:ci_height="3dp"
+                        app:ci_margin="2dp"
+                        app:ci_drawable_unselected="@drawable/indicator_unselected"
+                        app:ci_drawable="@drawable/indicator_selected"
+                        />
+
                     <TextView
                         android:id="@+id/voteDetailTitle"
                         android:layout_width="match_parent"

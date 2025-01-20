@@ -82,4 +82,5 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.glide)
     kapt(libs.glide.compiler)
+    implementation(libs.circleindicator)
 }
