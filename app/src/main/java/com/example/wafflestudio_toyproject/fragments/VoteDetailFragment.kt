@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.example.wafflestudio_toyproject.CommentRequest
 
 import com.example.wafflestudio_toyproject.ParticipationRequest
@@ -38,6 +40,7 @@ import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteDetailResponse
 import com.example.wafflestudio_toyproject.VoteDetailViewModel
 import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
+import com.example.wafflestudio_toyproject.adapter.ImageSliderAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
@@ -163,6 +166,14 @@ class VoteDetailFragment : Fragment() {
         }
     }
 
+    private fun setupImageSlider(imageUrls: List<String>) {
+        Log.d("VoteDetailFragment", "Setting up Image Slider with URLs: $imageUrls")
+        binding.postImage.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = ImageSliderAdapter(imageUrls)
+        }
+    }
+
     private fun fetchVoteDetails(voteId: Int) {
         val accessToken = userRepository.getAccessToken()
         viewModel.fetchVoteDetails(voteId, accessToken!!)
@@ -191,6 +202,12 @@ class VoteDetailFragment : Fragment() {
         binding.voteDetailTitle.text = voteDetail.title
         binding.voteDetailDescription.text = voteDetail.content
         binding.userId.text = voteDetail.writer_name
+
+        if (voteDetail.images.isNotEmpty()) {
+            setupImageSlider(voteDetail.images)
+        } else {
+            binding.postImage.visibility = View.GONE
+        }
 
         if (voteDetail.multiple_choice) {
             binding.multipleChoiceMessage.text = " · 중복 선택 가능"
@@ -224,8 +241,7 @@ class VoteDetailFragment : Fragment() {
             binding.voteButton.text = "투표하기"
         }
 
-        val totalParticipants = voteDetail.choices.sumOf { it.choice_num_participants ?: 0 }
-        binding.participantCount.text = "${totalParticipants}명 참여"
+        binding.participantCount.text = "${voteDetail.participantCount}명 참여"
         if (hasParticipated)
             binding.participantCount.visibility = View.VISIBLE
 
@@ -316,7 +332,6 @@ class VoteDetailFragment : Fragment() {
                 .show()
         }
 
-
         // voteButton 클릭 이벤트 추가
         viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
             val hasParticipated = viewModel.hasParticipated.value ?: false
@@ -364,7 +379,6 @@ class VoteDetailFragment : Fragment() {
                 }
             }
         }
-
 
         binding.postCommentButton.setOnClickListener {
             val content = binding.commentEditText.text.toString()

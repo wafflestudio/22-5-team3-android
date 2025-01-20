@@ -18,6 +18,9 @@ navigationFragment = "2.8.3"
 navigationRuntimeKtx = "2.8.5"
 lifecycle = "2.6.1"
 swiperefreshlayout = "1.1.0"
+databindingCompilerCommon = "8.8.0"
+coil = "2.4.0"
+glide = "4.16.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +43,10 @@ androidx-navigation-fragment = { group = "androidx.navigation", name = "navigati
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 swiperefreshlayout = {module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout"}
+androidx-databinding-compiler-common = { group = "androidx.databinding", name = "databinding-compiler-common", version.ref = "databindingCompilerCommon" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

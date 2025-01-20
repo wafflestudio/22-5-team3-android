@@ -1,15 +1,18 @@
 package com.example.wafflestudio_toyproject
 
-import android.os.Bundle
-import com.example.wafflestudio_toyproject.CreateVoteResponse.Choice
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -30,12 +33,23 @@ interface AuthApi {
 }
 
 interface VoteApi {
+    @Multipart
     @POST("api/votes/create")
-    fun createVote(@Body request: CreateVoteRequest): Call<CreateVoteResponse>
+    fun createVoteWithImage(
+        @Part("create_vote_json") createVoteJson: RequestBody,
+        @Part images: List<MultipartBody.Part>
+    ): Call<CreateVoteResponse>
 
-    @GET("api/votes/ongoing_list")
+    @Multipart
+    @POST("api/votes/create")
+    fun createVoteWithoutImage(
+        @Part("create_vote_json") createVoteJson: RequestBody
+    ): Call<CreateVoteResponse>
+
+    @GET("/api/votes/ongoing_list")
     fun getOngoingVotes(
-        @Header("Authorization") authToken: String
+        @Query("start_cursor") startCursor: String? = null,
+        @Header("Authorization") token: String
     ): Call<OngoingVoteResponse>
 
     @GET("/api/votes/{vote_id}")
@@ -43,7 +57,6 @@ interface VoteApi {
         @Path("vote_id") voteId: Int,
         @Header("Authorization") authToken: String
     ): Call<VoteDetailResponse>
-
 
     @POST("/api/votes/{vote_id}/participate")
     fun participateInVote(
@@ -149,7 +162,9 @@ data class VoteDetailResponse(
     val multiple_choice: Boolean,
     val annonymous_choice: Boolean,
     val create_datetime: String,
-    val end_datetime: String
+    val end_datetime: String,
+    val images: List<String>,
+    val participantCount: Int
 ){
     data class Choice(
         val choice_id: Int,
@@ -215,7 +230,9 @@ data class VoteItem(
     val content: String,
     val create_datetime: String,
     val end_datetime: String,
-    val participated: Boolean
+    val participated: Boolean,
+    val image: String?,
+    val participantCount: Int
 ) {
     fun calculateTimeRemaining(): String {
         return try {
