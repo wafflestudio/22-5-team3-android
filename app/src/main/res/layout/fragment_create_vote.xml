@@ -62,7 +62,7 @@
                     android:visibility="visible"
                     android:orientation="horizontal"
                     android:padding="8dp" />
-
+          
             <!-- Voting Title Input -->
             <EditText
                 android:id="@+id/vote_title"

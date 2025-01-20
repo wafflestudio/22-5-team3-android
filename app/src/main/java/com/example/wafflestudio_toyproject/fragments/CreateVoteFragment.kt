@@ -116,6 +116,7 @@ class CreateVoteFragment : Fragment() {
                 selectedImages.remove(uri)
                 selectedImagesAdapter.notifyDataSetChanged()
             },
+
             onAddImageClick = {
                 openImagePicker() // 이미지 선택
             }
