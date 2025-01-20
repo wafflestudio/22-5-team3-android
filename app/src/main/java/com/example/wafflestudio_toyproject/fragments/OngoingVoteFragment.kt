@@ -101,6 +101,13 @@ class OngoingVoteFragment : Fragment() {
         lifecycleScope.launch {
             voteViewModel.fetchVotes()
         }
+
+        voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
+            val updatedVotes = allVotes.map { voteItem ->
+                voteItem.copy(participated = voteItem.participated ) // 사용자가 선택한 항목이 있는지 확인
+            }
+            adapter.updateItems(updatedVotes)
+        }
     }
 
     override fun onDestroyView() {
