@@ -44,7 +44,6 @@ import java.io.FileOutputStream
 import java.util.Calendar
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class CreateVoteFragment : Fragment() {
     private lateinit var navController: NavController
@@ -97,11 +96,6 @@ class CreateVoteFragment : Fragment() {
             }
         }
 
-        // 이미지 선택
-        binding.addImageButton.setOnClickListener {
-            openImagePicker()
-        }
-
         return binding.root
     }
 
@@ -122,6 +116,9 @@ class CreateVoteFragment : Fragment() {
                 selectedImages.remove(uri)
                 selectedImagesAdapter.notifyDataSetChanged()
             },
+            onAddImageClick = {
+                openImagePicker() // 이미지 선택
+            }
         )
 
         binding.postImage.apply {
@@ -378,9 +375,6 @@ class CreateVoteFragment : Fragment() {
         if (selectedImages.isNotEmpty()) {
             binding.postImage.visibility = View.VISIBLE
             selectedImagesAdapter.notifyDataSetChanged()
-        } else {
-            binding.addImageButton.visibility = View.VISIBLE
-            binding.postImage.visibility = View.GONE
         }
     }
 

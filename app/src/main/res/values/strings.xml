@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Wafflestudio_toyproject</string>
+    <string name="my_button">My Button</string>
+    <string name="add_image">add image</string>
 </resources>
