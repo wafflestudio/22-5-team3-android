@@ -21,10 +21,12 @@ class SelectedImagesAdapter(
                 .load(uri)
                 .placeholder(R.drawable.post_image)
                 .into(binding.imageView)
-
+            
+            /* 이미지 삭제 버튼
             binding.removeButton.setOnClickListener {
                 onRemoveImage(uri)
             }
+             */
         }
     }
 

@@ -11,10 +11,12 @@
         android:layout_height="100dp"
         android:scaleType="centerCrop" />
 
+    <!-- 삭제 버튼
     <Button
         android:id="@+id/removeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="삭제"
         android:layout_gravity="center_horizontal" />
+        -->
 </LinearLayout>

@@ -168,9 +168,10 @@ class VoteDetailFragment : Fragment() {
 
     private fun setupImageSlider(imageUrls: List<String>) {
         Log.d("VoteDetailFragment", "Setting up Image Slider with URLs: $imageUrls")
+        
         binding.postImage.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = ImageSliderAdapter(imageUrls)
+            adapter = ImageSliderAdapter(imageUrls) // 어댑터 연결
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL // 가로 스와이프 설정
         }
     }
 
