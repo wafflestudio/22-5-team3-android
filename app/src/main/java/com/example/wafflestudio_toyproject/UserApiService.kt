@@ -182,7 +182,7 @@ data class VoteDetailResponse(
     val create_datetime: String,
     val end_datetime: String,
     val images: List<String>,
-    val participantCount: Int
+    val participant_count: Int
 ){
     data class Choice(
         val choice_id: Int,

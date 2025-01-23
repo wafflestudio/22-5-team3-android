@@ -19,5 +19,9 @@
         android:name="com.example.wafflestudio_toyproject.fragments.ChangePasswordFragment"
         android:label="change pw"
         tools:layout="@layout/fragment_change_password">
+
+        <action
+            android:id="@+id/action_changePasswordFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
     </fragment>
 </navigation>

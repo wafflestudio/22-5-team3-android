@@ -244,7 +244,7 @@ class VoteDetailFragment : Fragment() {
             binding.voteButton.text = "투표하기"
         }
 
-        binding.participantCount.text = "${voteDetail.participantCount}명 참여"
+        binding.participantCount.text = "${voteDetail.participant_count}명 참여"
         if (hasParticipated)
             binding.participantCount.visibility = View.VISIBLE
 
@@ -521,7 +521,7 @@ class VoteDetailFragment : Fragment() {
     private fun updateColorBar(voteDetail: VoteDetailResponse) {
         // 뷰의 레이아웃이 완료된 후에 실행
         binding.choicesContainer.post {
-            val totalParticipants = voteDetail.choices.sumOf { it.choice_num_participants ?: 0 }
+            val totalParticipants = voteDetail.participant_count
             val parentWidth = binding.choicesContainer.width // 레이아웃 완료 후 너비 가져오기
 
             binding.choicesContainer.forEachIndexed { index, view ->

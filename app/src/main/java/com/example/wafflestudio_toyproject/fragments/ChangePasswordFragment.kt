@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.wafflestudio_toyproject.ChangePasswordRequest
+import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserApi
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.databinding.FragmentChangePasswordBinding
@@ -55,6 +57,11 @@ class ChangePasswordFragment : Fragment() {
 
         navController = findNavController()
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navController.navigate(R.id.action_changePasswordFragment_to_userProfileFragment)
+            }
+        })
     }
     
     // 비밀번호 변경 api 연결
