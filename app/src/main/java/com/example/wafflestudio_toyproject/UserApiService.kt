@@ -165,7 +165,7 @@ data class VoteDetailResponse(
     val create_datetime: String,
     val end_datetime: String,
     val images: List<String>,
-    val participantCount: Int
+    val participant_count: Int
 ){
     data class Choice(
         val choice_id: Int,
@@ -233,7 +233,7 @@ data class VoteItem(
     val end_datetime: String,
     val participated: Boolean,
     val image: String?,
-    val participantCount: Int
+    val participant_count: Int
 ) {
     fun calculateTimeRemaining(): String {
         return try {
