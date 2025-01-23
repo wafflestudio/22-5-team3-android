@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -24,14 +23,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wafflestudio_toyproject.CreateVoteRequest
 import com.example.wafflestudio_toyproject.CreateVoteResponse
-import com.example.wafflestudio_toyproject.FileUtil
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.adapter.SelectedImagesAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentCreateVoteBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.selects.select
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -278,7 +275,7 @@ class CreateVoteFragment : Fragment() {
         val currentMonth = calendar.get(Calendar.MONTH) + 1
         val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
 
-        calendar.add(Calendar.DAY_OF_YEAR, 14)
+        calendar.add(Calendar.DAY_OF_YEAR, 30)
         val maxYear = calendar.get(Calendar.YEAR)
         val maxMonth = calendar.get(Calendar.MONTH) + 1
         val maxDay = calendar.get(Calendar.DAY_OF_MONTH)

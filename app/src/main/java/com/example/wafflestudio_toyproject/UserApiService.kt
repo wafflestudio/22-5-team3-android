@@ -2,6 +2,7 @@ package com.example.wafflestudio_toyproject
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -23,6 +24,17 @@ interface UserApi {
 
     @POST("api/users/signin")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
+
+    @GET("api/users/me")
+    fun getMe(
+        @Header("Authorization") authorization: String
+    ): Call<GetMeResponse>
+
+    @PATCH("api/users/reset_pw")
+    fun changePassword(
+        @Header("Authorization") authorization: String,
+        @Body changePasswordRequest: ChangePasswordRequest
+    ): Call<ResponseBody>
 }
 
 interface AuthApi {
@@ -113,6 +125,12 @@ data class CreateVoteRequest(
     val annonymous_choice: Boolean,
     val end_datetime: String,
     val choices: List<String>
+)
+
+data class ChangePasswordRequest(
+    val current_password: String,
+    val new_password: String,
+    val confirm_new_password: String
 )
 
 // 응답 데이터 클래스
@@ -265,6 +283,13 @@ data class ParticipationRequest(
 
 data class CommentRequest(
     val content: String
+)
+
+data class GetMeResponse(
+    val name: String,
+    val userid: String,
+    val email: String,
+    val college: Int
 )
 
 

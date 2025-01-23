@@ -43,6 +43,10 @@ class MainActivity : AppCompatActivity() {
                     tab.text = "종료된 투표"
                     tab.setIcon(R.drawable.vote_result)
                 }
+                3-> {
+                    tab.text = "회원정보"
+                    tab.setIcon(R.drawable.person)
+                }
             }
         }.attach()
     }

@@ -517,11 +517,11 @@ class VoteDetailFragment : Fragment() {
             .show()
     }
 
-    // 투표 선택지 색칠
+    // 투표 선택지 색칠ㄴ
     private fun updateColorBar(voteDetail: VoteDetailResponse) {
         // 뷰의 레이아웃이 완료된 후에 실행
         binding.choicesContainer.post {
-            val totalParticipants = voteDetail.choices.sumOf { it.choice_num_participants ?: 0 }
+            val totalParticipants = voteDetail.participant_count
             val parentWidth = binding.choicesContainer.width // 레이아웃 완료 후 너비 가져오기
 
             binding.choicesContainer.forEachIndexed { index, view ->
