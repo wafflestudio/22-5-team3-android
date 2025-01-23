@@ -17,6 +17,7 @@ class VoteItemAdapter(
         fun bind(voteItem: VoteItem) {
             binding.voteTitle.text = voteItem.title
             binding.voteTimeRemaining.text = voteItem.calculateTimeRemaining()
+            binding.participateNumber.text = voteItem.participant_count.toString()
 
             // 이미지 로드
             binding.postImage.load(voteItem.image)

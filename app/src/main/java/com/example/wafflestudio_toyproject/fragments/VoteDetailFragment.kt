@@ -244,7 +244,7 @@ class VoteDetailFragment : Fragment() {
             binding.voteButton.text = "투표하기"
         }
 
-        binding.participantCount.text = "${voteDetail.participantCount}명 참여"
+        binding.participantCount.text = "${voteDetail.participant_count}명 참여"
         if (hasParticipated)
             binding.participantCount.visibility = View.VISIBLE
 

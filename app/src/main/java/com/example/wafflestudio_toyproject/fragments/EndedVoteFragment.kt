@@ -19,18 +19,14 @@ import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteItem
 import com.example.wafflestudio_toyproject.VoteViewModel
 import com.example.wafflestudio_toyproject.adapter.VoteItemAdapter
-import com.example.wafflestudio_toyproject.databinding.FragmentOngoingvoteBinding
+import com.example.wafflestudio_toyproject.databinding.FragmentEndedvoteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class OngoingVoteFragment : Fragment() {
-    private lateinit var navController: NavController
-    private var _binding: FragmentOngoingvoteBinding? = null
+class EndedVoteFragment : Fragment() {
+    private var _binding: FragmentEndedvoteBinding? = null
     private val binding get() = _binding!!
 
     @Inject
@@ -48,30 +44,16 @@ class OngoingVoteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentOngoingvoteBinding.inflate(inflater, container, false)
-
-        // 투표 생성 페이지 연결
-        binding.createVoteIcon.setOnClickListener {
-            navController.navigate(R.id.action_ongoingVoteFragment_to_createVoteFragment)
-        }
-
-        binding.userPageIcon.setOnClickListener {
-            navController.navigate(R.id.action_ongoingVoteFragment_to_userProfileFragment)
-        }
+        _binding = FragmentEndedvoteBinding.inflate(inflater, container, false)
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navController = findNavController()
 
         // RecyclerView 설정
         adapter = VoteItemAdapter(voteItems) { voteItem ->
-            val bundle = Bundle().apply {
-                putInt("vote_id", voteItem.id)
-            }
-            navController.navigate(R.id.action_ongoingVoteFragment_to_voteDetailFragment, bundle)
         }
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
@@ -85,7 +67,7 @@ class OngoingVoteFragment : Fragment() {
 
                 if (lastVisibleItemPosition >= totalItemCount - 2) {  // 마지막에서 두 번째 아이템이 보이면 로드
                     lifecycleScope.launch {
-                        voteViewModel.loadMoreOngoingVotes()
+                        voteViewModel.loadMoreEndedVotes()
                     }
                 }
             }
@@ -98,7 +80,7 @@ class OngoingVoteFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            voteViewModel.fetchOngoingVotes()
+            voteViewModel.fetchEndedVotes()
         }
 
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
