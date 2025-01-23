@@ -23,25 +23,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/snuVote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SNU vote"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:layout_marginStart="40dp"
-        />
+            <TextView
+                android:id="@+id/snuVote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SNU vote"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_marginStart="40dp"
+                />
 
-        <ImageView
-            android:id="@+id/userPageIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:src="@drawable/setting"
-            android:scaleType="centerCrop"/>
+            <ImageView
+                android:id="@+id/userPageIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                android:src="@drawable/setting"
+                android:scaleType="centerCrop"/>
 
         </LinearLayout>
 
@@ -57,10 +57,10 @@
 
 
         <TextView
-            android:id="@+id/ongoingVote"
+            android:id="@+id/endedVote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="진행 중인 투표"
+            android:text="종료된 투표"
             android:textStyle="bold"
             android:textSize="20sp"
             android:layout_marginTop="15dp"
@@ -68,15 +68,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider" />
 
-        <ImageView
-            android:id="@+id/createVoteIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:src="@drawable/create_vote"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/ongoingVote" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/voteItemRecyclerView"
@@ -86,7 +77,7 @@
             android:scrollbars="vertical"
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="10dp"
-            app:layout_constraintTop_toBottomOf="@id/ongoingVote"
+            app:layout_constraintTop_toBottomOf="@id/endedVote"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

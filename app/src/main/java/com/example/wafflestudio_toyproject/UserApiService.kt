@@ -46,11 +46,12 @@ interface VoteApi {
         @Part("create_vote_json") createVoteJson: RequestBody
     ): Call<CreateVoteResponse>
 
-    @GET("/api/votes/ongoing_list")
-    fun getOngoingVotes(
+    @GET("/api/votes/list")
+    fun getVotes(
         @Query("start_cursor") startCursor: String? = null,
+        @Query("category") category: String? = null,
         @Header("Authorization") token: String
-    ): Call<OngoingVoteResponse>
+    ): Call<VoteListResponse>
 
     @GET("/api/votes/{vote_id}")
     fun getVoteDetails(
@@ -218,7 +219,7 @@ data class VoteDetailResponse(
     }
 }
 
-data class OngoingVoteResponse(
+data class VoteListResponse(
     val votes_list: List<VoteItem>,
     val has_next: Boolean,
     val next_cursor: String?
