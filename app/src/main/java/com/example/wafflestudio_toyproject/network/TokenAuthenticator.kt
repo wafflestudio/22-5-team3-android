@@ -57,10 +57,12 @@ class TokenAuthenticator @Inject constructor(
                 }
             } else {
                 Log.e("TokenAuthenticator", "Refresh token failed: ${response.code()} ${response.message()}")
+                navigateToLogin()
                 null
             }
         } catch (e: Exception) {
             Log.e("TokenAuthenticator", "Exception during token refresh", e)
+            navigateToLogin()
             null
         }
     }

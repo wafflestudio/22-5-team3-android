@@ -186,7 +186,7 @@ data class VoteDetailResponse(
         fun formatDatetime(isoDatetime: String): String {
             return try {
                 val serverFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()) // 서버에서 오는 ISO 8601 형식
-                val displayFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())  // 표시할 형식
+                val displayFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())  // 표시할 형식
                 val date = serverFormat.parse(isoDatetime) // 문자열을 Date 객체로 변환
                 displayFormat.format(date!!) // Date 객체를 원하는 형식으로 변환 후 반환
             } catch (e: Exception) {

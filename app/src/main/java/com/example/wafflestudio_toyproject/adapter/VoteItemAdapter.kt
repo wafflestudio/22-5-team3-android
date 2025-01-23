@@ -24,6 +24,12 @@ class VoteItemAdapter(
             binding.root.setOnClickListener {
                 onClick(voteItem)
             }
+
+            if (voteItem.participated) {
+                binding.voteCardView.setBackgroundResource(R.drawable.participate_vote)
+            } else {
+                binding.voteCardView.setBackgroundResource(R.drawable.rounded_rectangle)
+            }
         }
     }
 

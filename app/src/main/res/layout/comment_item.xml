@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="5dp">
 
     <View
         android:id="@+id/divider"
@@ -19,6 +19,8 @@
         android:text="작성자 이름"
         android:textStyle="bold"
         android:textSize="14sp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="5dp"
         android:textColor="@android:color/black" />
 
     <TextView
@@ -27,6 +29,7 @@
         android:layout_height="wrap_content"
         android:text="댓글 내용"
         android:textSize="14sp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp" />
 
@@ -34,6 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginHorizontal="15dp"
         android:layout_marginTop="8dp">
 
         <TextView
@@ -58,7 +62,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp"
             android:gravity="end">
 
             <TextView
