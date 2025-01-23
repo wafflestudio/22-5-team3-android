@@ -27,6 +27,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class UserProfileFragment : Fragment() {
+    private lateinit var navController: NavController
     private var _binding: FragmentUserProfileBinding? = null
     private val binding get() = _binding!!
 
@@ -47,7 +48,10 @@ class UserProfileFragment : Fragment() {
             logout()
         }
 
-
+        // 비밀번호 변경 버튼 클릭 리스너
+        binding.passwordChangeButton.setOnClickListener {
+            navController.navigate(R.id.action_userProfileFragment_to_changePasswordFragment)
+        }
 
         return binding.root
     }
@@ -55,8 +59,9 @@ class UserProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getUserInformation()
+        navController = findNavController()
 
+        getUserInformation()
     }
 
     private fun logout() {

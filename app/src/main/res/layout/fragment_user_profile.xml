@@ -64,7 +64,7 @@
             android:text="단과대"
             android:textStyle="bold"
             android:textSize="15sp"
-            android:textColor="#CCCCCC"
+            android:textColor="@color/gray"
             android:layout_marginTop="3dp"/>
 
         <TextView
@@ -98,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:text="user id"
                 android:textSize="15sp"
-                android:textColor="#CCCCCC"
+                android:textColor="@color/gray"
                 android:layout_marginStart="200dp"/>
         </LinearLayout>
 
@@ -123,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:text="user id"
                 android:textSize="15sp"
-                android:textColor="#CCCCCC"
+                android:textColor="@color/gray"
                 android:layout_marginStart="200dp"/>
         </LinearLayout>
 

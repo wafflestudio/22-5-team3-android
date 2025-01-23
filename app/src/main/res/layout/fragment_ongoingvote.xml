@@ -35,14 +35,6 @@
             android:layout_marginStart="40dp"
         />
 
-        <ImageView
-            android:id="@+id/userPageIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:src="@drawable/setting"
-            android:scaleType="centerCrop"/>
-
         </LinearLayout>
 
         <View
