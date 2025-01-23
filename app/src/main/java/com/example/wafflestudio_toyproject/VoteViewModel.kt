@@ -15,27 +15,71 @@ class VoteViewModel @Inject constructor(
     private val _allVotes = MutableLiveData<List<VoteItem>>()
     val allVotes: LiveData<List<VoteItem>> get() = _allVotes
 
-    private var nextCursor: String? = null
+    private var nextCursorOngoing: String? = null
+    private var nextCursorEnded: String? = null
+    private var nextCursorHot: String? = null
     private var isLoading = false
 
-    fun fetchVotes() {
+    fun fetchOngoingVotes() {
         if (isLoading) return  // 이미 요청 중이면 중복 요청 방지
         isLoading = true
 
-        voteRepository.getOngoingVotes(nextCursor).observeForever { response ->
+        voteRepository.getVotes("ongoing", nextCursorOngoing).observeForever { response ->
             response?.let {
                 val updatedList = _allVotes.value?.toMutableList() ?: mutableListOf()
                 updatedList.addAll(it.votes_list)
 
                 _allVotes.value = updatedList
-                nextCursor = if (it.has_next) it.next_cursor else null
+                nextCursorOngoing = if (it.has_next) it.next_cursor else null
             }
             isLoading = false
         }
     }
 
     // 다음 페이지 요청
-    fun loadMoreVotes() {
-        nextCursor?.let { fetchVotes() }
+    fun loadMoreOngoingVotes() {
+        nextCursorOngoing?.let { fetchOngoingVotes() }
+    }
+
+    fun fetchEndedVotes() {
+        if (isLoading) return  // 이미 요청 중이면 중복 요청 방지
+        isLoading = true
+
+        voteRepository.getVotes("ended", nextCursorEnded).observeForever { response ->
+            response?.let {
+                val updatedList = _allVotes.value?.toMutableList() ?: mutableListOf()
+                updatedList.addAll(it.votes_list)
+
+                _allVotes.value = updatedList
+                nextCursorEnded = if (it.has_next) it.next_cursor else null
+            }
+            isLoading = false
+        }
+    }
+
+    // 다음 페이지 요청
+    fun loadMoreEndedVotes() {
+        nextCursorEnded?.let { fetchEndedVotes() }
+    }
+
+    fun fetchHotVotes() {
+        if (isLoading) return  // 이미 요청 중이면 중복 요청 방지
+        isLoading = true
+
+        voteRepository.getVotes("hot", nextCursorHot).observeForever { response ->
+            response?.let {
+                val updatedList = _allVotes.value?.toMutableList() ?: mutableListOf()
+                updatedList.addAll(it.votes_list)
+
+                _allVotes.value = updatedList
+                nextCursorHot = if (it.has_next) it.next_cursor else null
+            }
+            isLoading = false
+        }
+    }
+
+    // 다음 페이지 요청
+    fun loadMoreHotVotes() {
+        nextCursorHot?.let { fetchEndedVotes() }
     }
 }

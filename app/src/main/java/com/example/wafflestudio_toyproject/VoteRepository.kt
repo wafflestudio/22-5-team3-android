@@ -13,12 +13,12 @@ class VoteRepository @Inject constructor(
     private val voteApi: VoteApi,
     private val userRepository: UserRepository
 ) {
-    fun getOngoingVotes(startCursor: String?): LiveData<OngoingVoteResponse?> {
-        val liveData = MutableLiveData<OngoingVoteResponse?>()
+    fun getVotes(category: String?,startCursor: String?): LiveData<VoteListResponse?> {
+        val liveData = MutableLiveData<VoteListResponse?>()
         val accessToken = userRepository.getAccessToken()
 
-        voteApi.getOngoingVotes(startCursor,"Bearer $accessToken").enqueue(object : Callback<OngoingVoteResponse> {
-            override fun onResponse(call: Call<OngoingVoteResponse>, response: Response<OngoingVoteResponse>) {
+        voteApi.getVotes(startCursor,category,"Bearer $accessToken").enqueue(object : Callback<VoteListResponse> {
+            override fun onResponse(call: Call<VoteListResponse>, response: Response<VoteListResponse>) {
                 if (response.isSuccessful) {
                     liveData.postValue(response.body())
                 } else {
@@ -26,7 +26,7 @@ class VoteRepository @Inject constructor(
                 }
             }
 
-            override fun onFailure(call: Call<OngoingVoteResponse>, t: Throwable) {
+            override fun onFailure(call: Call<VoteListResponse>, t: Throwable) {
                 liveData.postValue(null)
             }
         })
