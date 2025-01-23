@@ -56,10 +56,6 @@ class OngoingVoteFragment : Fragment() {
             navController.navigate(R.id.action_ongoingVoteFragment_to_createVoteFragment)
         }
 
-        binding.userPageIcon.setOnClickListener {
-            navController.navigate(R.id.action_ongoingVoteFragment_to_userProfileFragment)
-        }
-
         return binding.root
     }
 

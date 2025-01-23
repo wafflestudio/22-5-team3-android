@@ -23,6 +23,11 @@ interface UserApi {
 
     @POST("api/users/signin")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
+
+    @GET("api/users/me")
+    fun getMe(
+        @Header("Authorization") authorization: String
+    ): Call<GetMeResponse>
 }
 
 interface AuthApi {
@@ -264,6 +269,13 @@ data class ParticipationRequest(
 
 data class CommentRequest(
     val content: String
+)
+
+data class GetMeResponse(
+    val name: String,
+    val userid: String,
+    val email: String,
+    val college: Int
 )
 
 
