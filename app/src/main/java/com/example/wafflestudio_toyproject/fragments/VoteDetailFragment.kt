@@ -517,7 +517,7 @@ class VoteDetailFragment : Fragment() {
             .show()
     }
 
-    // 투표 선택지 색칠
+    // 투표 선택지 색칠ㄴ
     private fun updateColorBar(voteDetail: VoteDetailResponse) {
         // 뷰의 레이아웃이 완료된 후에 실행
         binding.choicesContainer.post {

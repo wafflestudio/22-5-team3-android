@@ -93,8 +93,6 @@ class ChangePasswordFragment : Fragment() {
                                 val errorMessage = when {
                                     errorBody?.contains("Invalid field format") == true ->
                                         "새 비밀번호 형식이 올바르지 않습니다."
-                                    errorBody?.contains("Invalid confirm password") == true ->
-                                        "새 비밀번호와 확인 비밀번호가 일치하지 않습니다."
                                     else -> "잘못된 요청입니다."
                                 }
                                 showPasswordError(errorMessage)
@@ -124,6 +122,10 @@ class ChangePasswordFragment : Fragment() {
     private fun validatePasswords(currentPassword: String, newPassword: String, confirmNewPassword: String): Boolean {
         var isValid = true
 
+        binding.currentPasswordError.visibility = View.GONE
+        binding.newPasswordError.visibility = View.GONE
+        binding.newPasswordCheckingError.visibility = View.GONE
+
         // 현재 비밀번호 검증
         if (currentPassword.isEmpty()) {
             binding.currentPasswordError.text = "현재 비밀번호를 입력해주세요."
@@ -134,17 +136,32 @@ class ChangePasswordFragment : Fragment() {
         }
 
         // 새 비밀번호 검증
+        val passwordPattern = "^(?:(?=.*[A-Za-z])(?=.*\\d)|(?=.*[A-Za-z])(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?])|(?=.*\\d)(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]))[A-Za-z\\d!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]{8,20}$".toRegex()
         if (newPassword.isEmpty()) {
             binding.newPasswordError.text = "새 비밀번호를 입력해주세요."
+            binding.newPasswordError.visibility = View.VISIBLE
+            isValid = false
+        } else if (!passwordPattern.matches(newPassword)) {
+            binding.newPasswordError.text = "영문, 숫자, 특수문자 2종류 이상 조합된 8~20자이어야 합니다."
             binding.newPasswordError.visibility = View.VISIBLE
             isValid = false
         } else {
             binding.newPasswordError.visibility = View.GONE
         }
+
         
         // 새 비밀번호 확인 검증
         if (confirmNewPassword.isEmpty()) {
             binding.newPasswordCheckingError.text = "새 비밀번호를 입력해주세요."
+            binding.newPasswordCheckingError.visibility = View.VISIBLE
+            isValid = false
+        } else {
+            binding.newPasswordCheckingError.visibility = View.GONE
+        }
+
+        // 새 비밀번호 != 새 비밀번호 확인
+        if (confirmNewPassword != newPassword) {
+            binding.newPasswordCheckingError.text = "비밀번호가 일치하지 않습니다."
             binding.newPasswordCheckingError.visibility = View.VISIBLE
             isValid = false
         } else {
