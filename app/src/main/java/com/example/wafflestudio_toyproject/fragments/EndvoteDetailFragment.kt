@@ -64,11 +64,7 @@ class EndvoteDetailFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
-            if (navController.previousBackStackEntry?.destination?.id == R.id.voteParticipantsDetailFragment) {
-                navController.popBackStack(R.id.voteDetailFragment, false) // ✅ 무한 루프 방지
-            } else {
-                navController.navigateUp()
-            }
+            navigateBack()
         }
 
         return binding.root
@@ -125,11 +121,7 @@ class EndvoteDetailFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (navController.previousBackStackEntry?.destination?.id == R.id.voteParticipantsDetailFragment) {
-                    navController.popBackStack(R.id.voteDetailFragment, false) // 무한 루프 방지
-                } else {
-                    navController.navigateUp()
-                }
+                navigateBack()
             }
         })
 
@@ -238,10 +230,11 @@ class EndvoteDetailFragment : Fragment() {
                 putParcelableArrayList("choices", choicesBundle)
 
                 putInt("vote_id", voteId)
+                putString("origin", "ended")
             }
 
             navController.navigate(
-                R.id.action_voteDetailFragment_to_voteParticipantsDetailFragment,
+                R.id.action_endvoteDetailFragment_to_voteParticipantsDetailFragment,
                 bundle
             )
         }
@@ -263,6 +256,11 @@ class EndvoteDetailFragment : Fragment() {
 
             choiceLayout.tag = choice.choice_id // 선택지 ID 저장
             choiceText.text = choice.choice_content
+
+            if (choice.participated) {
+                checkCircle.isSelected = true
+                checkIcon.setColorFilter(resources.getColor(R.color.selected_icon_color, null))
+            }
 
             checkCircle.isClickable = false
             checkIcon.isClickable = false
@@ -441,6 +439,10 @@ class EndvoteDetailFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun navigateBack() {
+        navController.navigate(R.id.action_endvoteDetailFragment_to_endedVoteFragment)
     }
 
 

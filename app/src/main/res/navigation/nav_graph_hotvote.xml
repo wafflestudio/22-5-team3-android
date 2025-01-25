@@ -30,8 +30,9 @@
     <fragment
         android:id="@+id/voteParticipantsDetailFragment"
         android:name="com.example.wafflestudio_toyproject.fragments.VoteParticipantsDetailFragment"
-        android:label="Participants Detail" />
-    <action
-        android:id="@+id/action_voteParticipantsDetailFragment_to_voteDetailFragment"
-        app:destination="@id/voteDetailFragment"/>
+        android:label="Participants Detail" >
+        <action
+            android:id="@+id/action_voteParticipantsDetailFragment_to_voteDetailFragment"
+            app:destination="@id/voteDetailFragment"/>
+    </fragment>
 </navigation>
