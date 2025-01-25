@@ -64,7 +64,11 @@ class EndvoteDetailFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
-            navController.navigateUp()
+            if (navController.previousBackStackEntry?.destination?.id == R.id.voteParticipantsDetailFragment) {
+                navController.popBackStack(R.id.voteDetailFragment, false) // ✅ 무한 루프 방지
+            } else {
+                navController.navigateUp()
+            }
         }
 
         return binding.root
@@ -121,7 +125,11 @@ class EndvoteDetailFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                navController.navigateUp()
+                if (navController.previousBackStackEntry?.destination?.id == R.id.voteParticipantsDetailFragment) {
+                    navController.popBackStack(R.id.voteDetailFragment, false) // 무한 루프 방지
+                } else {
+                    navController.navigateUp()
+                }
             }
         })
 

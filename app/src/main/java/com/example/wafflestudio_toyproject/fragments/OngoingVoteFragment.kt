@@ -66,6 +66,7 @@ class OngoingVoteFragment : Fragment() {
         adapter = VoteItemAdapter(voteItems) { voteItem ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
+                putString("origin", "ongoingVote")
             }
             navController.navigate(R.id.action_ongoingVoteFragment_to_voteDetailFragment, bundle)
         }

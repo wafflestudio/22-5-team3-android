@@ -78,7 +78,18 @@ class VoteDetailFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
-            navController.navigateUp()
+            val origin = arguments?.getString("origin")
+            Log.d("VoteDetailFragment", "From $origin")
+            //무한루프 방지
+            while (navController.previousBackStackEntry?.destination?.id == R.id.voteParticipantsDetailFragment) {
+                navController.popBackStack(R.id.voteParticipantsDetailFragment, true)
+            }
+
+            when (origin) {
+                "hotVote" -> navController.popBackStack(R.id.hotVoteFragment, true) // 핫 투표에서 온 경우
+                "ongoingVote" -> navController.popBackStack(R.id.ongoingVoteFragment, true) // 진행 중인 투표에서 온 경우
+                else -> navController.navigateUp()
+            }
         }
 
         return binding.root
@@ -153,7 +164,18 @@ class VoteDetailFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                navController.navigateUp()
+                val origin = arguments?.getString("origin")
+                Log.d("VoteDetailFragment", "From $origin")
+
+                while (navController.previousBackStackEntry?.destination?.id == R.id.voteParticipantsDetailFragment) {
+                    navController.popBackStack(R.id.voteParticipantsDetailFragment, true)
+                }
+
+                when (origin) {
+                    "hotVote" -> navController.popBackStack(R.id.hotVoteFragment, true) // 핫 투표에서 온 경우
+                    "ongoingVote" -> navController.popBackStack(R.id.ongoingVoteFragment, true) // 진행 중인 투표에서 온 경우
+                    else -> navController.navigateUp()
+                }
             }
         })
 

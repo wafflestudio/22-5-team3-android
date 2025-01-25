@@ -58,6 +58,7 @@ class HotVoteFragment : Fragment() {
         adapter = VoteItemAdapter(voteItems) { voteItem ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
+                putString("origin", "hotVote")
             }
             navController.navigate(R.id.action_hotVoteFragment_to_voteDetailFragment, bundle)
         }
