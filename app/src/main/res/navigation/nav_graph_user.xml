@@ -40,6 +40,12 @@
         <action
             android:id="@+id/action_myParticipatedVotesFragment_to_userProfileFragment"
             app:destination="@id/userProfileFragment" />
+        <action
+            android:id="@+id/action_myParticipatedVotesFragment_to_voteDetailFragment"
+            app:destination="@id/voteDetailFragment" />
+        <action
+            android:id="@+id/action_myParticipatedVotesFragment_to_endvoteDetailFragment"
+            app:destination="@id/endvoteDetailFragment" />
     </fragment>
 
     <fragment
@@ -51,5 +57,35 @@
         <action
             android:id="@+id/action_myCreatedVotesFragment_to_userProfileFragment"
             app:destination="@id/userProfileFragment" />
+        <action
+            android:id="@+id/action_myCreatedVotesFragment_to_voteDetailFragment"
+            app:destination="@id/voteDetailFragment" />
+        <action
+            android:id="@+id/action_myCreatedVotesFragment_to_endvoteDetailFragment"
+            app:destination="@id/endvoteDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/voteDetailFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.VoteDetailFragment"
+        android:label="Create Vote">
+        <argument
+            android:name="vote_id"
+            app:argType="integer" />
+        <argument
+            android:name="origin"
+            app:argType="string"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/endvoteDetailFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.EndvoteDetailFragment"
+        android:label="end vote">
+        <argument
+            android:name="vote_id"
+            app:argType="integer" />
+        <argument
+            android:name="origin"
+            app:argType="string"/>
     </fragment>
 </navigation>

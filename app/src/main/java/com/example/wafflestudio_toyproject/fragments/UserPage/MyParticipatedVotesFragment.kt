@@ -59,12 +59,16 @@ class MyParticipatedVotesFragment : Fragment() {
         navController = findNavController()
 
         // RecyclerView 설정
-        adapter = VoteItemAdapter(voteItems) { voteItem ->
+        adapter = VoteItemAdapter(voteItems) { voteItem, isEnded ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
-                putString("origin", "ongoingVote")
+                putString("origin", "participatedVote")
             }
-            navController.navigate(R.id.action_ongoingVoteFragment_to_voteDetailFragment, bundle)
+            if (isEnded) {
+                navController.navigate(R.id.action_myParticipatedVotesFragment_to_endvoteDetailFragment, bundle)
+            } else {
+                navController.navigate(R.id.action_myParticipatedVotesFragment_to_voteDetailFragment, bundle)
+            }
         }
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter

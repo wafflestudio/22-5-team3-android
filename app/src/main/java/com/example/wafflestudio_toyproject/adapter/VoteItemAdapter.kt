@@ -11,7 +11,7 @@ import com.example.wafflestudio_toyproject.databinding.VoteItemBinding
 
 class VoteItemAdapter(
     private var voteItems: List<VoteItem>,
-    private val onClick: (VoteItem) -> Unit
+    private val onClick: (VoteItem, Boolean) -> Unit
 ) : RecyclerView.Adapter<VoteItemAdapter.VoteViewHolder>() {
 
     inner class VoteViewHolder(private val binding: VoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -24,7 +24,7 @@ class VoteItemAdapter(
             binding.postImage.load(voteItem.image)
 
             binding.root.setOnClickListener {
-                onClick(voteItem)
+                onClick(voteItem, voteItem.isEnded())
             }
 
             if (voteItem.participated) {

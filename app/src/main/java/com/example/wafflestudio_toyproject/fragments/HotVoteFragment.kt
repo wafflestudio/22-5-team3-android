@@ -55,7 +55,7 @@ class HotVoteFragment : Fragment() {
 
         navController = findNavController()
         // RecyclerView 설정
-        adapter = VoteItemAdapter(voteItems) { voteItem ->
+        adapter = VoteItemAdapter(voteItems) { voteItem, isEnded ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
                 putString("origin", "hotVote")

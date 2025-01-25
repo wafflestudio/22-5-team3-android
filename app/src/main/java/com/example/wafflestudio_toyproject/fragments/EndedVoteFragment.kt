@@ -55,9 +55,10 @@ class EndedVoteFragment : Fragment() {
 
         navController = findNavController()
         // RecyclerView 설정
-        adapter = VoteItemAdapter(voteItems) { voteItem ->
+        adapter = VoteItemAdapter(voteItems) { voteItem, isEnded->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
+                putString("origin", "endedVote")
             }
             navController.navigate(R.id.action_endedVoteFragment_to_endvoteDetailFragment, bundle)
         }
