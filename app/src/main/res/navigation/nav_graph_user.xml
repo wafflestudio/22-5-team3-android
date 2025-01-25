@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/userProfileFragment">
+
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.UserPage.UserProfileFragment"
+        android:label="user profile"
+        tools:layout="@layout/fragment_user_profile">
+        <action
+            android:id="@+id/action_userProfileFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_myParticipatedVotesFragment"
+            app:destination="@id/myParticipatedVotesFragment" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_myCreatedVotesFragment"
+            app:destination="@id/myCreatedVotesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.UserPage.ChangePasswordFragment"
+        android:label="change pw"
+        tools:layout="@layout/fragment_change_password">
+
+        <action
+            android:id="@+id/action_changePasswordFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myParticipatedVotesFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.UserPage.MyParticipatedVotesFragment"
+        android:label="participated votes"
+        tools:layout="@layout/fragment_my_participated_votes">
+    </fragment>
+
+    <fragment
+        android:id="@+id/myCreatedVotesFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.UserPage.MyCreatedVotesFragment"
+        android:label="created votes"
+        tools:layout="@layout/fragment_my_created_votes">
+    </fragment>
+</navigation>
