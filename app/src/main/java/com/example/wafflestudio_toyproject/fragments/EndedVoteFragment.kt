@@ -26,6 +26,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class EndedVoteFragment : Fragment() {
+    private lateinit var navController: NavController
     private var _binding: FragmentEndedvoteBinding? = null
     private val binding get() = _binding!!
 
@@ -52,8 +53,13 @@ class EndedVoteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        navController = findNavController()
         // RecyclerView 설정
         adapter = VoteItemAdapter(voteItems) { voteItem ->
+            val bundle = Bundle().apply {
+                putInt("vote_id", voteItem.id)
+            }
+            navController.navigate(R.id.action_endedVoteFragment_to_endvoteDetailFragment, bundle)
         }
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
@@ -80,7 +86,7 @@ class EndedVoteFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            voteViewModel.fetchEndedVotes()
+            voteViewModel.fetchEndedVotes(isRefreshing = true)
         }
 
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
@@ -88,6 +94,11 @@ class EndedVoteFragment : Fragment() {
                 voteItem.copy(participated = voteItem.participated ) // 사용자가 선택한 항목이 있는지 확인
             }
             adapter.updateItems(updatedVotes)
+        }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            voteViewModel.fetchEndedVotes(isRefreshing = true)
+            binding.swipeRefreshLayout.isRefreshing = false // 새로고침 완료 후 로딩 종료
         }
     }
 
