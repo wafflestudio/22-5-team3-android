@@ -80,7 +80,7 @@ class EndedVoteFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            voteViewModel.fetchEndedVotes()
+            voteViewModel.fetchEndedVotes(isRefreshing = true)
         }
 
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
@@ -88,6 +88,11 @@ class EndedVoteFragment : Fragment() {
                 voteItem.copy(participated = voteItem.participated ) // 사용자가 선택한 항목이 있는지 확인
             }
             adapter.updateItems(updatedVotes)
+        }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            voteViewModel.fetchEndedVotes(isRefreshing = true)
+            binding.swipeRefreshLayout.isRefreshing = false // 새로고침 완료 후 로딩 종료
         }
     }
 

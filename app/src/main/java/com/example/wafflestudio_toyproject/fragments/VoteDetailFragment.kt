@@ -78,7 +78,7 @@ class VoteDetailFragment : Fragment() {
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
-            navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
+            navController.navigateUp()
         }
 
         return binding.root
@@ -153,7 +153,7 @@ class VoteDetailFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                navController.navigate(R.id.action_voteDetailFragment_to_ongoingVoteFragment)
+                navController.navigateUp()
             }
         })
 
@@ -517,7 +517,7 @@ class VoteDetailFragment : Fragment() {
             .show()
     }
 
-    // 투표 선택지 색칠ㄴ
+    // 투표 선택지 색칠
     private fun updateColorBar(voteDetail: VoteDetailResponse) {
         // 뷰의 레이아웃이 완료된 후에 실행
         binding.choicesContainer.post {
