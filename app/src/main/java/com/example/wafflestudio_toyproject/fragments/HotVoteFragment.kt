@@ -55,13 +55,13 @@ class HotVoteFragment : Fragment() {
 
         navController = findNavController()
         // RecyclerView 설정
-        adapter = VoteItemAdapter(voteItems) { voteItem, isEnded ->
+        adapter = VoteItemAdapter(voteItems, { voteItem, isEnded ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
                 putString("origin", "hotVote")
             }
             navController.navigate(R.id.action_hotVoteFragment_to_voteDetailFragment, bundle)
-        }
+        }, isBackgroundFixed = false)
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
         binding.voteItemRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

@@ -11,7 +11,8 @@ import com.example.wafflestudio_toyproject.databinding.VoteItemBinding
 
 class VoteItemAdapter(
     private var voteItems: List<VoteItem>,
-    private val onClick: (VoteItem, Boolean) -> Unit
+    private val onClick: (VoteItem, Boolean) -> Unit,
+    private val isBackgroundFixed: Boolean = false
 ) : RecyclerView.Adapter<VoteItemAdapter.VoteViewHolder>() {
 
     inner class VoteViewHolder(private val binding: VoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -27,7 +28,7 @@ class VoteItemAdapter(
                 onClick(voteItem, voteItem.isEnded())
             }
 
-            if (voteItem.participated) {
+            if (voteItem.participated && !isBackgroundFixed) {
                 binding.voteCardView.setBackgroundResource(R.drawable.participate_vote)
             } else {
                 binding.voteCardView.setBackgroundResource(R.drawable.rounded_rectangle)
