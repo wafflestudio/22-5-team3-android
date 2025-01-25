@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.example.wafflestudio_toyproject.R
+import com.example.wafflestudio_toyproject.databinding.FragmentUserBinding
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteBinding
 
-
-// 투표 페이지 내비게이션 호스트
-class VoteFragment : Fragment() {
-    private var _binding: FragmentVoteBinding? = null
+// 사용자 페이지 내비게이션 호스트
+class UserFragment : Fragment() {
+    private var _binding: FragmentUserBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentVoteBinding.inflate(inflater, container, false)
+        _binding = FragmentUserBinding.inflate(inflater, container, false)
 
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 

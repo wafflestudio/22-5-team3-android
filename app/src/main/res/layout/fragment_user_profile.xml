@@ -6,10 +6,10 @@
     android:background="#FFFFFF">
 
     <TextView
-        android:id="@+id/snuVote"
+        android:id="@+id/myUserPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SNU vote"
+        android:text="User Page"
         android:textStyle="bold"
         android:textSize="20sp"
         android:layout_marginTop="12dp"
@@ -34,20 +34,157 @@
         android:layout_height='1dp'
         android:background="#CCCCCC"
         android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/myUserPage" />
+
+    <LinearLayout
+        android:id="@+id/topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="5dp"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:paddingStart="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/snuVote" />
+        app:layout_constraintTop_toBottomOf="@id/divider">
 
-    <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="로그아웃"
-        android:textSize="16sp"
-        android:padding="12dp"
-        android:backgroundTint="#FFFFFF"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="김철수"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="20dp" />
 
+        <TextView
+            android:id="@+id/userCollege"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="단과대"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="@color/gray"
+            android:layout_marginTop="3dp"/>
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="개인 정보"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:id="@+id/idSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/userIDtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="아이디"
+                android:textSize="15sp"
+              />
+
+            <TextView
+                android:id="@+id/userID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user id"
+                android:textSize="15sp"
+                android:textColor="@color/gray"
+                android:layout_marginStart="200dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/emailSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/userEmailtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이메일"
+                android:textSize="15sp"
+                />
+
+            <TextView
+                android:id="@+id/userEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user id"
+                android:textSize="15sp"
+                android:textColor="@color/gray"
+                android:layout_marginStart="200dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/passwordChangeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="비밀번호 변경"
+            android:textSize="15sp"
+            android:layout_marginTop="5dp"
+            />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/myVotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="내가 만든 투표"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            />
+
+        <TextView
+            android:id="@+id/Votes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="내가 참여한 투표"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/withdrawButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="회원 탈퇴"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            />
+
+        <TextView
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그아웃"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            />
+        
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

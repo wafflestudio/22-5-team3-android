@@ -13,7 +13,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.wafflestudio_toyproject.OngoingVoteResponse
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
@@ -56,10 +55,6 @@ class OngoingVoteFragment : Fragment() {
             navController.navigate(R.id.action_ongoingVoteFragment_to_createVoteFragment)
         }
 
-        binding.userPageIcon.setOnClickListener {
-            navController.navigate(R.id.action_ongoingVoteFragment_to_userProfileFragment)
-        }
-
         return binding.root
     }
 
@@ -86,12 +81,11 @@ class OngoingVoteFragment : Fragment() {
 
                 if (lastVisibleItemPosition >= totalItemCount - 2) {  // 마지막에서 두 번째 아이템이 보이면 로드
                     lifecycleScope.launch {
-                        voteViewModel.loadMoreVotes()
+                        voteViewModel.loadMoreOngoingVotes()
                     }
                 }
             }
         })
-
 
         // API 호출
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
@@ -99,7 +93,7 @@ class OngoingVoteFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            voteViewModel.fetchVotes()
+            voteViewModel.fetchOngoingVotes()
         }
 
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->

@@ -19,14 +19,14 @@ import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteItem
 import com.example.wafflestudio_toyproject.VoteViewModel
 import com.example.wafflestudio_toyproject.adapter.VoteItemAdapter
-import com.example.wafflestudio_toyproject.databinding.FragmentHotvoteBinding
+import com.example.wafflestudio_toyproject.databinding.FragmentEndedvoteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HotVoteFragment : Fragment() {
-    private var _binding: FragmentHotvoteBinding? = null
+class EndedVoteFragment : Fragment() {
+    private var _binding: FragmentEndedvoteBinding? = null
     private val binding get() = _binding!!
 
     @Inject
@@ -44,7 +44,7 @@ class HotVoteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHotvoteBinding.inflate(inflater, container, false)
+        _binding = FragmentEndedvoteBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -67,7 +67,7 @@ class HotVoteFragment : Fragment() {
 
                 if (lastVisibleItemPosition >= totalItemCount - 2) {  // 마지막에서 두 번째 아이템이 보이면 로드
                     lifecycleScope.launch {
-                        voteViewModel.loadMoreHotVotes()
+                        voteViewModel.loadMoreEndedVotes()
                     }
                 }
             }
@@ -80,7 +80,7 @@ class HotVoteFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            voteViewModel.fetchHotVotes()
+            voteViewModel.fetchEndedVotes()
         }
 
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->

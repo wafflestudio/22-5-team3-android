@@ -2,6 +2,7 @@ package com.example.wafflestudio_toyproject
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -23,6 +24,17 @@ interface UserApi {
 
     @POST("api/users/signin")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
+
+    @GET("api/users/me")
+    fun getMe(
+        @Header("Authorization") authorization: String
+    ): Call<GetMeResponse>
+
+    @PATCH("api/users/reset_pw")
+    fun changePassword(
+        @Header("Authorization") authorization: String,
+        @Body changePasswordRequest: ChangePasswordRequest
+    ): Call<ResponseBody>
 }
 
 interface AuthApi {
@@ -46,11 +58,12 @@ interface VoteApi {
         @Part("create_vote_json") createVoteJson: RequestBody
     ): Call<CreateVoteResponse>
 
-    @GET("/api/votes/ongoing_list")
-    fun getOngoingVotes(
+    @GET("/api/votes/list")
+    fun getVotes(
         @Query("start_cursor") startCursor: String? = null,
+        @Query("category") category: String? = null,
         @Header("Authorization") token: String
-    ): Call<OngoingVoteResponse>
+    ): Call<VoteListResponse>
 
     @GET("/api/votes/{vote_id}")
     fun getVoteDetails(
@@ -114,6 +127,12 @@ data class CreateVoteRequest(
     val choices: List<String>
 )
 
+data class ChangePasswordRequest(
+    val current_password: String,
+    val new_password: String,
+    val confirm_new_password: String
+)
+
 // 응답 데이터 클래스
 data class SignupResponse(
     val id: String,
@@ -164,7 +183,7 @@ data class VoteDetailResponse(
     val create_datetime: String,
     val end_datetime: String,
     val images: List<String>,
-    val participantCount: Int
+    val participant_count: Int
 ){
     data class Choice(
         val choice_id: Int,
@@ -218,7 +237,7 @@ data class VoteDetailResponse(
     }
 }
 
-data class OngoingVoteResponse(
+data class VoteListResponse(
     val votes_list: List<VoteItem>,
     val has_next: Boolean,
     val next_cursor: String?
@@ -232,7 +251,7 @@ data class VoteItem(
     val end_datetime: String,
     val participated: Boolean,
     val image: String?,
-    val participantCount: Int
+    val participant_count: Int
 ) {
     fun calculateTimeRemaining(): String {
         return try {
@@ -264,6 +283,13 @@ data class ParticipationRequest(
 
 data class CommentRequest(
     val content: String
+)
+
+data class GetMeResponse(
+    val name: String,
+    val userid: String,
+    val email: String,
+    val college: Int
 )
 
 

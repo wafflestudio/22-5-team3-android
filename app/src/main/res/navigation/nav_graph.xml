@@ -15,9 +15,6 @@
         <action
             android:id="@+id/action_ongoingVoteFragment_to_voteDetailFragment"
             app:destination="@id/voteDetailFragment" />
-        <action
-            android:id="@+id/action_ongoingVoteFragment_to_userProfileFragment"
-            app:destination="@id/userProfileFragment" />
     </fragment>
 
     <fragment
@@ -52,12 +49,4 @@
             android:id="@+id/action_voteParticipantsDetailFragment_to_voteDetailFragment"
             app:destination="@id/voteDetailFragment"/>
 
-    <fragment
-        android:id="@+id/userProfileFragment"
-        android:name="com.example.wafflestudio_toyproject.fragments.UserProfileFragment"
-        android:label="Create Vote" >
-        <action
-            android:id="@+id/action_userProfileFragment_to_ongoingVoteFragment"
-            app:destination="@id/ongoingVoteFragment" />
-    </fragment>
 </navigation>
