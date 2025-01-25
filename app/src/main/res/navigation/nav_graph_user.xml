@@ -36,6 +36,10 @@
         android:name="com.example.wafflestudio_toyproject.fragments.UserPage.MyParticipatedVotesFragment"
         android:label="participated votes"
         tools:layout="@layout/fragment_my_participated_votes">
+
+        <action
+            android:id="@+id/action_myParticipatedVotesFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
     </fragment>
 
     <fragment
@@ -43,5 +47,9 @@
         android:name="com.example.wafflestudio_toyproject.fragments.UserPage.MyCreatedVotesFragment"
         android:label="created votes"
         tools:layout="@layout/fragment_my_created_votes">
+
+        <action
+            android:id="@+id/action_myCreatedVotesFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
     </fragment>
 </navigation>

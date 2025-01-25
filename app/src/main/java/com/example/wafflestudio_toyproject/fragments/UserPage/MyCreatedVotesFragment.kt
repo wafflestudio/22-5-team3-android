@@ -17,6 +17,7 @@ import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteItem
 import com.example.wafflestudio_toyproject.VoteViewModel
 import com.example.wafflestudio_toyproject.adapter.VoteItemAdapter
+import com.example.wafflestudio_toyproject.databinding.FragmentMyCreatedVotesBinding
 import com.example.wafflestudio_toyproject.databinding.FragmentOngoingvoteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MyCreatedVotesFragment : Fragment() {
     private lateinit var navController: NavController
-    private var _binding: FragmentOngoingvoteBinding? = null
+    private var _binding: FragmentMyCreatedVotesBinding? = null
     private val binding get() = _binding!!
 
     @Inject
@@ -43,11 +44,11 @@ class MyCreatedVotesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentOngoingvoteBinding.inflate(inflater, container, false)
+        _binding = FragmentMyCreatedVotesBinding.inflate(inflater, container, false)
 
-        // 투표 생성 페이지 연결
-        binding.createVoteIcon.setOnClickListener {
-            navController.navigate(R.id.action_ongoingVoteFragment_to_createVoteFragment)
+        // 뒤로가기 버튼
+        binding.backButton.setOnClickListener {
+            navController.navigate(R.id.action_myCreatedVotesFragment_to_userProfileFragment)
         }
 
         return binding.root
@@ -61,7 +62,7 @@ class MyCreatedVotesFragment : Fragment() {
         adapter = VoteItemAdapter(voteItems) { voteItem ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
-                putString("origin", "ongoingVote")
+                putString("origin", "createdVote")
             }
             navController.navigate(R.id.action_ongoingVoteFragment_to_voteDetailFragment, bundle)
         }
@@ -89,7 +90,7 @@ class MyCreatedVotesFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            voteViewModel.fetchOngoingVotes(isRefreshing = true)
+            voteViewModel.fetchCreatedVotes(isRefreshing = true)
         }
 
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
@@ -100,7 +101,7 @@ class MyCreatedVotesFragment : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            voteViewModel.fetchOngoingVotes(isRefreshing = true)
+            voteViewModel.fetchCreatedVotes(isRefreshing = true)
             binding.swipeRefreshLayout.isRefreshing = false // 새로고침 완료 후 로딩 종료
         }
     }

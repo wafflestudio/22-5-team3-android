@@ -95,6 +95,29 @@ class VoteViewModel @Inject constructor(
         }
     }
 
+    fun fetchCreatedVotes(isRefreshing: Boolean = false) {
+        if (isLoading) return  // 이미 요청 중이면 중복 요청 방지
+        isLoading = true
+
+        if (isRefreshing) {
+            nextCursorEnded = null
+        }
+
+        voteRepository.getVotes("made", nextCursorEnded).observeForever { response ->
+            response?.let {
+                val updatedList = if (isRefreshing) {
+                    it.votes_list
+                } else {
+                    (_allVotes.value?.toMutableList() ?: mutableListOf()) + it.votes_list
+                }
+
+                _allVotes.value = updatedList.distinctBy { vote -> vote.id }  // 중복 제거
+                nextCursorEnded = if (it.has_next) it.next_cursor else null
+            }
+            isLoading = false
+        }
+    }
+
     // 다음 페이지 요청
     fun loadMoreEndedVotes() {
         nextCursorEnded?.let { fetchEndedVotes() }

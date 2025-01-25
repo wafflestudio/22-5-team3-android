@@ -46,9 +46,9 @@ class MyParticipatedVotesFragment : Fragment() {
     ): View {
         _binding = FragmentMyParticipatedVotesBinding.inflate(inflater, container, false)
 
-        // 투표 생성 페이지 연결
-        binding.createVoteIcon.setOnClickListener {
-            navController.navigate(R.id.action_ongoingVoteFragment_to_createVoteFragment)
+        // 뒤로가기 버튼
+        binding.backButton.setOnClickListener {
+            navController.navigate(R.id.action_myParticipatedVotesFragment_to_userProfileFragment)
         }
 
         return binding.root

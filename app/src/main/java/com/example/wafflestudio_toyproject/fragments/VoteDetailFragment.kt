@@ -597,6 +597,8 @@ class VoteDetailFragment : Fragment() {
         when (origin) {
             "hotVote" -> navController.popBackStack(R.id.hotVoteFragment, false) // 핫 투표에서 온 경우
             "ongoingVote" -> navController.popBackStack(R.id.ongoingVoteFragment, false) // 진행 중인 투표에서 온 경우
+            "participatedVote" -> navController.popBackStack(R.id.myParticipatedVotesFragment, false) // 내가 참여한 투표에서 온 경우
+            "createdVote" -> navController.popBackStack(R.id.myCreatedVotesFragment, false) // 내가 만든 투표에서 온 경우
             else -> navController.navigateUp()
         }
     }
