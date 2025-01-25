@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/endedVoteFragment"
+    android:id="@+id/nav_graph_endedvote">
+
+    <fragment
+        android:id="@+id/endedVoteFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.EndedVoteFragment"
+        android:label="Hot Vote"
+        tools:layout="@layout/fragment_hotvote">
+        <action
+            android:id="@+id/action_endedVoteFragment_to_endvoteDetailFragment"
+            app:destination="@id/endvoteDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/endvoteDetailFragment"
+        android:name="com.example.wafflestudio_toyproject.fragments.EndvoteDetailFragment"
+        android:label="Create Vote">
+        <argument
+            android:name="vote_id"
+            app:argType="integer" />
+    </fragment>
+
+</navigation>

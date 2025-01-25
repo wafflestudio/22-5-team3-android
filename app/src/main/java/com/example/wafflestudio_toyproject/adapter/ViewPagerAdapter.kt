@@ -3,7 +3,7 @@ package com.example.wafflestudio_toyproject.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.wafflestudio_toyproject.fragments.EndedVoteFragment
+import com.example.wafflestudio_toyproject.fragments.EndedVoteFragmentHost
 import com.example.wafflestudio_toyproject.fragments.HotVoteFragmentHost
 import com.example.wafflestudio_toyproject.fragments.UserFragment
 import com.example.wafflestudio_toyproject.fragments.OngoingVoteFragmentHost
@@ -18,7 +18,7 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
         return when (position) {
             0 -> OngoingVoteFragmentHost()
             1 -> HotVoteFragmentHost()
-            2 -> EndedVoteFragment()
+            2 -> EndedVoteFragmentHost()
             3 -> UserFragment()
 
             else -> throw IllegalStateException("Unexpected position $position")
