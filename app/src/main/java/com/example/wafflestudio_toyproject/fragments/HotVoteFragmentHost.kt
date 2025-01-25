@@ -5,23 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
-import com.example.wafflestudio_toyproject.R
-import com.example.wafflestudio_toyproject.databinding.FragmentVoteBinding
+import com.example.wafflestudio_toyproject.databinding.FragmentHotvoteHostBinding
 
-
-// 투표 페이지 내비게이션 호스트
-class VoteFragment : Fragment() {
-    private var _binding: FragmentVoteBinding? = null
+class HotVoteFragmentHost : Fragment() {
+    private var _binding: FragmentHotvoteHostBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentVoteBinding.inflate(inflater, container, false)
-
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        _binding = FragmentHotvoteHostBinding.inflate(inflater, container, false)
 
         return binding.root
     }

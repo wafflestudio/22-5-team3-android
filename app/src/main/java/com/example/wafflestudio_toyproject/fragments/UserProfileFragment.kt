@@ -96,7 +96,7 @@ class UserProfileFragment : Fragment() {
                         binding.userName.text = userInfo.name
                         binding.userID.text = userInfo.userid
                         binding.userEmail.text = userInfo.email
-                        binding.userCollege.text = colleges[userInfo.college]
+                        binding.userCollege.text = colleges[userInfo.college-1]
 
                         Log.d("getme", "name: ${userInfo.name}, id: ${userInfo.userid}, email: ${userInfo.email}, college: ${userInfo.college}")
                     }
