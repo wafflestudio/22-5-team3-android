@@ -181,7 +181,7 @@ class CreateVoteFragment : Fragment() {
         val errorMessage = when {
             title.isEmpty() || title.length > 100 -> "Title must be between 1 and 100 characters."
             content.isEmpty() || content.length > 200 -> "Content must be between 1 and 200 characters."
-            participationCodeRequired && (participationCode.isNullOrEmpty() || participationCode.length != 6) -> "Participation code must be 6 characters."
+            participationCodeRequired && (participationCode.isNullOrEmpty() || participationCode.length != 6 || participationCode.contains(" ")) -> "Participation code must be 6 characters."
             choices.isEmpty() -> "At least one choice is required."
             binding.deadlineDate.text.isNullOrEmpty() || binding.deadlineTime.text.isNullOrEmpty() -> "Date and Time must not be empty."
             else -> null
