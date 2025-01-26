@@ -22,6 +22,7 @@ databindingCompilerCommon = "8.8.0"
 coil = "2.4.0"
 glide = "4.16.0"
 circleindicator = "2.1.6"
+kakao-sdk = "2.18.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,7 @@ coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 circleindicator = { module = "me.relex:circleindicator", version.ref = "circleindicator"}
+kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao-sdk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

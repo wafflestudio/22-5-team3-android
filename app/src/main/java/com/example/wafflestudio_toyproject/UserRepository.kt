@@ -1,6 +1,7 @@
 package com.example.wafflestudio_toyproject
 
 import android.content.SharedPreferences
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -90,5 +91,40 @@ class UserRepository @Inject constructor(
 
     fun getAccessToken(): String? {
         return sharedPreferences.getString("access_token", null)
+    }
+
+
+    fun linkKakaoAccount(authToken: String, kakaoAccessToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.linkKakaoAccount("Bearer $authToken", kakaoAccessToken).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onError("서버 오류 발생")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                onError("네트워크 오류")
+            }
+        })
+    }
+
+    fun loginWithKakao(accessToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.loginWithKakao(accessToken).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    onSuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    onError("서버 로그인 실패")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                onError("네트워크 오류")
+            }
+        })
     }
 }
