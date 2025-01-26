@@ -22,6 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
+import com.kakao.sdk.user.UserApiClient
 
 @AndroidEntryPoint
 class UserProfileFragment : Fragment() {
@@ -60,6 +61,8 @@ class UserProfileFragment : Fragment() {
         binding.participatedVotes.setOnClickListener {
             navController.navigate(R.id.action_userProfileFragment_to_myParticipatedVotesFragment)
         }
+
+        binding.kakaoButton.setOnClickListener { linkKakaoAccount() }
 
         return binding.root
     }
@@ -104,7 +107,7 @@ class UserProfileFragment : Fragment() {
                         binding.userName.text = userInfo.name
                         binding.userID.text = userInfo.userid
                         binding.userEmail.text = userInfo.email
-                        binding.userCollege.text = colleges[userInfo.college]
+                        binding.userCollege.text = colleges[userInfo.college-1]
 
                         Log.d("getme", "name: ${userInfo.name}, id: ${userInfo.userid}, email: ${userInfo.email}, college: ${userInfo.college}")
                     }
@@ -117,6 +120,28 @@ class UserProfileFragment : Fragment() {
                 Toast.makeText(requireContext(), "네트워크 에러: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun linkKakaoAccount() {
+        UserApiClient.instance.loginWithKakaoAccount(requireContext()) { token, error ->
+            if (error != null) {
+                Log.e("KakaoLink", "카카오 계정 연동 실패", error)
+                Toast.makeText(requireContext(), "카카오 계정 연동 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+            } else if (token != null) {
+                Log.d("KakaoLink", "카카오 로그인 성공! 액세스 토큰: ${token.accessToken}")
+
+                val existingToken = userRepository.getAccessToken()
+
+                userRepository.linkKakaoAccount(existingToken!!, token.accessToken,
+                    onSuccess = {
+                        Toast.makeText(requireContext(), "카카오 계정 연동 성공!", Toast.LENGTH_SHORT).show()
+                    },
+                    onError = { message ->
+                        Toast.makeText(requireContext(), "계정 연동 실패: $message", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
     }
 
     override fun onDestroyView() {

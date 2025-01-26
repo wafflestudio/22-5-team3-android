@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wafflestudio_toyproject.databinding.ActivityLoginBinding
+import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -56,6 +57,27 @@ class LoginActivity : AppCompatActivity() {
                 login(username, password)
             } else {
                 Toast.makeText(this, "모든 항목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.kakaoButton.setOnClickListener {
+            UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
+                if (error != null) {
+                    Log.e("KakaoLogin", "카카오 로그인 실패", error)
+                    Toast.makeText(this, "카카오 로그인 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+                } else if (token != null) {
+                    Log.d("KakaoLogin", "카카오 로그인 성공! 액세스 토큰: ${token.accessToken}")
+
+                    userRepository.loginWithKakao(token.accessToken,
+                        onSuccess = {
+                            Toast.makeText(this, "카카오 로그인 성공!", Toast.LENGTH_SHORT).show()
+                            navigateToMainScreen()
+                        },
+                        onError = { message ->
+                            Toast.makeText(this, "로그인 실패: $message", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
             }
         }
     }
