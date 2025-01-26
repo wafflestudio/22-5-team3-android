@@ -1,26 +1,20 @@
 package com.example.wafflestudio_toyproject.fragments
 
 import android.app.AlertDialog
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
@@ -30,10 +24,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.example.wafflestudio_toyproject.CommentRequest
-
-import com.example.wafflestudio_toyproject.ParticipationRequest
-
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.VoteApi
@@ -41,18 +31,14 @@ import com.example.wafflestudio_toyproject.VoteDetailResponse
 import com.example.wafflestudio_toyproject.VoteDetailViewModel
 import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
 import com.example.wafflestudio_toyproject.adapter.ImageSliderAdapter
-import com.example.wafflestudio_toyproject.databinding.FragmentVoteDetailBinding
-import com.google.android.material.tabs.TabLayoutMediator
+import com.example.wafflestudio_toyproject.databinding.FragmentEndvoteDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 @AndroidEntryPoint
-class VoteDetailFragment : Fragment() {
+class EndvoteDetailFragment : Fragment() {
     private lateinit var navController: NavController
-    private var _binding: FragmentVoteDetailBinding? = null
+    private var _binding: FragmentEndvoteDetailBinding? = null
     private val binding get() = _binding!!
 
     @Inject
@@ -74,7 +60,7 @@ class VoteDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentVoteDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentEndvoteDetailBinding.inflate(inflater, container, false)
 
         // 뒤로가기 버튼
         binding.backButton.setOnClickListener {
@@ -113,28 +99,10 @@ class VoteDetailFragment : Fragment() {
 
         viewModel.voteResult.observe(viewLifecycleOwner) { result ->
             result.onSuccess { updatedVoteDetail ->
-                val hasParticipated = updatedVoteDetail.choices.any { it.participated }
-
-                if (hasParticipated) {
-                    Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
-                    binding.voteButton.text = "다시 투표하기"
-                } else {
-                    Toast.makeText(requireContext(), "투표가 취소되었습니다.", Toast.LENGTH_SHORT).show()
-                    binding.voteButton.text = "투표하기"
-                }
-                Toast.makeText(requireContext(), "투표에 성공적으로 참여했습니다!", Toast.LENGTH_SHORT).show()
-
                 binding.errorTextView.visibility = View.GONE
-                updateColorBar(updatedVoteDetail) // 선택지 배경 색칠
-                fetchVoteDetails(voteId) // UI 업데이트
-                binding.voteButton.text = "다시 투표하기"
+                updateColorBar(updatedVoteDetail)
+                fetchVoteDetails(voteId)
             }.onFailure { error ->
-                if (error.message == "Forbidden") {
-                    binding.errorTextView.text = "참여 코드가 틀렸습니다."
-                    binding.errorTextView.visibility = View.VISIBLE
-                } else {
-                    Toast.makeText(requireContext(), "투표 참여 실패: ${error.message}", Toast.LENGTH_SHORT).show()
-                }
             }
         }
 
@@ -238,15 +206,9 @@ class VoteDetailFragment : Fragment() {
 
         val hasParticipated = voteDetail.choices.any { it.participated }
 
-        if (hasParticipated) { // 투표 여부를 서버에서 반환하는 경우
-            binding.voteButton.text = "다시 투표하기"
-        } else {
-            binding.voteButton.text = "투표하기"
-        }
 
         binding.participantCount.text = "${voteDetail.participant_count}명 참여"
-        if (hasParticipated)
-            binding.participantCount.visibility = View.VISIBLE
+        binding.participantCount.visibility = View.VISIBLE
 
         // 참여자 목록으로 이동
         binding.participantCount.setOnClickListener {
@@ -268,24 +230,20 @@ class VoteDetailFragment : Fragment() {
                 putParcelableArrayList("choices", choicesBundle)
 
                 putInt("vote_id", voteId)
-                putString("origin", "ongoing")
+                putString("origin", "ended")
             }
 
             navController.navigate(
-                R.id.action_voteDetailFragment_to_voteParticipantsDetailFragment,
+                R.id.action_endvoteDetailFragment_to_voteParticipantsDetailFragment,
                 bundle
             )
         }
-        startTrackingTime(voteDetail)
 
         viewModel.setInitialChoices(voteDetail.choices)
         // 기존 선택지 제거 (중복 방지)
         binding.choicesContainer.removeAllViews()
 
-        if (voteDetail.realtime_result) {
-            Log.d("updateColorBar", "Updating color bar in displayVoteDetails")
-            updateColorBar(voteDetail)
-        }
+        updateColorBar(voteDetail)
 
         // 투표 선택지 표시하기
         voteDetail.choices.forEach { choice ->
@@ -299,90 +257,18 @@ class VoteDetailFragment : Fragment() {
             choiceLayout.tag = choice.choice_id // 선택지 ID 저장
             choiceText.text = choice.choice_content
 
-            // 선택 상태 UI 반영
-            viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
-                val isSelected = selectedChoices.contains(choice.choice_id)
-                checkCircle.isSelected = isSelected
-                checkIcon.setColorFilter(
-                    if (isSelected) resources.getColor(R.color.selected_icon_color, null)
-                    else resources.getColor(R.color.unselected_icon_color, null)
-                )
+            if (choice.participated) {
+                checkCircle.isSelected = true
+                checkIcon.setColorFilter(resources.getColor(R.color.selected_icon_color, null))
             }
 
-            // 클릭 이벤트 → ViewModel에 선택 상태 변경 요청
-            checkCircle.setOnClickListener {
-                viewModel.toggleChoice(choice.choice_id, voteDetail.multiple_choice)
-            }
+            checkCircle.isClickable = false
+            checkIcon.isClickable = false
+            choiceText.isClickable = false
 
             binding.choicesContainer.addView(choiceLayout)
         }
 
-        fun showParticipationCodeDialog(onCodeEntered: (String) -> Unit) {
-            val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_participation_code, null)
-            val codeInput = dialogView.findViewById<EditText>(R.id.participationCodeInput)
-
-            AlertDialog.Builder(requireContext())
-                .setView(dialogView)
-                .setPositiveButton("확인") { _, _ ->
-                    val enteredCode = codeInput.text.toString()
-                    if (enteredCode.isNotEmpty()) {
-                        onCodeEntered(enteredCode)
-                    } else {
-                        binding.errorTextView.text = "참여 코드를 입력하세요."
-                        binding.errorTextView.visibility = View.VISIBLE
-                    }
-                }
-                .create()
-                .show()
-        }
-
-        // voteButton 클릭 이벤트 추가
-        viewModel.selectedChoices.observe(viewLifecycleOwner) { selectedChoices ->
-            val hasParticipated = viewModel.hasParticipated.value ?: false
-            binding.voteButton.setOnClickListener {
-                val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
-
-                if (selectedChoices.isEmpty()) {
-                    if (hasParticipated) {
-                        AlertDialog.Builder(requireContext())
-                            .setMessage("투표 참여를 취소하시겠습니까?")
-                            .setPositiveButton("예") { _, _ ->
-                                if (voteDetail.participation_code_required) {
-                                    showParticipationCodeDialog { enteredCode ->
-                                        viewModel.performVote(voteId, accessToken, emptyList(), enteredCode)
-                                    }
-                                } else {
-                                    viewModel.performVote(voteId, accessToken, emptyList(), null)
-                                }
-                            }
-                            .setNegativeButton("아니요", null)
-                            .create()
-                            .show()
-                    } else {
-                        binding.errorTextView.text = "투표 항목을 선택해주세요."
-                        binding.errorTextView.visibility = View.VISIBLE
-                    }
-                } else {
-                    binding.errorTextView.visibility = View.GONE
-                    binding.voteButton.setOnClickListener {
-                        if (selectedChoices.isEmpty()) {
-                            binding.errorTextView.text = "투표 항목을 선택해주세요."
-                            binding.errorTextView.visibility = View.VISIBLE
-                        } else {
-                            binding.errorTextView.visibility = View.GONE
-                            val accessToken = userRepository.getAccessToken() ?: return@setOnClickListener
-                            if (voteDetail.participation_code_required) {
-                                showParticipationCodeDialog { enteredCode ->
-                                    viewModel.performVote(voteId, accessToken, selectedChoices.toList(), enteredCode)
-                                }
-                            } else {
-                                viewModel.performVote(voteId, accessToken, selectedChoices.toList(), null)
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         binding.postCommentButton.setOnClickListener {
             val content = binding.commentEditText.text.toString()
@@ -532,6 +418,7 @@ class VoteDetailFragment : Fragment() {
 
                     if (choice != null) {
                         val participants = choice.choice_num_participants ?: 0
+                        Log.d("VoteDetailFragment", "Participant Count: ${choice.choice_num_participants}")
                         val ratio = if (totalParticipants > 0) participants.toFloat() / totalParticipants else 0f
 
                         // 비율에 따라 막대 너비 계산
@@ -554,37 +441,6 @@ class VoteDetailFragment : Fragment() {
         }
     }
 
-    private val handler = android.os.Handler(Looper.getMainLooper())
-    private lateinit var runnable: Runnable
-
-    private fun startTrackingTime(voteDetail: VoteDetailResponse) {
-        runnable = Runnable {
-            val timeRemaining = voteDetail.calculateTimeRemaining()
-            binding.voteTimeRemaining.text = timeRemaining
-
-            // 투표 종료 상태 확인
-            val isVoteClosed = timeRemaining == "종료됨"
-            binding.voteButton.isEnabled = !isVoteClosed
-
-            // 종료 시 오류 메시지
-            if (isVoteClosed) {
-                binding.errorTextView.text = "투표가 종료되었습니다."
-                binding.errorTextView.visibility = View.VISIBLE
-            }
-
-            // 1초마다 업데이트
-            if (!isVoteClosed) {
-                handler.postDelayed(runnable, 1000)
-            }
-        }
-
-        handler.post(runnable)
-    }
-
-    private fun stopTrackingTime() {
-        handler.removeCallbacks(runnable)
-    }
-
     private fun navigateBack() {
         val origin = arguments?.getString("origin")
         Log.d("VoteDetailFragment", "From $origin")
@@ -595,17 +451,16 @@ class VoteDetailFragment : Fragment() {
         }
 
         when (origin) {
-            "hotVote" -> navController.popBackStack(R.id.hotVoteFragment, false) // 핫 투표에서 온 경우
-            "ongoingVote" -> navController.popBackStack(R.id.ongoingVoteFragment, false) // 진행 중인 투표에서 온 경우
+            "endedVote" -> navController.popBackStack(R.id.hotVoteFragment, false) // 핫 투표에서 온 경우
             "participatedVote" -> navController.popBackStack(R.id.myParticipatedVotesFragment, false) // 내가 참여한 투표에서 온 경우
             "createdVote" -> navController.popBackStack(R.id.myCreatedVotesFragment, false) // 내가 만든 투표에서 온 경우
             else -> navController.navigateUp()
         }
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
-        stopTrackingTime()
         _binding = null
     }
 }

@@ -1,4 +1,4 @@
-package com.example.wafflestudio_toyproject.fragments
+package com.example.wafflestudio_toyproject.fragments.UserPage
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.databinding.FragmentUserBinding
-import com.example.wafflestudio_toyproject.databinding.FragmentVoteBinding
 
 // 사용자 페이지 내비게이션 호스트
 class UserFragment : Fragment() {

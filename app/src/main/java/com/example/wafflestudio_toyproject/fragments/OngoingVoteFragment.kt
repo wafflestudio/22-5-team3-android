@@ -63,12 +63,13 @@ class OngoingVoteFragment : Fragment() {
         navController = findNavController()
 
         // RecyclerView 설정
-        adapter = VoteItemAdapter(voteItems) { voteItem ->
+        adapter = VoteItemAdapter(voteItems, { voteItem, isEnded ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
+                putString("origin", "ongoingVote")
             }
             navController.navigate(R.id.action_ongoingVoteFragment_to_voteDetailFragment, bundle)
-        }
+        }, isBackgroundFixed = false)
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
         binding.voteItemRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -93,7 +94,7 @@ class OngoingVoteFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            voteViewModel.fetchOngoingVotes()
+            voteViewModel.fetchOngoingVotes(isRefreshing = true)
         }
 
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
@@ -102,7 +103,13 @@ class OngoingVoteFragment : Fragment() {
             }
             adapter.updateItems(updatedVotes)
         }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            voteViewModel.fetchOngoingVotes(isRefreshing = true)
+            binding.swipeRefreshLayout.isRefreshing = false // 새로고침 완료 후 로딩 종료
+        }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

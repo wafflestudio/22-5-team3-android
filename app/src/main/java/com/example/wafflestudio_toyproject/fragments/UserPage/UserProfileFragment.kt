@@ -1,4 +1,4 @@
-package com.example.wafflestudio_toyproject.fragments
+package com.example.wafflestudio_toyproject.fragments.UserPage
 
 import android.content.Context
 import android.content.Intent
@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -17,7 +16,6 @@ import com.example.wafflestudio_toyproject.LoginActivity
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserApi
 import com.example.wafflestudio_toyproject.UserRepository
-import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.databinding.FragmentUserProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
@@ -51,6 +49,16 @@ class UserProfileFragment : Fragment() {
         // 비밀번호 변경 버튼 클릭 리스너
         binding.passwordChangeButton.setOnClickListener {
             navController.navigate(R.id.action_userProfileFragment_to_changePasswordFragment)
+        }
+
+        // 내가 만든 투표 클릭 리스너
+        binding.createdVotes.setOnClickListener {
+            navController.navigate(R.id.action_userProfileFragment_to_myCreatedVotesFragment)
+        }
+        
+        // 내가 참여한 투표 클릭 리스너
+        binding.participatedVotes.setOnClickListener {
+            navController.navigate(R.id.action_userProfileFragment_to_myParticipatedVotesFragment)
         }
 
         return binding.root

@@ -73,13 +73,23 @@ class VoteParticipantsDetailFragment : Fragment() {
     }
 
     private fun navigateBack() {
+        val origin = arguments?.getString("origin")
+
         val bundle = Bundle().apply {
             putInt("vote_id", voteId) // voteId를 다시 전달
         }
-        navController.navigate(
-            R.id.action_voteParticipantsDetailFragment_to_voteDetailFragment,
-            bundle
-        )
+
+        when (origin) {
+            "ongoing" -> navController.navigate(
+                R.id.action_voteParticipantsDetailFragment_to_voteDetailFragment,
+                bundle
+            ) // 진행중인 투표에서 온 경우
+            "ended" -> navController.navigate(
+                R.id.action_voteParticipantsDetailFragment_to_endvoteDetailFragment,
+                bundle
+            ) // 진행 중인 투표에서 온 경우
+            else -> navController.navigateUp()
+        }
     }
 
     override fun onDestroyView() {
