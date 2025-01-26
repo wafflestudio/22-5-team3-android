@@ -206,7 +206,6 @@ class EndvoteDetailFragment : Fragment() {
 
         val hasParticipated = voteDetail.choices.any { it.participated }
 
-
         binding.participantCount.text = "${voteDetail.participant_count}명 참여"
         binding.participantCount.visibility = View.VISIBLE
 
@@ -451,13 +450,12 @@ class EndvoteDetailFragment : Fragment() {
         }
 
         when (origin) {
-            "endedVote" -> navController.popBackStack(R.id.hotVoteFragment, false) // 핫 투표에서 온 경우
+            "endedVote" -> navController.popBackStack(R.id.endedVoteFragment, false) // 핫 투표에서 온 경우
             "participatedVote" -> navController.popBackStack(R.id.myParticipatedVotesFragment, false) // 내가 참여한 투표에서 온 경우
             "createdVote" -> navController.popBackStack(R.id.myCreatedVotesFragment, false) // 내가 만든 투표에서 온 경우
             else -> navController.navigateUp()
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
