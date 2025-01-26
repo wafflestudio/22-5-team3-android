@@ -21,10 +21,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.wafflestudio_toyproject.CreateVoteRequest
-import com.example.wafflestudio_toyproject.CreateVoteResponse
+import com.example.wafflestudio_toyproject.network.CreateVoteRequest
+import com.example.wafflestudio_toyproject.network.CreateVoteResponse
 import com.example.wafflestudio_toyproject.R
-import com.example.wafflestudio_toyproject.VoteApi
+import com.example.wafflestudio_toyproject.network.VoteApi
 import com.example.wafflestudio_toyproject.adapter.SelectedImagesAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentCreateVoteBinding
 import com.google.gson.Gson

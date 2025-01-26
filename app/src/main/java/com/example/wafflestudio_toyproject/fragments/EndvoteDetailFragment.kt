@@ -2,14 +2,12 @@ package com.example.wafflestudio_toyproject.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -26,8 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
-import com.example.wafflestudio_toyproject.VoteApi
-import com.example.wafflestudio_toyproject.VoteDetailResponse
+import com.example.wafflestudio_toyproject.network.VoteApi
+import com.example.wafflestudio_toyproject.network.VoteDetailResponse
 import com.example.wafflestudio_toyproject.VoteDetailViewModel
 import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
 import com.example.wafflestudio_toyproject.adapter.ImageSliderAdapter

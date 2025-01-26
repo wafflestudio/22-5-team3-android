@@ -13,12 +13,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
-import com.example.wafflestudio_toyproject.VoteApi
-import com.example.wafflestudio_toyproject.VoteItem
+import com.example.wafflestudio_toyproject.network.VoteApi
+import com.example.wafflestudio_toyproject.network.VoteItem
 import com.example.wafflestudio_toyproject.VoteViewModel
 import com.example.wafflestudio_toyproject.adapter.VoteItemAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentMyParticipatedVotesBinding
-import com.example.wafflestudio_toyproject.databinding.FragmentOngoingvoteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
