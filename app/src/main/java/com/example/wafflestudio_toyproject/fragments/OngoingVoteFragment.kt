@@ -63,13 +63,13 @@ class OngoingVoteFragment : Fragment() {
         navController = findNavController()
 
         // RecyclerView 설정
-        adapter = VoteItemAdapter(voteItems) { voteItem ->
+        adapter = VoteItemAdapter(voteItems, { voteItem, isEnded ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
                 putString("origin", "ongoingVote")
             }
             navController.navigate(R.id.action_ongoingVoteFragment_to_voteDetailFragment, bundle)
-        }
+        }, isBackgroundFixed = false)
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
         binding.voteItemRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

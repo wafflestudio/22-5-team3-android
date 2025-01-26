@@ -1,15 +1,13 @@
-package com.example.wafflestudio_toyproject.fragments
+package com.example.wafflestudio_toyproject.fragments.UserPage
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,15 +17,16 @@ import com.example.wafflestudio_toyproject.VoteApi
 import com.example.wafflestudio_toyproject.VoteItem
 import com.example.wafflestudio_toyproject.VoteViewModel
 import com.example.wafflestudio_toyproject.adapter.VoteItemAdapter
-import com.example.wafflestudio_toyproject.databinding.FragmentHotvoteBinding
+import com.example.wafflestudio_toyproject.databinding.FragmentMyParticipatedVotesBinding
+import com.example.wafflestudio_toyproject.databinding.FragmentOngoingvoteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HotVoteFragment : Fragment() {
+class MyParticipatedVotesFragment : Fragment() {
     private lateinit var navController: NavController
-    private var _binding: FragmentHotvoteBinding? = null
+    private var _binding: FragmentMyParticipatedVotesBinding? = null
     private val binding get() = _binding!!
 
     @Inject
@@ -45,23 +44,32 @@ class HotVoteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHotvoteBinding.inflate(inflater, container, false)
+        _binding = FragmentMyParticipatedVotesBinding.inflate(inflater, container, false)
+
+        // 뒤로가기 버튼
+        binding.backButton.setOnClickListener {
+            navController.navigate(R.id.action_myParticipatedVotesFragment_to_userProfileFragment)
+        }
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         navController = findNavController()
+
         // RecyclerView 설정
         adapter = VoteItemAdapter(voteItems, { voteItem, isEnded ->
             val bundle = Bundle().apply {
                 putInt("vote_id", voteItem.id)
-                putString("origin", "hotVote")
+                putString("origin", "participatedVote")
             }
-            navController.navigate(R.id.action_hotVoteFragment_to_voteDetailFragment, bundle)
-        }, isBackgroundFixed = false)
+            if (isEnded) {
+                navController.navigate(R.id.action_myParticipatedVotesFragment_to_endvoteDetailFragment, bundle)
+            } else {
+                navController.navigate(R.id.action_myParticipatedVotesFragment_to_voteDetailFragment, bundle)
+            }
+        }, isBackgroundFixed = true)
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
         binding.voteItemRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -74,12 +82,11 @@ class HotVoteFragment : Fragment() {
 
                 if (lastVisibleItemPosition >= totalItemCount - 2) {  // 마지막에서 두 번째 아이템이 보이면 로드
                     lifecycleScope.launch {
-                        voteViewModel.loadMoreHotVotes()
+                        voteViewModel.loadMoreOngoingVotes()
                     }
                 }
             }
         })
-
 
         // API 호출
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
@@ -87,18 +94,18 @@ class HotVoteFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            voteViewModel.fetchHotVotes(isRefreshing = true)
+            voteViewModel.fetchParticipatedVotes(isRefreshing = true)
         }
 
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
             val updatedVotes = allVotes.map { voteItem ->
-                voteItem.copy(participated = voteItem.participated ) // 사용자가 선택한 항목이 있는지 확인
+                voteItem.copy(participated = voteItem.participated) // 사용자가 선택한 항목이 있는지 확인
             }
             adapter.updateItems(updatedVotes)
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            voteViewModel.fetchHotVotes(isRefreshing = true)
+            voteViewModel.fetchParticipatedVotes(isRefreshing = true)
             binding.swipeRefreshLayout.isRefreshing = false // 새로고침 완료 후 로딩 종료
         }
     }

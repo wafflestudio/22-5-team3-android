@@ -442,7 +442,20 @@ class EndvoteDetailFragment : Fragment() {
     }
 
     private fun navigateBack() {
-        navController.navigate(R.id.action_endvoteDetailFragment_to_endedVoteFragment)
+        val origin = arguments?.getString("origin")
+        Log.d("VoteDetailFragment", "From $origin")
+
+        //무한루프 방지
+        while (navController.previousBackStackEntry?.destination?.id == R.id.voteParticipantsDetailFragment) {
+            navController.popBackStack(R.id.voteParticipantsDetailFragment, true)
+        }
+
+        when (origin) {
+            "endedVote" -> navController.popBackStack(R.id.hotVoteFragment, false) // 핫 투표에서 온 경우
+            "participatedVote" -> navController.popBackStack(R.id.myParticipatedVotesFragment, false) // 내가 참여한 투표에서 온 경우
+            "createdVote" -> navController.popBackStack(R.id.myCreatedVotesFragment, false) // 내가 만든 투표에서 온 경우
+            else -> navController.navigateUp()
+        }
     }
 
 

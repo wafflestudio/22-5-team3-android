@@ -144,7 +144,7 @@
             android:layout_marginTop="10dp"/>
 
         <TextView
-            android:id="@+id/myVotes"
+            android:id="@+id/createdVotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="내가 만든 투표"
@@ -153,7 +153,7 @@
             />
 
         <TextView
-            android:id="@+id/Votes"
+            android:id="@+id/participatedVotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="내가 참여한 투표"

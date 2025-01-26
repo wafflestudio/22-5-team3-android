@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.wafflestudio_toyproject.fragments.EndedVoteFragmentHost
 import com.example.wafflestudio_toyproject.fragments.HotVoteFragmentHost
-import com.example.wafflestudio_toyproject.fragments.UserFragment
+import com.example.wafflestudio_toyproject.fragments.UserPage.UserFragment
 import com.example.wafflestudio_toyproject.fragments.OngoingVoteFragmentHost
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {

@@ -274,6 +274,17 @@ data class VoteItem(
             "시간 계산 불가"
         }
     }
+
+    fun isEnded(): Boolean {
+        return try {
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            val endDate = format.parse(end_datetime) ?: return true // 만료 시 종료로 간주
+            val now = Date()
+            endDate.before(now)
+        } catch (e: Exception) {
+            true // 예외 발생 시 종료된 상태로 간주
+        }
+    }
 }
 
 data class ParticipationRequest(

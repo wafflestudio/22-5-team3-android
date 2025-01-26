@@ -1,4 +1,4 @@
-package com.example.wafflestudio_toyproject.fragments
+package com.example.wafflestudio_toyproject.fragments.UserPage
 
 import android.os.Bundle
 import android.view.LayoutInflater
