@@ -44,7 +44,7 @@ class SignupActivity : AppCompatActivity() {
             val realname = binding.nameEditText.text.toString()
             val department = binding.departmentSpinner.selectedItemPosition + 1
 
-            val errorMessage = when {
+            var errorMessage = when {
                 username.isEmpty() -> "UserID is required."
                 password.isEmpty() -> "Password is required."
                 email.isEmpty() -> "Email is required."
@@ -53,6 +53,10 @@ class SignupActivity : AppCompatActivity() {
                     .matches() -> "Invalid email format."
 
                 else -> null
+            }
+
+            if (!isPasswordValid(password)) {
+                errorMessage = "Password is invalid."
             }
 
             if (errorMessage != null) {
@@ -122,4 +126,18 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
+    // 비밀번호 유효성 검사 함수
+    private fun isPasswordValid(password: String): Boolean {
+        if (password.length !in 8..20) return false // 길이 검증
+        if (password.contains(" ")) return false // 공백 포함 여부 검증
+
+        // 영문, 숫자, 특수문자 패턴
+        val hasLetter = password.any { it.isLetter() }
+        val hasDigit = password.any { it.isDigit() }
+        val hasSpecialChar = password.any { !it.isLetterOrDigit() }
+
+        // 세 가지 중 두 가지 이상 충족해야 함
+        val validCriteriaCount = listOf(hasLetter, hasDigit, hasSpecialChar).count { it }
+        return validCriteriaCount >= 2
+    }
 }
