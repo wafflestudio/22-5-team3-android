@@ -1,6 +1,11 @@
 package com.example.wafflestudio_toyproject
 
 import android.content.SharedPreferences
+import com.example.wafflestudio_toyproject.network.LoginRequest
+import com.example.wafflestudio_toyproject.network.LoginResponse
+import com.example.wafflestudio_toyproject.network.SignupRequest
+import com.example.wafflestudio_toyproject.network.SignupResponse
+import com.example.wafflestudio_toyproject.network.UserApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
