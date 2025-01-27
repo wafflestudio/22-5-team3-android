@@ -31,6 +31,9 @@ interface UserApi {
     fun changePassword(
         @Body changePasswordRequest: ChangePasswordRequest
     ): Call<ResponseBody>
+
+    @DELETE("api/users/me")
+    fun deleteAccount(): Call<ResponseBody>
 }
 
 interface AuthApi {

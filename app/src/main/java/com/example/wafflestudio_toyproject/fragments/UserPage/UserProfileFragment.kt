@@ -22,6 +22,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
+import androidx.appcompat.app.AlertDialog
+
 
 @AndroidEntryPoint
 class UserProfileFragment : Fragment() {
@@ -59,6 +61,11 @@ class UserProfileFragment : Fragment() {
         // 내가 참여한 투표 클릭 리스너
         binding.participatedVotes.setOnClickListener {
             navController.navigate(R.id.action_userProfileFragment_to_myParticipatedVotesFragment)
+        }
+        
+        // 회원 탈퇴 클릭 리스너
+        binding.withdrawButton.setOnClickListener {
+            showDeleteAccountDialog()
         }
 
         return binding.root
@@ -102,7 +109,7 @@ class UserProfileFragment : Fragment() {
                         binding.userName.text = userInfo.name
                         binding.userID.text = userInfo.userid
                         binding.userEmail.text = userInfo.email
-                        binding.userCollege.text = colleges[userInfo.college]
+                        binding.userCollege.text = colleges[if (userInfo.college > 0) userInfo.college - 1 else 0]
 
                         Log.d("getme", "name: ${userInfo.name}, id: ${userInfo.userid}, email: ${userInfo.email}, college: ${userInfo.college}")
                     }
@@ -116,6 +123,40 @@ class UserProfileFragment : Fragment() {
             }
         })
     }
+
+    // 회원 탈퇴 다이얼로그
+    private fun showDeleteAccountDialog() {
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle("회원 탈퇴")
+            setMessage("회원 탈퇴하시겠습니까?")
+            setPositiveButton("탈퇴") { _, _ ->
+                deleteAccount()
+            }
+            setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+        }.show()
+    }
+        
+    // 회원 탈퇴
+    private fun deleteAccount() {
+        userRepository.deleteAccount(
+            onSuccess = {
+                Toast.makeText(requireContext(), "회원 탈퇴 성공", Toast.LENGTH_SHORT).show()
+                navigateToLogin()
+            },
+            onError = {
+                Toast.makeText(requireContext(), "회원 탈퇴 실패: $it", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    private fun navigateToLogin() {
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
