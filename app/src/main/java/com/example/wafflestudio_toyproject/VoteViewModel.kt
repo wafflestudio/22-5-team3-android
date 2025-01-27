@@ -3,7 +3,7 @@ package com.example.wafflestudio_toyproject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
+import com.example.wafflestudio_toyproject.network.VoteItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

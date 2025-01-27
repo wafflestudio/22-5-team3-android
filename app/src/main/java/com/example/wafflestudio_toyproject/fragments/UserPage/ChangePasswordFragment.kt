@@ -9,9 +9,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.example.wafflestudio_toyproject.ChangePasswordRequest
+import com.example.wafflestudio_toyproject.network.ChangePasswordRequest
 import com.example.wafflestudio_toyproject.R
-import com.example.wafflestudio_toyproject.UserApi
+import com.example.wafflestudio_toyproject.network.UserApi
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.databinding.FragmentChangePasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,7 +80,7 @@ class ChangePasswordFragment : Fragment() {
                 confirmNewPassword
             )
 
-            userApi.changePassword(accessToken, changePasswordRequest)
+            userApi.changePassword(changePasswordRequest)
                 .enqueue(object : Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         when (response.code()) {

@@ -8,7 +8,6 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -35,18 +34,6 @@ interface UserApi {
     fun changePassword(
         @Header("Authorization") authorization: String,
         @Body changePasswordRequest: ChangePasswordRequest
-    ): Call<ResponseBody>
-
-    @POST("api/users/link/kakao")
-    fun linkKakaoAccount(
-        @Header("Authorization") authorization: String,
-        @Body kakaoAccessToken: String
-    ): Call<ResponseBody>
-
-
-    @POST("api/users/signin/kakao")
-    fun loginWithKakao(
-        @Body accessToken: String
     ): Call<ResponseBody>
 }
 

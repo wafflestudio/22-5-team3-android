@@ -1,5 +1,9 @@
 package com.example.wafflestudio_toyproject
 
+import com.example.wafflestudio_toyproject.network.CommentRequest
+import com.example.wafflestudio_toyproject.network.ParticipationRequest
+import com.example.wafflestudio_toyproject.network.VoteApi
+import com.example.wafflestudio_toyproject.network.VoteDetailResponse
 import jakarta.inject.Inject
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,7 +16,7 @@ class VoteDetailRepository @Inject constructor(
     private val userRepository: UserRepository
 ) {
     fun getVoteDetails(voteId: Int, accessToken: String, callback: (Result<VoteDetailResponse>) -> Unit) {
-        voteApi.getVoteDetails(voteId, "Bearer $accessToken").enqueue(object : Callback<VoteDetailResponse> {
+        voteApi.getVoteDetails(voteId).enqueue(object : Callback<VoteDetailResponse> {
             override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let { callback(Result.success(it)) }
@@ -34,7 +38,7 @@ class VoteDetailRepository @Inject constructor(
         participationRequest: ParticipationRequest,
         callback: (Result<VoteDetailResponse>) -> Unit
     ) {
-        voteApi.participateInVote(voteId, "Bearer $accessToken", participationRequest)
+        voteApi.participateInVote(voteId, participationRequest)
             .enqueue(object : Callback<VoteDetailResponse> {
                 override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
                     if (response.isSuccessful) {
@@ -54,7 +58,7 @@ class VoteDetailRepository @Inject constructor(
     fun postComment(voteId: Int, content: String, accessToken: String, callback: (Result<VoteDetailResponse>) -> Unit) {
         val commentRequest = CommentRequest(content)
 
-        voteApi.postComment(voteId, "Bearer $accessToken", commentRequest)
+        voteApi.postComment(voteId, commentRequest)
             .enqueue(object : Callback<VoteDetailResponse> {
                 override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
                     if (response.isSuccessful) {
@@ -74,7 +78,7 @@ class VoteDetailRepository @Inject constructor(
     fun editComment(voteId: Int, commentId: Int, updatedContent: String, accessToken: String, callback: (Result<VoteDetailResponse>) -> Unit) {
         val commentRequest = CommentRequest(updatedContent)
 
-        voteApi.updateComment(voteId, commentId, "Bearer $accessToken", commentRequest)
+        voteApi.updateComment(voteId, commentId, commentRequest)
             .enqueue(object : Callback<VoteDetailResponse> {
                 override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
                     if (response.isSuccessful) {
@@ -92,7 +96,7 @@ class VoteDetailRepository @Inject constructor(
     }
 
     fun deleteComment(voteId: Int, commentId: Int, accessToken: String, callback: (Result<VoteDetailResponse>) -> Unit) {
-        voteApi.deleteComment(voteId, commentId, "Bearer $accessToken")
+        voteApi.deleteComment(voteId, commentId)
             .enqueue(object : Callback<VoteDetailResponse> {
                 override fun onResponse(call: Call<VoteDetailResponse>, response: Response<VoteDetailResponse>) {
                     if (response.isSuccessful) {
