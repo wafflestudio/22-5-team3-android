@@ -159,6 +159,31 @@
             android:layout_marginTop="10dp"/>
 
         <TextView
+            android:id="@+id/naverButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="네이버 계정연동"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            />
+
+        <TextView
+            android:id="@+id/kakaoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="카카오 계정연동"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            />
+
+        <View
+            android:id="@+id/divider4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
             android:id="@+id/withdrawButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
