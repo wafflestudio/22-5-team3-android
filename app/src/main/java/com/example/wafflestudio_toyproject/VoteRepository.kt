@@ -2,6 +2,8 @@ package com.example.wafflestudio_toyproject
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.wafflestudio_toyproject.network.VoteApi
+import com.example.wafflestudio_toyproject.network.VoteListResponse
 import jakarta.inject.Inject
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,7 +19,7 @@ class VoteRepository @Inject constructor(
         val liveData = MutableLiveData<VoteListResponse?>()
         val accessToken = userRepository.getAccessToken()
 
-        voteApi.getVotes(startCursor,category,"Bearer $accessToken").enqueue(object : Callback<VoteListResponse> {
+        voteApi.getVotes(startCursor,category).enqueue(object : Callback<VoteListResponse> {
             override fun onResponse(call: Call<VoteListResponse>, response: Response<VoteListResponse>) {
                 if (response.isSuccessful) {
                     liveData.postValue(response.body())

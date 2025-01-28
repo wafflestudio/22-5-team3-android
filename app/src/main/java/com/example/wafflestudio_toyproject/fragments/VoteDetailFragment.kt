@@ -1,26 +1,20 @@
 package com.example.wafflestudio_toyproject.fragments
 
 import android.app.AlertDialog
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
@@ -30,24 +24,17 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.example.wafflestudio_toyproject.CommentRequest
-
-import com.example.wafflestudio_toyproject.ParticipationRequest
 
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
-import com.example.wafflestudio_toyproject.VoteApi
-import com.example.wafflestudio_toyproject.VoteDetailResponse
+import com.example.wafflestudio_toyproject.network.VoteApi
+import com.example.wafflestudio_toyproject.network.VoteDetailResponse
 import com.example.wafflestudio_toyproject.VoteDetailViewModel
 import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
 import com.example.wafflestudio_toyproject.adapter.ImageSliderAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteDetailBinding
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 @AndroidEntryPoint
 class VoteDetailFragment : Fragment() {
@@ -248,33 +235,40 @@ class VoteDetailFragment : Fragment() {
         if (hasParticipated)
             binding.participantCount.visibility = View.VISIBLE
 
-        // 참여자 목록으로 이동
-        binding.participantCount.setOnClickListener {
-            val bundle = Bundle().apply {
-                val choicesBundle = ArrayList<Bundle>()
-                voteDetail.choices.forEach { choice ->
-                    val choiceBundle = Bundle().apply {
-                        putInt("choice_id", choice.choice_id)
-                        putString("choice_content", choice.choice_content)
-                        putBoolean("participated", choice.participated)
-                        choice.choice_num_participants?.let { putInt("choice_num_participants", it) }
-                        putStringArrayList(
-                            "choice_participants_name",
-                            ArrayList(choice.choice_participants_name ?: emptyList())
-                        )
+        // 실시간 투표 공개일 때만 참여자 목록으로 이동
+        if (voteDetail.realtime_result) {
+            binding.participantCount.setOnClickListener {
+                val bundle = Bundle().apply {
+                    val choicesBundle = ArrayList<Bundle>()
+                    voteDetail.choices.forEach { choice ->
+                        val choiceBundle = Bundle().apply {
+                            putInt("choice_id", choice.choice_id)
+                            putString("choice_content", choice.choice_content)
+                            putBoolean("participated", choice.participated)
+                            choice.choice_num_participants?.let {
+                                putInt(
+                                    "choice_num_participants",
+                                    it
+                                )
+                            }
+                            putStringArrayList(
+                                "choice_participants_name",
+                                ArrayList(choice.choice_participants_name ?: emptyList())
+                            )
+                        }
+                        choicesBundle.add(choiceBundle)
                     }
-                    choicesBundle.add(choiceBundle)
+                    putParcelableArrayList("choices", choicesBundle)
+
+                    putInt("vote_id", voteId)
+                    putString("origin", "ongoing")
                 }
-                putParcelableArrayList("choices", choicesBundle)
 
-                putInt("vote_id", voteId)
-                putString("origin", "ongoing")
+                navController.navigate(
+                    R.id.action_voteDetailFragment_to_voteParticipantsDetailFragment,
+                    bundle
+                )
             }
-
-            navController.navigate(
-                R.id.action_voteDetailFragment_to_voteParticipantsDetailFragment,
-                bundle
-            )
         }
         startTrackingTime(voteDetail)
 

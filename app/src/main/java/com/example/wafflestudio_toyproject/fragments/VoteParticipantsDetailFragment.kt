@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.wafflestudio_toyproject.R
-import com.example.wafflestudio_toyproject.VoteDetailResponse
+import com.example.wafflestudio_toyproject.network.VoteDetailResponse
 import com.example.wafflestudio_toyproject.databinding.FragmentVoteParticipantsDetailBinding
 
 class VoteParticipantsDetailFragment : Fragment() {

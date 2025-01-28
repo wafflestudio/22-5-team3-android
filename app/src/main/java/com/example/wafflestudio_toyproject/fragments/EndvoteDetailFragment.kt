@@ -2,14 +2,12 @@ package com.example.wafflestudio_toyproject.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -26,8 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.wafflestudio_toyproject.R
 import com.example.wafflestudio_toyproject.UserRepository
-import com.example.wafflestudio_toyproject.VoteApi
-import com.example.wafflestudio_toyproject.VoteDetailResponse
+import com.example.wafflestudio_toyproject.network.VoteApi
+import com.example.wafflestudio_toyproject.network.VoteDetailResponse
 import com.example.wafflestudio_toyproject.VoteDetailViewModel
 import com.example.wafflestudio_toyproject.adapter.CommentItemAdapter
 import com.example.wafflestudio_toyproject.adapter.ImageSliderAdapter
@@ -205,7 +203,6 @@ class EndvoteDetailFragment : Fragment() {
         }
 
         val hasParticipated = voteDetail.choices.any { it.participated }
-
 
         binding.participantCount.text = "${voteDetail.participant_count}명 참여"
         binding.participantCount.visibility = View.VISIBLE
@@ -451,13 +448,12 @@ class EndvoteDetailFragment : Fragment() {
         }
 
         when (origin) {
-            "endedVote" -> navController.popBackStack(R.id.hotVoteFragment, false) // 핫 투표에서 온 경우
+            "endedVote" -> navController.popBackStack(R.id.endedVoteFragment, false) // 핫 투표에서 온 경우
             "participatedVote" -> navController.popBackStack(R.id.myParticipatedVotesFragment, false) // 내가 참여한 투표에서 온 경우
             "createdVote" -> navController.popBackStack(R.id.myCreatedVotesFragment, false) // 내가 만든 투표에서 온 경우
             else -> navController.navigateUp()
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

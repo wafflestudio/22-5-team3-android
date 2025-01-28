@@ -21,10 +21,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.wafflestudio_toyproject.CreateVoteRequest
-import com.example.wafflestudio_toyproject.CreateVoteResponse
+import com.example.wafflestudio_toyproject.network.CreateVoteRequest
+import com.example.wafflestudio_toyproject.network.CreateVoteResponse
 import com.example.wafflestudio_toyproject.R
-import com.example.wafflestudio_toyproject.VoteApi
+import com.example.wafflestudio_toyproject.network.VoteApi
 import com.example.wafflestudio_toyproject.adapter.SelectedImagesAdapter
 import com.example.wafflestudio_toyproject.databinding.FragmentCreateVoteBinding
 import com.google.gson.Gson
@@ -181,7 +181,7 @@ class CreateVoteFragment : Fragment() {
         val errorMessage = when {
             title.isEmpty() || title.length > 100 -> "Title must be between 1 and 100 characters."
             content.isEmpty() || content.length > 200 -> "Content must be between 1 and 200 characters."
-            participationCodeRequired && (participationCode.isNullOrEmpty() || participationCode.length != 6) -> "Participation code must be 6 characters."
+            participationCodeRequired && (participationCode.isNullOrEmpty() || participationCode.length != 6 || participationCode.contains(" ")) -> "Participation code must be 6 characters."
             choices.isEmpty() -> "At least one choice is required."
             binding.deadlineDate.text.isNullOrEmpty() || binding.deadlineTime.text.isNullOrEmpty() -> "Date and Time must not be empty."
             else -> null

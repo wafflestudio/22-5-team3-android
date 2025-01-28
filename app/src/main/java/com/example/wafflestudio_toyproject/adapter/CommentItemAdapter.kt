@@ -1,13 +1,11 @@
 package com.example.wafflestudio_toyproject.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.wafflestudio_toyproject.VoteDetailResponse
+import com.example.wafflestudio_toyproject.network.VoteDetailResponse
 import com.example.wafflestudio_toyproject.databinding.CommentItemBinding
-import com.example.wafflestudio_toyproject.fragments.VoteDetailFragment
 
 class CommentItemAdapter(
     private val comments: MutableList<VoteDetailResponse.Comment>,

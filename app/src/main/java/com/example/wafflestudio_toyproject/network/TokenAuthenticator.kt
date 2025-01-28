@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.example.wafflestudio_toyproject.AppUtils
-import com.example.wafflestudio_toyproject.AuthApi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -49,7 +48,7 @@ class TokenAuthenticator @Inject constructor(
     private fun refreshAccessToken(refreshToken: String): String? {
         return try {
             val authorizationHeader = "Bearer $refreshToken"
-            val response = authApi.refreshToken(authorizationHeader).execute()
+            val response = authApi.refreshToken().execute()
 
             if (response.isSuccessful) {
                 response.body()?.access_token?.also { newAccessToken ->

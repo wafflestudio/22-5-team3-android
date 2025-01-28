@@ -11,10 +11,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.example.wafflestudio_toyproject.GetMeResponse
+import com.example.wafflestudio_toyproject.network.GetMeResponse
 import com.example.wafflestudio_toyproject.LoginActivity
 import com.example.wafflestudio_toyproject.R
-import com.example.wafflestudio_toyproject.UserApi
+import com.example.wafflestudio_toyproject.network.UserApi
 import com.example.wafflestudio_toyproject.UserRepository
 import com.example.wafflestudio_toyproject.databinding.FragmentUserProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
+import com.kakao.sdk.user.UserApiClient
 
 @AndroidEntryPoint
 class UserProfileFragment : Fragment() {
@@ -61,6 +62,8 @@ class UserProfileFragment : Fragment() {
             navController.navigate(R.id.action_userProfileFragment_to_myParticipatedVotesFragment)
         }
 
+        binding.kakaoButton.setOnClickListener { linkKakaoAccount() }
+
         return binding.root
     }
 
@@ -88,8 +91,6 @@ class UserProfileFragment : Fragment() {
     
     // 회원 정보 불러오기
     private fun getUserInformation() {
-        val accessToken = "Bearer ${userRepository.getAccessToken()}"
-
         val colleges = listOf(
             "인문대학", "사회과학대학", "자연과학대학", "간호대학", "경영대학", "공과대학",
             "농업생명과학대학", "미술대학", "사범대학", "생활과학대학", "수의과대학", "약학대학", "음악대학", "의과대학",
@@ -97,14 +98,14 @@ class UserProfileFragment : Fragment() {
         )
 
         // getMe API 호출
-        userApi.getMe(accessToken).enqueue(object : Callback<GetMeResponse> {
+        userApi.getMe().enqueue(object : Callback<GetMeResponse> {
             override fun onResponse(call: Call<GetMeResponse>, response: Response<GetMeResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let { userInfo ->
                         binding.userName.text = userInfo.name
                         binding.userID.text = userInfo.userid
                         binding.userEmail.text = userInfo.email
-                        binding.userCollege.text = colleges[userInfo.college]
+                        binding.userCollege.text = colleges[userInfo.college-1]
 
                         Log.d("getme", "name: ${userInfo.name}, id: ${userInfo.userid}, email: ${userInfo.email}, college: ${userInfo.college}")
                     }
@@ -117,6 +118,28 @@ class UserProfileFragment : Fragment() {
                 Toast.makeText(requireContext(), "네트워크 에러: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun linkKakaoAccount() {
+        UserApiClient.instance.loginWithKakaoAccount(requireContext()) { token, error ->
+            if (error != null) {
+                Log.e("KakaoLink", "카카오 계정 연동 실패", error)
+                Toast.makeText(requireContext(), "카카오 계정 연동 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+            } else if (token != null) {
+                Log.d("KakaoLink", "카카오 로그인 성공! 액세스 토큰: ${token.accessToken}")
+
+                val existingToken = userRepository.getAccessToken()
+
+                userRepository.linkKakaoAccount(existingToken!!, token.accessToken,
+                    onSuccess = {
+                        Toast.makeText(requireContext(), "카카오 계정 연동 성공!", Toast.LENGTH_SHORT).show()
+                    },
+                    onError = { message ->
+                        Toast.makeText(requireContext(), "계정 연동 실패: $message", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
     }
 
     override fun onDestroyView() {
