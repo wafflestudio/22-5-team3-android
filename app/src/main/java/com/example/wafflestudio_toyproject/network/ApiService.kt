@@ -46,7 +46,7 @@ interface UserApi {
     @POST("api/users/signin/kakao")
     fun loginWithKakao(
         @Body accessToken: String
-    ): Call<ResponseBody>
+    ): Call<LoginResponse>
 
     @POST("api/users/link/naver")
     fun linkNaverAccount(
@@ -57,12 +57,14 @@ interface UserApi {
     @POST("api/users/signin/naver")
     fun loginWithNaver(
         @Body accessToken: String
-    ): Call<ResponseBody>
+    ): Call<LoginResponse>
 }
 
 interface AuthApi {
     @GET("api/users/refresh")
-    fun refreshToken(): Call<RefreshTokenResponse>
+    fun refreshToken(
+        @Header("Authorization") authorization: String,
+    ): Call<RefreshTokenResponse>
 }
 
 interface VoteApi {
