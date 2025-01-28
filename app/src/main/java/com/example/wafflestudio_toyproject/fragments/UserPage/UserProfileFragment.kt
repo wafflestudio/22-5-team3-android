@@ -24,6 +24,9 @@ import retrofit2.Response
 import javax.inject.Inject
 import androidx.appcompat.app.AlertDialog
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.OAuthLoginCallback
 
 @AndroidEntryPoint
 class UserProfileFragment : Fragment() {
@@ -69,6 +72,7 @@ class UserProfileFragment : Fragment() {
         }
 
         binding.kakaoButton.setOnClickListener { linkKakaoAccount() }
+        binding.naverButton.setOnClickListener { linkNaverAccount() }
 
         return binding.root
     }
@@ -179,6 +183,36 @@ class UserProfileFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun linkNaverAccount() {
+        // 네이버 로그인 실행
+        NaverIdLoginSDK.authenticate(requireContext(), object : OAuthLoginCallback {
+            override fun onSuccess() {
+                val naverToken = NaverIdLoginSDK.getAccessToken()
+                if (naverToken != null) {
+                    Log.d("NaverLink", "네이버 로그인 성공! 액세스 토큰: $naverToken")
+                    val existingToken = userRepository.getAccessToken()  // 앱에서 관리하는 기존 사용자 인증 토큰 가져오기
+                    userRepository.linkNaverAccount(existingToken!!, naverToken,
+                        onSuccess = {
+                            Toast.makeText(requireContext(), "네이버 계정 연동 성공!", Toast.LENGTH_SHORT).show()
+                        },
+                        onError = { message ->
+                            Toast.makeText(requireContext(), "계정 연동 실패: $message", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                } else {
+                    Toast.makeText(requireContext(), "네이버 로그인 실패: 액세스 토큰을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(httpStatus: Int, message: String) {
+                Log.e("NaverLink", "네이버 계정 연동 실패: $message")
+                Toast.makeText(requireContext(), "네이버 계정 연동 실패: $message", Toast.LENGTH_SHORT).show()
+            }
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+            }
+        })
     }
     
     override fun onDestroyView() {

@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wafflestudio_toyproject.databinding.ActivityLoginBinding
 import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -79,6 +81,41 @@ class LoginActivity : AppCompatActivity() {
                     )
                 }
             }
+        }
+
+        binding.googleButton.setOnClickListener {
+            NaverIdLoginSDK.authenticate(this, object : OAuthLoginCallback {
+                override fun onSuccess() {
+                    val naverToken = NaverIdLoginSDK.getAccessToken()
+                    if (naverToken != null) {
+                        Log.d("NaverLogin", "네이버 로그인 성공! 액세스 토큰: $naverToken")
+
+                        userRepository.loginWithNaver(naverToken,
+                            onSuccess = {
+                                Toast.makeText(this@LoginActivity, "네이버 로그인 성공!", Toast.LENGTH_SHORT).show()
+                                navigateToMainScreen()
+                            },
+                            onError = { message ->
+                                Toast.makeText(this@LoginActivity, "네이버 로그인 실패: $message", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    } else {
+                        Toast.makeText(this@LoginActivity, "네이버 로그인 실패: 토큰을 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(httpStatus: Int, message: String) {
+                    val errorCode = NaverIdLoginSDK.getLastErrorCode().code
+                    val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
+
+                    Log.e("NaverLogin", "네이버 로그인 실패: [ErrorCode: $errorCode] $errorDescription")
+                    Toast.makeText(this@LoginActivity, "네이버 로그인 실패: $errorDescription", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onError(errorCode: Int, message: String) {
+                    onFailure(errorCode, message)
+                }
+            })
         }
     }
 

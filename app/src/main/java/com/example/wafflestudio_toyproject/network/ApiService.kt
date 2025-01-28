@@ -7,6 +7,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -34,10 +35,33 @@ interface UserApi {
 
     @DELETE("api/users/me")
     fun deleteAccount(): Call<ResponseBody>
+
+
+    @POST("api/users/link/kakao")
+    fun linkKakaoAccount(
+        @Header("Authorization") authorization: String,
+        @Body kakaoAccessToken: String
+    ): Call<ResponseBody>
+
+    @POST("api/users/signin/kakao")
+    fun loginWithKakao(
+        @Body accessToken: String
+    ): Call<ResponseBody>
+
+    @POST("api/users/link/naver")
+    fun linkNaverAccount(
+        @Header("Authorization") authorization: String,
+        @Body accessToken: String
+    ): Call<ResponseBody>
+
+    @POST("api/users/signin/naver")
+    fun loginWithNaver(
+        @Body accessToken: String
+    ): Call<ResponseBody>
 }
 
 interface AuthApi {
-    @GET("/api/users/refresh")
+    @GET("api/users/refresh")
     fun refreshToken(): Call<RefreshTokenResponse>
 }
 
