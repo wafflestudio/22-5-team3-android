@@ -23,6 +23,7 @@ coil = "2.4.0"
 glide = "4.16.0"
 circleindicator = "2.1.6"
 kakao-sdk = "2.18.0"
+naver-oauth = "5.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +52,7 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 circleindicator = { module = "me.relex:circleindicator", version.ref = "circleindicator"}
 kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao-sdk" }
+naver-oauth = { module = "com.navercorp.nid:oauth", version.ref = "naver-oauth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

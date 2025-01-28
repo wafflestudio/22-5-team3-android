@@ -113,4 +113,72 @@ class UserRepository @Inject constructor(
             }
         })
     }
+
+    fun linkKakaoAccount(authToken: String, kakaoAccessToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.linkKakaoAccount("Bearer $authToken", kakaoAccessToken).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onError("서버 오류 발생")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                onError("네트워크 오류")
+            }
+        })
+    }
+
+    fun loginWithKakao(accessToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.loginWithKakao(accessToken).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    onSuccess()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    onError("서버 로그인 실패")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                onError("네트워크 오류")
+            }
+        })
+    }
+
+    fun linkNaverAccount(authToken: String, naverAccessToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.linkNaverAccount("Bearer $authToken", naverAccessToken).enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        onSuccess()
+                    } else {
+                        onError("서버 오류 발생")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    onError("네트워크 오류")
+                }
+            })
+    }
+
+    fun loginWithNaver(naverAccessToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.loginWithNaver(naverAccessToken)
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        onSuccess()
+                    } else {
+                        val errorBody = response.errorBody()?.string() ?: "서버 응답 없음"
+                        onError("서버 오류 발생: $errorBody")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    onError("네트워크 오류")
+                }
+            })
+    }
 }
