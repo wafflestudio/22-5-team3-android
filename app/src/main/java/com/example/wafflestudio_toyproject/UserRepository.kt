@@ -6,6 +6,7 @@ import com.example.wafflestudio_toyproject.network.LoginResponse
 import com.example.wafflestudio_toyproject.network.SignupRequest
 import com.example.wafflestudio_toyproject.network.SignupResponse
 import com.example.wafflestudio_toyproject.network.UserApi
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -95,5 +96,21 @@ class UserRepository @Inject constructor(
 
     fun getAccessToken(): String? {
         return sharedPreferences.getString("access_token", null)
+    }
+
+    fun deleteAccount(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.deleteAccount().enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onError("회원 탈퇴에 실패했습니다. (${response.code()})")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                onError("네트워크 오류가 발생했습니다.")
+            }
+        })
     }
 }
