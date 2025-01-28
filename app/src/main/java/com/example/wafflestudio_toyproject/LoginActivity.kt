@@ -71,8 +71,14 @@ class LoginActivity : AppCompatActivity() {
                     Log.d("KakaoLogin", "카카오 로그인 성공! 액세스 토큰: ${token.accessToken}")
 
                     userRepository.loginWithKakao(token.accessToken,
-                        onSuccess = {
+                        onSuccess = { response->
                             Toast.makeText(this, "카카오 로그인 성공!", Toast.LENGTH_SHORT).show()
+                            userRepository.saveTokens(response.access_token, response.refresh_token)
+
+                            if (binding.autoLoginCheckBox.isChecked) {
+                                sharedPreferences.edit().putBoolean("AUTO_LOGIN_ENABLED", true).apply()
+                            }
+
                             navigateToMainScreen()
                         },
                         onError = { message ->
@@ -91,8 +97,13 @@ class LoginActivity : AppCompatActivity() {
                         Log.d("NaverLogin", "네이버 로그인 성공! 액세스 토큰: $naverToken")
 
                         userRepository.loginWithNaver(naverToken,
-                            onSuccess = {
+                            onSuccess = { response->
                                 Toast.makeText(this@LoginActivity, "네이버 로그인 성공!", Toast.LENGTH_SHORT).show()
+                                userRepository.saveTokens(response.access_token, response.refresh_token)
+
+                                if (binding.autoLoginCheckBox.isChecked) {
+                                    sharedPreferences.edit().putBoolean("AUTO_LOGIN_ENABLED", true).apply()
+                                }
                                 navigateToMainScreen()
                             },
                             onError = { message ->
