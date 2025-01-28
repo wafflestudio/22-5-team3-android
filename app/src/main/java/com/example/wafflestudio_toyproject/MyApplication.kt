@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility
+import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -17,6 +18,13 @@ class MyApplication : Application() {
 
         var keyHash = Utility.getKeyHash(this)
         Log.d("App", "keyHash: '${keyHash}'")
+
+        NaverIdLoginSDK.initialize(
+            this,
+            "xwnPExvfFVbdUANM_CW5",
+            BuildConfig.NAVER_CLIENT_SECRET,
+            "SNUVote"
+        )
     }
 
 }

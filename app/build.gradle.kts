@@ -28,9 +28,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         buildConfigField("String", "KAKAO_NATIVE_KEY", "\"${properties.getProperty("KAKAO_NATIVE_KEY")}\"")
         val kakaoKey = properties.getProperty("KAKAO_NATIVE_KEY")
         manifestPlaceholders["KAKAO_NATIVE_KEY"] = kakaoKey
+
+        buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${properties.getProperty("NAVER_CLIENT_SECRET")}\"")
     }
 
     buildTypes {
@@ -97,4 +100,5 @@ dependencies {
     implementation(libs.circleindicator)
 
     implementation(libs.kakao.user)
+    implementation(libs.naver.oauth)
 }

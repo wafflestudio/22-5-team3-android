@@ -147,4 +147,38 @@ class UserRepository @Inject constructor(
             }
         })
     }
+
+    fun linkNaverAccount(authToken: String, naverAccessToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.linkNaverAccount("Bearer $authToken", naverAccessToken).enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        onSuccess()
+                    } else {
+                        onError("서버 오류 발생")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    onError("네트워크 오류")
+                }
+            })
+    }
+
+    fun loginWithNaver(naverAccessToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        api.loginWithNaver(naverAccessToken)
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        onSuccess()
+                    } else {
+                        val errorBody = response.errorBody()?.string() ?: "서버 응답 없음"
+                        onError("서버 오류 발생: $errorBody")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    onError("네트워크 오류")
+                }
+            })
+    }
 }

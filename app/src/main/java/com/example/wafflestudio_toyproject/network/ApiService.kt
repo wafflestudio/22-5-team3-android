@@ -47,10 +47,21 @@ interface UserApi {
     fun loginWithKakao(
         @Body accessToken: String
     ): Call<ResponseBody>
+
+    @POST("api/users/link/naver")
+    fun linkNaverAccount(
+        @Header("Authorization") authorization: String,
+        @Body accessToken: String
+    ): Call<ResponseBody>
+
+    @POST("api/users/signin/naver")
+    fun loginWithNaver(
+        @Body accessToken: String
+    ): Call<ResponseBody>
 }
 
 interface AuthApi {
-    @GET("/api/users/refresh")
+    @GET("api/users/refresh")
     fun refreshToken(): Call<RefreshTokenResponse>
 }
 
