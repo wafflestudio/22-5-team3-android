@@ -23,7 +23,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 import androidx.appcompat.app.AlertDialog
-
+import com.kakao.sdk.user.UserApiClient
 
 @AndroidEntryPoint
 class UserProfileFragment : Fragment() {
@@ -67,6 +67,8 @@ class UserProfileFragment : Fragment() {
         binding.withdrawButton.setOnClickListener {
             showDeleteAccountDialog()
         }
+
+        binding.kakaoButton.setOnClickListener { linkKakaoAccount() }
 
         return binding.root
     }
@@ -157,7 +159,28 @@ class UserProfileFragment : Fragment() {
         startActivity(intent)
     }
 
+    private fun linkKakaoAccount() {
+        UserApiClient.instance.loginWithKakaoAccount(requireContext()) { token, error ->
+            if (error != null) {
+                Log.e("KakaoLink", "카카오 계정 연동 실패", error)
+                Toast.makeText(requireContext(), "카카오 계정 연동 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+            } else if (token != null) {
+                Log.d("KakaoLink", "카카오 로그인 성공! 액세스 토큰: ${token.accessToken}")
 
+                val existingToken = userRepository.getAccessToken()
+
+                userRepository.linkKakaoAccount(existingToken!!, token.accessToken,
+                    onSuccess = {
+                        Toast.makeText(requireContext(), "카카오 계정 연동 성공!", Toast.LENGTH_SHORT).show()
+                    },
+                    onError = { message ->
+                        Toast.makeText(requireContext(), "계정 연동 실패: $message", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
+    }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
