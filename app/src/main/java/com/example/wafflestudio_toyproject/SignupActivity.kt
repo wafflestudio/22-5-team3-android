@@ -90,6 +90,10 @@ class SignupActivity : AppCompatActivity() {
             college,
             onSuccess = { response ->
                 Toast.makeText(this, "회원가입 성공: ${response.email}", Toast.LENGTH_SHORT).show()
+                // 로그인 화면으로 이동
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
             },
             onError = { errorMessage ->
                 val parsedErrorMessage = parseErrorDetail(errorMessage)
@@ -114,7 +118,7 @@ class SignupActivity : AppCompatActivity() {
                     val statusCode = parts[1].toIntOrNull() // 상태 코드를 정수로 변환
                     when (statusCode) {
                         400 -> "Invalid field format" // userid 또는 password 형식 오류
-                        409 -> "Username or Email already exists" // ID 또는 이메일 중복
+                        409 -> "UserID or Email already exists" // ID 또는 이메일 중복
                         else -> "알 수 없는 오류가 발생했습니다." // 정의되지 않은 상태 코드
                     }
                 } else {
