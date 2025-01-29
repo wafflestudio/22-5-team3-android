@@ -1,3 +1,8 @@
+import java.util.Properties
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -9,7 +14,9 @@ android {
     namespace = "com.example.wafflestudio_toyproject"
     compileSdk = 35
 
+
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 
@@ -21,6 +28,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "KAKAO_NATIVE_KEY", "\"${properties.getProperty("KAKAO_NATIVE_KEY")}\"")
+        val kakaoKey = properties.getProperty("KAKAO_NATIVE_KEY")
+        manifestPlaceholders["KAKAO_NATIVE_KEY"] = kakaoKey
+
+        buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${properties.getProperty("NAVER_CLIENT_SECRET")}\"")
     }
 
     buildTypes {
@@ -53,6 +66,8 @@ android {
     }
 }
 
+
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -83,4 +98,7 @@ dependencies {
     implementation(libs.glide)
     kapt(libs.glide.compiler)
     implementation(libs.circleindicator)
+
+    implementation(libs.kakao.user)
+    implementation(libs.naver.oauth)
 }

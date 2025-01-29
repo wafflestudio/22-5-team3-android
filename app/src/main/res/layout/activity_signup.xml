@@ -289,33 +289,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/signupButton"
                 style="@null"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/loginButton">
-
-                <ImageView
-                    android:id="@+id/kakaoButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/icon_border_background"
-                    android:padding="8dp"
-                    android:src="@drawable/kakao_icon"
-                    android:scaleType="centerInside"
-                    android:layout_marginEnd="32dp" />
-
-                <ImageView
-                    android:id="@+id/googleButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/icon_border_background"
-                    android:padding="8dp"
-                    android:src="@drawable/google_icon"
-                    android:scaleType="centerInside"/>
-            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

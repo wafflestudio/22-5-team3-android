@@ -23,7 +23,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 import androidx.appcompat.app.AlertDialog
-
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.OAuthLoginCallback
 
 @AndroidEntryPoint
 class UserProfileFragment : Fragment() {
@@ -57,16 +60,19 @@ class UserProfileFragment : Fragment() {
         binding.createdVotes.setOnClickListener {
             navController.navigate(R.id.action_userProfileFragment_to_myCreatedVotesFragment)
         }
-        
+
         // 내가 참여한 투표 클릭 리스너
         binding.participatedVotes.setOnClickListener {
             navController.navigate(R.id.action_userProfileFragment_to_myParticipatedVotesFragment)
         }
-        
+
         // 회원 탈퇴 클릭 리스너
         binding.withdrawButton.setOnClickListener {
             showDeleteAccountDialog()
         }
+
+        binding.kakaoButton.setOnClickListener { linkKakaoAccount() }
+        binding.naverButton.setOnClickListener { linkNaverAccount() }
 
         return binding.root
     }
@@ -92,7 +98,7 @@ class UserProfileFragment : Fragment() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
-    
+
     // 회원 정보 불러오기
     private fun getUserInformation() {
         val colleges = listOf(
@@ -137,7 +143,7 @@ class UserProfileFragment : Fragment() {
             }
         }.show()
     }
-        
+
     // 회원 탈퇴
     private fun deleteAccount() {
         userRepository.deleteAccount(
@@ -157,6 +163,57 @@ class UserProfileFragment : Fragment() {
         startActivity(intent)
     }
 
+    private fun linkKakaoAccount() {
+        UserApiClient.instance.loginWithKakaoAccount(requireContext()) { token, error ->
+            if (error != null) {
+                Log.e("KakaoLink", "카카오 계정 연동 실패", error)
+                Toast.makeText(requireContext(), "카카오 계정 연동 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+            } else if (token != null) {
+                Log.d("KakaoLink", "카카오 로그인 성공! 액세스 토큰: ${token.accessToken}")
+
+                val existingToken = userRepository.getAccessToken()
+
+                userRepository.linkKakaoAccount(existingToken!!, token.accessToken,
+                    onSuccess = {
+                        Toast.makeText(requireContext(), "카카오 계정 연동 성공!", Toast.LENGTH_SHORT).show()
+                    },
+                    onError = { message ->
+                        Toast.makeText(requireContext(), "계정 연동 실패: $message", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
+    }
+
+    private fun linkNaverAccount() {
+        // 네이버 로그인 실행
+        NaverIdLoginSDK.authenticate(requireContext(), object : OAuthLoginCallback {
+            override fun onSuccess() {
+                val naverToken = NaverIdLoginSDK.getAccessToken()
+                if (naverToken != null) {
+                    Log.d("NaverLink", "네이버 로그인 성공! 액세스 토큰: $naverToken")
+                    val existingToken = userRepository.getAccessToken()  // 앱에서 관리하는 기존 사용자 인증 토큰 가져오기
+                    userRepository.linkNaverAccount(existingToken!!, naverToken,
+                        onSuccess = {
+                            Toast.makeText(requireContext(), "네이버 계정 연동 성공!", Toast.LENGTH_SHORT).show()
+                        },
+                        onError = { message ->
+                            Toast.makeText(requireContext(), "계정 연동 실패: $message", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                } else {
+                    Toast.makeText(requireContext(), "네이버 로그인 실패: 액세스 토큰을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(httpStatus: Int, message: String) {
+                Log.e("NaverLink", "네이버 계정 연동 실패: $message")
+                Toast.makeText(requireContext(), "네이버 계정 연동 실패: $message", Toast.LENGTH_SHORT).show()
+            }
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+            }
+        })
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

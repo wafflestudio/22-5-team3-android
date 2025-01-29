@@ -58,7 +58,11 @@ class HotVoteFragment : Fragment() {
                 putInt("vote_id", voteItem.id)
                 putString("origin", "hotVote")
             }
-            navController.navigate(R.id.action_hotVoteFragment_to_voteDetailFragment, bundle)
+            if (isEnded) {
+                navController.navigate(R.id.action_hotVoteFragment_to_endvoteDetailFragment, bundle)
+            } else {
+                navController.navigate(R.id.action_hotVoteFragment_to_voteDetailFragment, bundle)
+            }
         }, isBackgroundFixed = false)
         binding.voteItemRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.voteItemRecyclerView.adapter = adapter
