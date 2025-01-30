@@ -204,5 +204,7 @@ data class GetMeResponse(
     val name: String,
     val userid: String,
     val email: String,
-    val college: Int
+    val college: Int,
+    val is_naver_user: Boolean,
+    val is_kakao_user: Boolean
 )
