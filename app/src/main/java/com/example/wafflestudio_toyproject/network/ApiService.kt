@@ -79,7 +79,8 @@ interface VoteApi {
 
     @GET("/api/votes/list")
     fun getVotes(
-        @Query("start_cursor") startCursor: String? = null,
+        @Query("start_cursor_time") startCursorTime: String? = null,
+        @Query("start_cursor_id") startCursorId: Int? = null,
         @Query("category") category: String? = null
     ): Call<VoteListResponse>
 

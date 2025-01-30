@@ -143,7 +143,8 @@ data class VoteDetailResponse(
 data class VoteListResponse(
     val votes_list: List<VoteItem>,
     val has_next: Boolean,
-    val next_cursor: String?
+    val next_cursor_time: String?,
+    val next_cursor_id: Int?
 )
 
 data class VoteItem(

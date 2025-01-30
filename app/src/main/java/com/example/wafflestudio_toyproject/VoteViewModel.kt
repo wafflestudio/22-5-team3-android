@@ -15,9 +15,15 @@ class VoteViewModel @Inject constructor(
     private val _allVotes = MutableLiveData<List<VoteItem>>()
     val allVotes: LiveData<List<VoteItem>> get() = _allVotes
 
-    private var nextCursorOngoing: String? = null
-    private var nextCursorEnded: String? = null
-    private var nextCursorHot: String? = null
+    private var nextCursorOngoingTime: String? = null
+    private var nextCursorOngoingId: Int? = null
+
+    private var nextCursorEndedTime: String? = null
+    private var nextCursorEndedId: Int? = null
+
+    private var nextCursorHotTime: String? = null
+    private var nextCursorHotId: Int? = null
+
     private var isLoading = false
 
     fun fetchOngoingVotes(isRefreshing: Boolean = false) {
@@ -25,10 +31,11 @@ class VoteViewModel @Inject constructor(
         isLoading = true
 
         if (isRefreshing) {
-            nextCursorOngoing = null
+            nextCursorOngoingTime = null
+            nextCursorOngoingId = null
         }
 
-        voteRepository.getVotes("ongoing", nextCursorOngoing).observeForever { response ->
+        voteRepository.getVotes("ongoing", nextCursorOngoingTime, nextCursorOngoingId).observeForever { response ->
             response?.let {
                 val updatedList = if (isRefreshing) {
                     it.votes_list
@@ -37,7 +44,13 @@ class VoteViewModel @Inject constructor(
                 }
 
                 _allVotes.value = updatedList.distinctBy { vote -> vote.id }
-                nextCursorOngoing = if (it.has_next) it.next_cursor else null
+                if (it.has_next) {
+                    nextCursorOngoingTime = it.next_cursor_time
+                    nextCursorOngoingId = it.next_cursor_id
+                } else {
+                    nextCursorOngoingTime = null
+                    nextCursorOngoingId = null
+                }
             }
             isLoading = false
         }
@@ -45,7 +58,9 @@ class VoteViewModel @Inject constructor(
 
     // 다음 페이지 요청
     fun loadMoreOngoingVotes() {
-        nextCursorOngoing?.let { fetchOngoingVotes() }
+        if (nextCursorOngoingTime != null && nextCursorOngoingId != null) {
+            fetchOngoingVotes()
+        }
     }
 
     fun fetchEndedVotes(isRefreshing: Boolean = false) {
@@ -53,10 +68,11 @@ class VoteViewModel @Inject constructor(
         isLoading = true
 
         if (isRefreshing) {
-            nextCursorEnded = null
+            nextCursorEndedTime = null
+            nextCursorEndedId = null
         }
 
-        voteRepository.getVotes("ended", nextCursorEnded).observeForever { response ->
+        voteRepository.getVotes("ended", nextCursorEndedTime, nextCursorEndedId).observeForever { response ->
             response?.let {
                 val updatedList = if (isRefreshing) {
                     it.votes_list
@@ -65,7 +81,13 @@ class VoteViewModel @Inject constructor(
                 }
 
                 _allVotes.value = updatedList.distinctBy { vote -> vote.id }  // 중복 제거
-                nextCursorEnded = if (it.has_next) it.next_cursor else null
+                if (it.has_next) {
+                    nextCursorEndedTime = it.next_cursor_time
+                    nextCursorEndedId = it.next_cursor_id
+                } else {
+                    nextCursorEndedTime = null
+                    nextCursorEndedId = null
+                }
             }
             isLoading = false
         }
@@ -77,10 +99,11 @@ class VoteViewModel @Inject constructor(
         isLoading = true
 
         if (isRefreshing) {
-            nextCursorEnded = null
+            nextCursorOngoingTime = null
+            nextCursorOngoingId = null
         }
 
-        voteRepository.getVotes("participated", nextCursorEnded).observeForever { response ->
+        voteRepository.getVotes("participated", nextCursorOngoingTime, nextCursorOngoingId).observeForever { response ->
             response?.let {
                 val updatedList = if (isRefreshing) {
                     it.votes_list
@@ -89,7 +112,13 @@ class VoteViewModel @Inject constructor(
                 }
 
                 _allVotes.value = updatedList.distinctBy { vote -> vote.id }  // 중복 제거
-                nextCursorEnded = if (it.has_next) it.next_cursor else null
+                if (it.has_next) {
+                    nextCursorOngoingTime = it.next_cursor_time
+                    nextCursorOngoingId = it.next_cursor_id
+                } else {
+                    nextCursorOngoingTime = null
+                    nextCursorOngoingId = null
+                }
             }
             isLoading = false
         }
@@ -100,10 +129,11 @@ class VoteViewModel @Inject constructor(
         isLoading = true
 
         if (isRefreshing) {
-            nextCursorEnded = null
+            nextCursorOngoingTime = null
+            nextCursorOngoingId = null
         }
 
-        voteRepository.getVotes("made", nextCursorEnded).observeForever { response ->
+        voteRepository.getVotes("made", nextCursorOngoingTime, nextCursorOngoingId).observeForever { response ->
             response?.let {
                 val updatedList = if (isRefreshing) {
                     it.votes_list
@@ -112,7 +142,13 @@ class VoteViewModel @Inject constructor(
                 }
 
                 _allVotes.value = updatedList.distinctBy { vote -> vote.id }  // 중복 제거
-                nextCursorEnded = if (it.has_next) it.next_cursor else null
+                if (it.has_next) {
+                    nextCursorOngoingTime = it.next_cursor_time
+                    nextCursorOngoingId = it.next_cursor_id
+                } else {
+                    nextCursorOngoingTime = null
+                    nextCursorOngoingId = null
+                }
             }
             isLoading = false
         }
@@ -120,7 +156,9 @@ class VoteViewModel @Inject constructor(
 
     // 다음 페이지 요청
     fun loadMoreEndedVotes() {
-        nextCursorEnded?.let { fetchEndedVotes() }
+        if (nextCursorEndedTime != null && nextCursorEndedId != null) {
+            fetchEndedVotes()
+        }
     }
 
     fun fetchHotVotes(isRefreshing: Boolean = false) {
@@ -128,10 +166,11 @@ class VoteViewModel @Inject constructor(
         isLoading = true
 
         if (isRefreshing) {
-            nextCursorHot = null
+            nextCursorHotTime = null
+            nextCursorHotId = null
         }
 
-        voteRepository.getVotes("hot", nextCursorHot).observeForever { response ->
+        voteRepository.getVotes("hot", nextCursorHotTime, nextCursorHotId).observeForever { response ->
             response?.let {
                 val updatedList = if (isRefreshing) {
                     it.votes_list
@@ -140,7 +179,13 @@ class VoteViewModel @Inject constructor(
                 }
 
                 _allVotes.value = updatedList.distinctBy { vote -> vote.id }  // 중복 제거
-                nextCursorHot = if (it.has_next) it.next_cursor else null
+                if (it.has_next) {
+                    nextCursorHotTime = it.next_cursor_time
+                    nextCursorHotId = it.next_cursor_id
+                } else {
+                    nextCursorHotTime = null
+                    nextCursorHotId = null
+                }
             }
             isLoading = false
         }
@@ -148,7 +193,9 @@ class VoteViewModel @Inject constructor(
 
     // 다음 페이지 요청
     fun loadMoreHotVotes() {
-        nextCursorHot?.let { fetchEndedVotes() }
+        if (nextCursorHotTime != null && nextCursorHotId != null) {
+            fetchHotVotes()
+        }
     }
 
     fun addNewVote(newVote: VoteItem) {
