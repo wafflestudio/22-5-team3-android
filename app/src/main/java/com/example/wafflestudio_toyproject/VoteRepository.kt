@@ -15,11 +15,11 @@ class VoteRepository @Inject constructor(
     private val voteApi: VoteApi,
     private val userRepository: UserRepository
 ) {
-    fun getVotes(category: String?,startCursor: String?): LiveData<VoteListResponse?> {
+    fun getVotes(category: String?,startCursorTime: String?, startCursorId: Int?): LiveData<VoteListResponse?> {
         val liveData = MutableLiveData<VoteListResponse?>()
         val accessToken = userRepository.getAccessToken()
 
-        voteApi.getVotes(startCursor,category).enqueue(object : Callback<VoteListResponse> {
+        voteApi.getVotes(startCursorTime, startCursorId, category).enqueue(object : Callback<VoteListResponse> {
             override fun onResponse(call: Call<VoteListResponse>, response: Response<VoteListResponse>) {
                 if (response.isSuccessful) {
                     liveData.postValue(response.body())

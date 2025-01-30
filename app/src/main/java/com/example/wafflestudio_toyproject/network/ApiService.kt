@@ -14,9 +14,6 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 interface UserApi {
     @POST("api/users/signup")
@@ -35,7 +32,6 @@ interface UserApi {
 
     @DELETE("api/users/me")
     fun deleteAccount(): Call<ResponseBody>
-
 
     @POST("api/users/link/kakao")
     fun linkKakaoAccount(
@@ -83,7 +79,8 @@ interface VoteApi {
 
     @GET("/api/votes/list")
     fun getVotes(
-        @Query("start_cursor") startCursor: String? = null,
+        @Query("start_cursor_time") startCursorTime: String? = null,
+        @Query("start_cursor_id") startCursorId: Int? = null,
         @Query("category") category: String? = null
     ): Call<VoteListResponse>
 
@@ -117,6 +114,10 @@ interface VoteApi {
         @Path("comment_id") commentId: Int
     ): Call<VoteDetailResponse>
 }
+
+
+
+
 
 
 

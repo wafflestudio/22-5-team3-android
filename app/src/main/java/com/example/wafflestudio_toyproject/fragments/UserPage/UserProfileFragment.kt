@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -60,12 +61,12 @@ class UserProfileFragment : Fragment() {
         binding.createdVotes.setOnClickListener {
             navController.navigate(R.id.action_userProfileFragment_to_myCreatedVotesFragment)
         }
-        
+
         // 내가 참여한 투표 클릭 리스너
         binding.participatedVotes.setOnClickListener {
             navController.navigate(R.id.action_userProfileFragment_to_myParticipatedVotesFragment)
         }
-        
+
         // 회원 탈퇴 클릭 리스너
         binding.withdrawButton.setOnClickListener {
             showDeleteAccountDialog()
@@ -98,7 +99,7 @@ class UserProfileFragment : Fragment() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
-    
+
     // 회원 정보 불러오기
     private fun getUserInformation() {
         val colleges = listOf(
@@ -116,6 +117,13 @@ class UserProfileFragment : Fragment() {
                         binding.userID.text = userInfo.userid
                         binding.userEmail.text = userInfo.email
                         binding.userCollege.text = colleges[if (userInfo.college > 0) userInfo.college - 1 else 0]
+
+                        if (userInfo.is_naver_user) {
+                            binding.naverIcon.visibility = VISIBLE
+                        }
+                        if (userInfo.is_kakao_user) {
+                            binding.kakaoIcon.visibility = VISIBLE
+                        }
 
                         Log.d("getme", "name: ${userInfo.name}, id: ${userInfo.userid}, email: ${userInfo.email}, college: ${userInfo.college}")
                     }
@@ -143,7 +151,7 @@ class UserProfileFragment : Fragment() {
             }
         }.show()
     }
-        
+
     // 회원 탈퇴
     private fun deleteAccount() {
         userRepository.deleteAccount(
@@ -214,7 +222,7 @@ class UserProfileFragment : Fragment() {
             }
         })
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
