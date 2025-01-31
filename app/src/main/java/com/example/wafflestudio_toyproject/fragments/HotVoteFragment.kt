@@ -82,7 +82,6 @@ class HotVoteFragment : Fragment() {
             }
         })
 
-
         // API 호출
         voteViewModel.allVotes.observe(viewLifecycleOwner) { allVotes ->
             adapter.updateItems(allVotes)
