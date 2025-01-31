@@ -18,6 +18,7 @@ class VoteItemAdapter(
     inner class VoteViewHolder(private val binding: VoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(voteItem: VoteItem) {
             binding.voteTitle.text = voteItem.title
+            binding.voteTimeRemaining.text = voteItem.calculateTimeRemaining()
             binding.participateNumber.text = voteItem.participant_count.toString()
 
             if (!voteItem.image.isNullOrEmpty())
