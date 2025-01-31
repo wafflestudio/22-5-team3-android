@@ -151,15 +151,6 @@
             app:layout_constraintTop_toBottomOf="@id/autoLoginCheckBox">
 
             <Button
-                android:id="@+id/forgotPwButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Forgot pw"
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/black"
-                android:layout_marginEnd="8dp" />
-
-            <Button
                 android:id="@+id/signUpButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

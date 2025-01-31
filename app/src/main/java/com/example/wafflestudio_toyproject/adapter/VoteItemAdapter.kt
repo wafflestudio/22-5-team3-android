@@ -17,11 +17,19 @@ class VoteItemAdapter(
     inner class VoteViewHolder(private val binding: VoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(voteItem: VoteItem) {
             binding.voteTitle.text = voteItem.title
-            binding.voteTimeRemaining.text = voteItem.calculateTimeRemaining()
             binding.participateNumber.text = voteItem.participant_count.toString()
 
+            // 종료된 경우 "종료됨", 그렇지 않으면 남은 시간 표시
+            binding.voteTimeRemaining.text = if (voteItem.isEnded()) {
+                "종료됨"
+            } else {
+                voteItem.calculateTimeRemaining()
+            }
+
             // 이미지 로드
-            binding.postImage.load(voteItem.image)
+            voteItem.image?.let {
+                binding.postImage.load(it)
+            }
 
             binding.root.setOnClickListener {
                 onClick(voteItem, voteItem.isEnded())

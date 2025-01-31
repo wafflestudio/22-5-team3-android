@@ -171,6 +171,7 @@ class EndvoteDetailFragment : Fragment() {
         binding.voteDetailTitle.text = voteDetail.title
         binding.voteDetailDescription.text = voteDetail.content
         binding.userId.text = voteDetail.writer_name
+        binding.voteTimeRemaining.text = "종료됨"
 
         if (voteDetail.images.isNotEmpty()) {
             setupImageSlider(voteDetail.images)
