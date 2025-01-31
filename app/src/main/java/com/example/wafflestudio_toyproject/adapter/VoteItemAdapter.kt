@@ -1,5 +1,6 @@
 package com.example.wafflestudio_toyproject.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -17,23 +18,11 @@ class VoteItemAdapter(
     inner class VoteViewHolder(private val binding: VoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(voteItem: VoteItem) {
             binding.voteTitle.text = voteItem.title
+            binding.voteTimeRemaining.text = voteItem.calculateTimeRemaining()
             binding.participateNumber.text = voteItem.participant_count.toString()
 
-            // 종료된 경우 "종료됨", 그렇지 않으면 남은 시간 표시
-            binding.voteTimeRemaining.text = if (voteItem.isEnded()) {
-                "종료됨"
-            } else {
-                voteItem.calculateTimeRemaining()
-            }
-
-            // 이미지 로드
-            voteItem.image?.let {
-                binding.postImage.load(it)
-            }
-
-            binding.root.setOnClickListener {
-                onClick(voteItem, voteItem.isEnded())
-            }
+            if (!voteItem.image.isNullOrEmpty())
+                binding.postImage.load(voteItem.image)
 
             if (voteItem.participated && !isBackgroundFixed) {
                 binding.voteCardView.setBackgroundResource(R.drawable.participate_vote)
@@ -49,6 +38,7 @@ class VoteItemAdapter(
     }
 
     override fun onBindViewHolder(holder: VoteViewHolder, position: Int) {
+        holder.setIsRecyclable(false)
         holder.bind(voteItems[position])
     }
 
