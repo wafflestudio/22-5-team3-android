@@ -18,11 +18,14 @@ class VoteItemAdapter(
     inner class VoteViewHolder(private val binding: VoteItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(voteItem: VoteItem) {
             binding.voteTitle.text = voteItem.title
-            binding.voteTimeRemaining.text = voteItem.calculateTimeRemaining()
             binding.participateNumber.text = voteItem.participant_count.toString()
 
             if (!voteItem.image.isNullOrEmpty())
                 binding.postImage.load(voteItem.image)
+
+            binding.root.setOnClickListener {
+                onClick(voteItem, voteItem.isEnded())
+            }
 
             if (voteItem.participated && !isBackgroundFixed) {
                 binding.voteCardView.setBackgroundResource(R.drawable.participate_vote)
